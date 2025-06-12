@@ -42,11 +42,13 @@
 }
 
 .separator-line {
-  margin-top: 0; /* Should be positioned directly below the background */
+  position: relative; /* Use relative or absolute positioning for z-index to work */
+  top: -4px; /* Adjust position to be directly below the background, accounting for height */
   height: 4px; /* Thickness of 4 pixels */
   background-color: white; /* White color */
   border: none;
-  z-index: 2; /* Ensure it's above the background */
+  width: 100%; /* Ensure the line spans the full width */
+  z-index: 3; /* Ensure it's above the background and other potentially conflicting elements */
 }
 
 #seasons-container {
