@@ -1,68 +1,109 @@
 <template>
   <div>
-    <div class="background-container"></div>
-    <img src="/logo_noph.png" alt="Logo" class="background-logo">
-    <hr class="separator-line">
-    <div id="seasons-container">
-      <div v-if="loading" class="loading">Loading cards...</div>
+ <div class="hero-section">
+ <div class="hero-image">
+ <img src="/public/background.jpg" alt="Hero Background">
+ <div class="logo-overlay">
+ <img src="/public/logo_noph.png" alt="Store Logo">
+ </div>
+ </div>
+ <div class="hero-text">
+ <h1>Сумочки, которые вдохновляют</h1>
+ <p>Откройте для себя нашу эксклюзивную коллекцию сумок, где стиль встречается с практичностью.</p>
+ </div>
+ </div>
+ <div class="items-grid">
+ <div v-if="loading" class="loading">Загрузка товаров...</div>
       <div v-else-if="error" class="error-message">Error loading data: {{ error.message || error }}. Please try again later.</div>
-      <div v-else-if="seasons.length === 0" class="loading">No seasons found</div>
-      <Season 
-        v-for="season in seasons" 
-        :key="season.uuid" 
-        :season="season" 
-        @card-clicked="navigateToCard" deprecated
-        @add-card="navigateToAddCard"
-        @emitUserAllowedStatus="updateUserAllowedStatus"
-        @season-deleted="handleSeasonDeleted"
+ <div v-else-if="items.length === 0" class="loading">Товары не найдены.</div>
+ <div v-for="item in items" :key="item.id" class="item-card" @click="navigateToItem(item.id)">
+ <img :src="item.img" :alt="item.name" class="item-image">
+ <h3>{{ item.name }}</h3>
+ <p class="item-price">{{ item.price }} руб.</p>
       />
-    </div>
-    <div v-if="isUserAllowed" class="add-season-footer">
-      <div class="add-new-season-btn" @click="navigateToAddSeason">
-        + Add New Season
-      </div>
-    </div>
-    <div>
-      <h2>.</h2>
-    </div>
-  </div>
-
+ </div>
+ </div>
+ </div>
 </template>
 
+<script>
+import { mapActions, mapState } from 'vuex';
+
+export default {
+ computed: {
+ ...mapState(['items', 'loading', 'error']),
+ },
+ methods: {
+ ...mapActions(['fetchItems']),
+ navigateToItem(itemId) {
+ this.$router.push(`/item/${itemId}`);
+ },
+ },
+ mounted() {
+ this.fetchItems();
+ },
+};
+</script>
+
 <style scoped>
-.background-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 400px; /* Adjust height as needed */
-  background-image: url('/background.jpg');
-  background-size: cover;
-  background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
-  z-index: 1; /* Ensure it's behind the content */
+.hero-section {
+ position: relative;
+ width: 100%;
+ height: 400px; /* Adjust height as needed */
+ overflow: hidden;
 }
 
-.background-logo {
+.hero-image {
+ width: 100%;
+ height: 100%;
+ position: relative;
+}
+
+.hero-image img {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ object-position: center 57%;
+}
+
+.logo-overlay {
   position: absolute;
   top: 100px;
   left: 50%;
-  transform: translate(-50%, 0);
-  max-width: 250px; /* Adjust size as needed */
-  max-height: 250px; /* Adjust size as needed */
-  z-index: 1; /* Ensure it's behind the content */
+ transform: translateX(-50%);
 }
 
-.separator-line {
-  position: relative;
-  margin-top: 370px; /* Adjust to be below the background image */
-  height: 2px;
-  background-color: white;
-  border: none;
-  z-index: 2; /* Ensure it's above the background */
-  width: 75%;
+.logo-overlay img {
+ max-width: 250px;
+ max-height: 250px;
+ object-fit: contain;
 }
 
-#seasons-container {
+.hero-text {
+ position: absolute;
+ bottom: 20px;
+ left: 50%;
+ transform: translateX(-50%);
+ text-align: center;
+ color: white;
+ text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+ z-index: 2;
+}
+
+.hero-text h1 {
+ margin: 0;
+ font-size: 2.5em;
+}
+
+.hero-text p {
+ margin-top: 10px;
+ font-size: 1.2em;
+}
+
+.items-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+ gap: 20px;
   position: relative; /* Essential for z-index to work correctly relative to the background */
   margin-top: 30px; /* Push content down by the height of the background */
   z-index: 2; /* Ensure content is above the background */
@@ -70,118 +111,34 @@
   padding-bottom: 50px;
 }
 .error-message {
-  text-align: center;
-  margin: 50px 0;
-  color: #ff5555; /* Red color for errors */
+ text-align: center;
+ margin: 50px 0;
+ color: #ff5555;
 }
 
-page-container {
-  position: relative;
-  min-height: 100vh;
+.item-card {
+ background-color: white;
+ border-radius: 8px;
+ overflow: hidden;
+ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+ cursor: pointer;
+ text-align: center;
 }
 
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 400px); /* Учитываем высоту хедера */
+.item-image {
+ width: 100%;
+ height: 200px; /* Adjust as needed */
+ object-fit: cover;
 }
 
-#seasons-container {
-  flex: 1; /* Занимает все доступное пространство */
+.item-card h3 {
+ margin: 10px 0;
+ font-size: 1.2em;
+ color: #333;
 }
 
-.add-season-footer {
-  padding: 20px 0 50px;
-  text-align: center;
+.item-price {
+ margin-bottom: 15px;
+ font-size: 1.1em;
+ color: #007bff; /* Adjust color as needed */
 }
-.add-new-season-btn {
-  background: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--text-color);
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-height: 60px;
-  padding: 0 30px;
-  border: 2px dashed #555;
-  margin: 0 auto;
-}
-
-.add-new-season-btn:hover {
-  transform: translateY(-5px);
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-}
-/* Добавляем отступ для основного контента */
-#seasons-container {
-  padding-bottom: 0px; /* Чтобы контент не перекрывался кнопкой */
-}
-
-</style>
-
-<script>
-import Season from '@/components/Season.vue'
-import { mapActions, mapState, mapMutations } from 'vuex' // Import mapMutations
-
-export default {
-  components: {
-    Season
-  },
-  computed: {
-    ...mapState(['seasons', 'loading', 'error'])
-  },
-  data() {
-    return {
-      isUserAllowed: false
-    };
-  },
-  methods: {
-    ...mapActions(['fetchSeasons']),
-    ...mapMutations(['REMOVE_SEASON']), // Add mapMutations
-    navigateToCard(cardUuid) { // Deprecated - use @card-clicked on card component directly
-      this.$router.push(`/card/${cardUuid}`);
-    },
-    updateUserAllowedStatus(isAllowed) {
-      console.log('Received user allowed status:', isAllowed);
-      this.isUserAllowed = isAllowed;
-    },
-    navigateToAddCard() {
-      // Реализуйте навигацию к странице добавления карточки
-      // this.$router.push('/add-card'); // This method seems unused based on template. Leaving as comment.
-    },
-    async navigateToAddSeason() {
-      try {
-        // Assuming createSeason is imported from your api file
-        const { createSeason } = await import('@/api'); // Import dynamically if not already imported
-        const newSeason = await createSeason();
-        console.log('New season created:', newSeason);
-        await this.fetchSeasons(); // Refresh the list of seasons
-        // Removed automatic navigation after season creation
-        // this.$router.push(`/season/${newSeason.uuid}`); // Navigate to the new season's page
-      } catch (error) {
-        console.error('Error creating new season:', error);
-        alert('Failed to create new season.'); // Provide user feedback
-      }
-    }
-    ,
-    // Add a new method to handle season deletion
-    handleSeasonDeleted(deletedSeasonUuid) {
-      // Call the mutation to remove the season from the VueX store
-      this.REMOVE_SEASON(deletedSeasonUuid);
-    }
-  },
-  mounted() {
-    this.fetchSeasons()
-  },
-  // Add a new method to handle season deletion
-  handleSeasonDeleted(deletedSeasonUuid) {
-    // Call the mutation to remove the season from the VueX store
-    this.REMOVE_SEASON(deletedSeasonUuid);
-  }
-}
-</script>
