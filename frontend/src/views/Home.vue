@@ -8,8 +8,11 @@
   </div>
 </template>
 <style scoped>
+.background-container {
+  position: absolute;
+  left: 0;
   width: 100%;  
- height: 100vh; /* Adjust height as needed */
+  height: 100vh; /* Adjust height as needed */
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
