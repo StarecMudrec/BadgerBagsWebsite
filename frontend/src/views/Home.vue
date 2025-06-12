@@ -43,17 +43,17 @@
 
 .separator-line {
   position: relative; /* Use relative or absolute positioning for z-index to work */
-  top: -4px; /* Adjust position to be directly below the background, accounting for height */
+  display: block; /* Ensure it's a block element */
+  margin-top: -4px; /* Adjust position to be directly below the background, accounting for its height */
   height: 4px; /* Thickness of 4 pixels */
   background-color: white; /* White color */
   border: none;
   width: 100%; /* Ensure the line spans the full width */
-  z-index: 3; /* Ensure it's above the background and other potentially conflicting elements */
+  z-index: 2; /* Ensure it's above the background but below the seasons container */
 }
 
-#seasons-container {
-  position: relative;
-  margin-top: 30px; /* Push content down by the height of the background */
+.background-container + .separator-line {
+  margin-top: 100vh; /* Position the line directly below the 100vh background */
   z-index: 2; /* Ensure content is above the background */
   /* Add other styles for your seasons container here */
   padding-bottom: 50px;
@@ -108,7 +108,7 @@ page-container {
 }
 /* Добавляем отступ для основного контента */
 #seasons-container {
-  padding-bottom: 0px; /* Чтобы контент не перекрывался кнопкой */
+  padding-bottom: 0px; /* To prevent content from being overlapped by the button */
 }
 
 </style>
