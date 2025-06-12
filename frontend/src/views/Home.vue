@@ -46,6 +46,7 @@
   height: 4px; /* Thickness of 4 pixels */
   width: 100%;
   background-color: white; /* White color */
+  margin-top: 100vh; /* Position the line directly below the 100vh background */
   z-index: 2; /* Ensure content is above the background */
   /* Add other styles for your seasons container here */
   padding-bottom: 50px;
