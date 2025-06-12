@@ -40,15 +40,14 @@
   z-index: 1; /* Ensure it's behind the content */
   bottom: 0; /* Anchor to the bottom */
 }
-
-
 .separator-line {
-  height: 4px; /* Thickness of 4 pixels */
+  position: absolute;
+  bottom: 0; /* Position at the bottom edge of the background */
+  left: 0;
+  height: 4px;
   width: 100%;
-  background-color: white; /* White color */
-  margin-top: 100vh; /* Position the line directly below the 100vh background */
-  z-index: 2; /* Ensure content is above the background */
-  /* Add other styles for your seasons container here */
+  background-color: white;
+  z-index: 2; /* Ensure it's above the background */
   padding-bottom: 50px;
 }
 .error-message {
