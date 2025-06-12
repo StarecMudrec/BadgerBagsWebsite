@@ -41,18 +41,10 @@
   z-index: 1; /* Ensure it's behind the content */
 }
 
+
 .separator-line {
-  position: relative; /* Use relative or absolute positioning for z-index to work */
-  display: block; /* Ensure it's a block element */
-  margin-top: -4px; /* Adjust position to be directly below the background, accounting for its height */
   height: 4px; /* Thickness of 4 pixels */
   background-color: white; /* White color */
-  border: none;
-  width: 100%; /* Ensure the line spans the full width */
-  z-index: 2; /* Ensure it's above the background but below the seasons container */
-}
-
-.background-container + .separator-line {
   margin-top: 100vh; /* Position the line directly below the 100vh background */
   z-index: 2; /* Ensure content is above the background */
   /* Add other styles for your seasons container here */
