@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="background-container"></div>
-    <hr class="separator-line" style="margin-top: 0;">
+    <hr class="separator-line">
     <div id="seasons-container">
       <div v-if="loading" class="loading">Loading cards...</div>
       <div v-else-if="error" class="error-message">Error loading data: {{ error.message || error }}. Please try again later.</div>
