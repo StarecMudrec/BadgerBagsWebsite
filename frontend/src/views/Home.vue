@@ -21,10 +21,10 @@
         + Add New Season
       </div>
     </div>
-    <hr class="separator-line">
     <div>
       <h2>.</h2>
     </div>
+    <hr class="separator-line">
   </div>
 
 </template>
@@ -54,7 +54,7 @@
 
 .separator-line {
   position: relative;
-  margin-top: 30px; /* Adjust to be below the background image */
+  margin-top: 0px; /* Adjust to be below the seasons container */
   height: 4px;
   background-color: white;
   border: none;
