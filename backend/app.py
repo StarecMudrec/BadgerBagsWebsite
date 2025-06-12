@@ -10,8 +10,8 @@ import requests  # Import the requests library
 from joserfc.errors import JoseError
 import logging
 from flask_sqlalchemy import SQLAlchemy  # Database integration
-from models import db, AuthToken, Card, Season, Comment, AllowedUser
-from models import Item # Import the Item model
+from models import db, AuthToken, Item, AllowedUser
+from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)

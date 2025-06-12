@@ -8,9 +8,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: cards  # Главная база данных
+      POSTGRES_DB: badgerbags  # Главная база данных
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d cards"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d badgerbags"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -41,12 +41,13 @@ services:
       db:
         condition: service_healthy
     environment:      
-      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/cards
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/badgerbags
       BOT_TOKEN_HASH: 7505659847:AAF3AoBU0HFInjsPPOqz4KaPmX3M15l9f1U
       SECRET_KEY: VUPSENPUPSENROSTIC)
       FLASK_APP: wsgi:app
     command: >      
-      sh -c "flask --app wsgi db migrate  &&
+      sh -c "flask --app wsgi db init &&
+      flask --app wsgi db migrate  &&
       flask --app wsgi db upgrade &&
       gunicorn --bind 0.0.0.0:8000 wsgi:app"
 
