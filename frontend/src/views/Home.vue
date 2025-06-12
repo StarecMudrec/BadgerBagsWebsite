@@ -2,6 +2,7 @@
   <div>
     <div class="background-container"></div>
     <img src="/logo_noph.png" alt="Logo" class="background-logo">
+    <hr class="separator-line">
     <div id="seasons-container">
       <div v-if="loading" class="loading">Loading cards...</div>
       <div v-else-if="error" class="error-message">Error loading data: {{ error.message || error }}. Please try again later.</div>
@@ -24,7 +25,6 @@
     <div>
       <h2>.</h2>
     </div>
-    <hr class="separator-line">
   </div>
 
 </template>
@@ -43,17 +43,17 @@
 }
 
 .background-logo {
-  position: absolute;
-  top: 100px;
+  position: relative; /* Changed to relative */
+  display: block; /* Ensures it takes up space and allows margin */
+  margin: 100px auto 0 auto; /* Center horizontally and add top margin */
   left: 50%;
   transform: translate(-50%, 0);
   max-width: 250px; /* Adjust size as needed */
   max-height: 250px; /* Adjust size as needed */
-  z-index: 1; /* Ensure it's behind the content */
+  z-index: 2; /* Ensure it's above the background */
 }
 
 .separator-line {
-  position: relative;
   margin-top: 0px; /* Adjust to be below the seasons container */
   height: 4px;
   background-color: white;
@@ -63,7 +63,7 @@
 }
 
 #seasons-container {
-  position: relative; /* Essential for z-index to work correctly relative to the background */
+  position: relative;
   margin-top: 30px; /* Push content down by the height of the background */
   z-index: 2; /* Ensure content is above the background */
   /* Add other styles for your seasons container here */
