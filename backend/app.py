@@ -468,14 +468,14 @@ def update_card_image(card_uuid):
 
 @app.route("/api/bags", methods=["GET"])
 def get_bags():
- items = Item.query.filter_by(category='bag').all()
- bags_data = []
- for item in items:
- bags_data.append({
- 'image': item.img,
- 'price': item.price
- })
- return jsonify(bags_data), 200
+    items = Item.query.filter_by(category='bag').all()
+    bags_data = []
+    for item in items:
+        bags_data.append({
+            'image': item.img,
+            'price': item.price
+        })
+    return jsonify(bags_data), 200
 
 @app.route("/api/season_info/<int:season_id>")
 def get_season_info(season_id):  
