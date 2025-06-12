@@ -1,28 +1,12 @@
 <template>
   <div>
     <div class="background-container"></div>
+    <div class="content-above-separator">
+      <!-- Content that should be above the separator if any -->
+    </div>
     <hr class="separator-line">
-    <div id="seasons-container">
-      <div v-if="loading" class="loading">Loading cards...</div>
-      <div v-else-if="error" class="error-message">Error loading data: {{ error.message || error }}. Please try again later.</div>
-      <div v-else-if="seasons.length === 0" class="loading">No seasons found</div>
-      <Season 
-        v-for="season in seasons" 
-        :key="season.uuid" 
-        :season="season" 
-        @card-clicked="navigateToCard" deprecated
-        @add-card="navigateToAddCard"
-        @emitUserAllowedStatus="updateUserAllowedStatus"
-        @season-deleted="handleSeasonDeleted"
-      />
-    </div>
-    <div v-if="isUserAllowed" class="add-season-footer">
-      <div class="add-new-season-btn" @click="navigateToAddSeason">
-        + Add New Season
-      </div>
-    </div>
-    <div>
-      <h2>.</h2>
+    <div class="bag-catalog">
+      <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
     </div>
   </div>
 </template>
@@ -31,12 +15,11 @@
 .background-container {
   position: absolute;
   left: 0;
-  width: 100%;
-  height: 100vh; /* Adjust height as needed */
+  width: 100%;  
+ height: 100vh; /* Adjust height as needed */
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
- z-index: 1; /* Ensure it's behind the content */
   bottom: 0; /* Anchor to the bottom */
 }
 .separator-line {
@@ -44,8 +27,7 @@
   bottom: 0; /* Position at the bottom edge of the background container */
   left: 0;
   height: 4px;
-  width: 100%;
-  background-color: white;
+  width: 100%;  background-color: white;
   z-index: 2; /* Ensure it's above the background */
 }
 .error-message {
@@ -66,6 +48,20 @@ page-container {
   min-height: calc(100vh - 400px); /* Учитываем высоту хедера */
 }
 
+.bag-catalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust minmax for card size */
+  gap: 20px; /* Adjust gap between cards */
+  padding: 20px;
+  margin-top: 100vh; /* Push the catalog down below the background image */
+  background-color: #e0d8ce; /* Match the background color from the image */
+}
+
+.content-above-separator {
+  position: relative;
+  z-index: 3; /* Ensure content is above the separator */
+}
+ 
 #seasons-container {
   flex: 1; /* Занимает все доступное пространство */
 }
@@ -106,7 +102,9 @@ page-container {
 
 <script>
 import Season from '@/components/Season.vue'
-import { mapActions, mapState, mapMutations } from 'vuex' // Import mapMutations
+import BagCard from '@/components/BagCard.vue' // Import BagCard component
+import axios from 'axios'; // Import axios
+import { mapActions, mapState, mapMutations } from 'vuex'; // Import mapMutations
 
 export default {
   components: {
@@ -117,7 +115,8 @@ export default {
   },
   data() {
     return {
-      isUserAllowed: false
+      isUserAllowed: false,
+      bags: [] // Add bags data property
     };
   },
   methods: {
