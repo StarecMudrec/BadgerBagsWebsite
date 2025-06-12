@@ -31,7 +31,6 @@
 <style scoped>
 .background-container {
   position: absolute;
-  top: 0;
   left: 0;
   width: 100%;
   height: 100vh; /* Adjust height as needed */
@@ -39,11 +38,13 @@
   background-size: cover;
   background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
   z-index: 1; /* Ensure it's behind the content */
+  bottom: 0; /* Anchor to the bottom */
 }
 
 
 .separator-line {
   height: 4px; /* Thickness of 4 pixels */
+  width: 100%;
   background-color: white; /* White color */
   margin-top: 100vh; /* Position the line directly below the 100vh background */
   z-index: 2; /* Ensure content is above the background */
@@ -51,6 +52,7 @@
   padding-bottom: 50px;
 }
 .error-message {
+  position: relative; /* Ensure it's positioned relative to the flow */
   text-align: center;
   margin: 50px 0;
   color: #ff5555; /* Red color for errors */
