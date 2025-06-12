@@ -468,7 +468,7 @@ def update_card_image(card_uuid):
 
 @app.route("/api/bags", methods=["GET"])
 def get_bags():
-    items = Item.query.filter_by(category='bag').all()
+    items = Item.query.all()
     bags_data = []
     for item in items:
         bags_data.append({
