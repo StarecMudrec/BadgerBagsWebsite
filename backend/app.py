@@ -11,7 +11,7 @@ from joserfc.errors import JoseError
 import logging
 from flask_sqlalchemy import SQLAlchemy  # Database integration
 from models import db, AuthToken, Card, Season, Comment, AllowedUser
-from config import Config
+from models import Item # Import the Item model
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -465,6 +465,17 @@ def update_card_image(card_uuid):
         db.session.rollback()
         logging.error(f"Error updating card image: {e}")
         return jsonify({'error': 'Error updating card image'}), 500
+
+@app.route("/api/bags", methods=["GET"])
+def get_bags():
+ items = Item.query.filter_by(category='bag').all()
+ bags_data = []
+ for item in items:
+ bags_data.append({
+ 'image': item.img,
+ 'price': item.price
+ })
+ return jsonify(bags_data), 200
 
 @app.route("/api/season_info/<int:season_id>")
 def get_season_info(season_id):  
