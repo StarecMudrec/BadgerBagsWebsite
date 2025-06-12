@@ -25,7 +25,6 @@
       <h2>.</h2>
     </div>
   </div>
-
 </template>
 
 <style scoped>
@@ -37,18 +36,17 @@
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
-  z-index: 1; /* Ensure it's behind the content */
+ z-index: 1; /* Ensure it's behind the content */
   bottom: 0; /* Anchor to the bottom */
 }
 .separator-line {
   position: absolute;
-  bottom: 0; /* Position at the bottom edge of the background */
+  bottom: 0; /* Position at the bottom edge of the background container */
   left: 0;
   height: 4px;
   width: 100%;
   background-color: white;
   z-index: 2; /* Ensure it's above the background */
-  padding-bottom: 50px;
 }
 .error-message {
   position: relative; /* Ensure it's positioned relative to the flow */
