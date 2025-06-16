@@ -20,10 +20,9 @@
       </transition>
     </div>
 
-
-    <div class="bag-catalog">
+    <div v-if="loading">Loading bags...</div>
+    <div v-else class="bag-catalog">
       <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
-    </div>
   </div>
 </template>
 
@@ -39,6 +38,7 @@ export default {
     return {
       bags: [],
       showSortDropdown: false, // Data property to control dropdown visibility
+      loading: true, // Add a loading state
     };
   },
 
@@ -60,7 +60,11 @@ export default {
 
   async created() {
     const response = await fetch('/api/bags');
-    this.bags = await response.json();
+    try {
+      this.bags = await response.json();
+    } finally {
+      this.loading = false; // Set loading to false after fetch
+    }
   }
 };
 </script>
