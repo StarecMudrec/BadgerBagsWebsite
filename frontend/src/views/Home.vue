@@ -88,6 +88,7 @@ body, html, #app {
   min-height: calc(100vh - 4px);
   left: 0;
   top: 4px;
+  background-color: #e0d8ce;
 }
 
 /* Каталог */
@@ -96,6 +97,5 @@ body, html, #app {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
-  background-color: #e0d8ce;
 }
 </style>
