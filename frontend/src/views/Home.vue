@@ -181,6 +181,6 @@ body, html, #app {
 
 .sort-dropdown-enter-to, .sort-dropdown-leave {
   opacity: 1;
-  max-height: 200px; /* Adjust based on the maximum possible height of your dropdown */
+  max-height: 500px; /* Adjust based on the maximum possible height of your dropdown */
 }
 </style>

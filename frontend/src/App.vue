@@ -3,9 +3,7 @@
     <Navbar :user="user"/>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <div :key="$route.fullPath">
-          <component :is="Component" />
-        </div>
+        <component :is="Component" />
       </transition>
     </router-view>
     <div class="user-info" v-if="user">
