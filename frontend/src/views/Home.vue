@@ -15,6 +15,25 @@
   </div>
 </template>
 
+<script>
+import BagCard from '@/components/BagCard.vue';
+
+export default {
+  components: {
+    BagCard
+  },
+  data() {
+    return {
+      bags: []
+    };
+  },
+  async created() {
+    const response = await fetch('/api/bags');
+    this.bags = await response.json();
+  }
+};
+</script>
+
 <style scoped>
 /* Жёсткий сброс всех отступов */
 body, html, #app {
