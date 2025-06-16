@@ -12,7 +12,7 @@
     <div class="sort-container">
       <button class="sort-button" @click="toggleSortDropdown">Sort</button>
       <transition name="sort-dropdown">
-        <div v-if="showSortDropdown" class="sort-dropdown">
+        <div class="sort-dropdown" v-if="showSortDropdown">
           <div class="sort-option" @click="sortByPriceAscending">Price: Low to High</div>
           <div class="sort-option" @click="sortByPriceDescending">Price: High to Low</div>
           <div class="sort-option">Newest</div>
