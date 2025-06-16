@@ -31,9 +31,12 @@ export default {
 
 .bag-image {
   max-width: 100%;
-  height: auto;
+  height: 100%;
   margin-bottom: 10px;
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  object-fit: cover;
+  overflow: hidden;
 }
 
 .bag-price {

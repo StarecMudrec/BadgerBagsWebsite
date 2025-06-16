@@ -10,12 +10,16 @@
   <!-- Основной контент -->
   <div class="content">
     <div class="sort-container">
-      <button class="sort-button" @click="toggleSortDropdown">Sort</button>
+      <div class="sort-icon" @click.stop="toggleSortDropdown">
+        <span class="sort-icon-line"></span>
+        <span class="sort-icon-line"></span>
+        <span class="sort-icon-line"></span>
+      </div>
       <transition name="sort-dropdown">
-        <div class="sort-dropdown" v-if="showSortDropdown">
-          <div class="sort-option" @click="sortByPriceAscending">Price: Low to High</div>
-          <div class="sort-option" @click="sortByPriceDescending">Price: High to Low</div>
-          <div class="sort-option">Newest</div>
+        <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
+          <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
+          <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
+          <div class="sort-option">Сначала новые</div>
         </div> 
       </transition>
     </div>
@@ -30,22 +34,44 @@
 <script>
 import BagCard from '@/components/BagCard.vue';
 
+// Директива для обработки кликов вне элемента
+const clickOutside = {
+  beforeMount(el, binding) {
+    el.clickOutsideEvent = function(event) {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value();
+      }
+    };
+    document.addEventListener('click', el.clickOutsideEvent);
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent);
+  },
+};
+
 export default {
   components: {
     BagCard
   },
 
+  directives: {
+    'click-outside': clickOutside
+  },
+
   data() {
     return {
       bags: [],
-      showSortDropdown: false, // Data property to control dropdown visibility
-      loading: true, // Add a loading state
+      showSortDropdown: false,
+      loading: true,
     };
   },
 
   methods: {
     toggleSortDropdown() {
       this.showSortDropdown = !this.showSortDropdown;
+    },
+    closeSortDropdown() {
+      this.showSortDropdown = false;
     },
     sortByPriceAscending() {
       this.bags.sort((a, b) => a.price - b.price);
@@ -55,8 +81,6 @@ export default {
       this.bags.sort((a, b) => b.price - a.price);
       this.showSortDropdown = false;
     },
-    // Add sortByNewest method here later if needed bag
-
   },
 
   async created() {
@@ -64,7 +88,7 @@ export default {
     try {
       this.bags = await response.json();
     } finally {
-      this.loading = false; // Set loading to false after fetch
+      this.loading = false;
     }
   }
 };
@@ -129,33 +153,81 @@ body, html, #app {
 
 /* Стили для контейнера сортировки */
 .sort-container {
-  position: relative; /* Для позиционирования выпадающего списка */
-  margin-bottom: 20px; /* Отступ перед каталогом */
-  padding-top: 20px; /* Отступ сверху */
+  position: relative;
+  margin-bottom: -20px;
+  padding-top: 20px;
 }
 
-/* Стили для кнопки сортировки */
-.sort-button {
-  background-color: #423125;
-  color: white;
-  border: none;
-  padding: 10px 20px;
+/* Стили для иконки сортировки (гамбургер) */
+.sort-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 20px;
+  margin-left: 40px;
   cursor: pointer;
-  margin-left: 40px; /* Отступ слева */
-  border-radius: 5px;
+  padding: 2px 0;
+}
+
+.sort-icon-line {
+  display: block;
+  height: 2px;
+  background-color: #423125;
+  transition: all 0.3s ease;
+}
+
+.sort-icon-line:nth-child(1) {
+  width: 100%;
+  border-radius: 2px;
+}
+
+.sort-icon-line:nth-child(2) {
+  width: 65%;
+  border-radius: 2px;
+}
+
+.sort-icon-line:nth-child(3) {
+  width: 35%;
+  border-radius: 2px;
+}
+
+.sort-icon:hover .sort-icon-line {
+  opacity: 0.8;
 }
 
 /* Стили для выпадающего списка */
 .sort-dropdown {
   position: absolute;
-  top: 100%; /* Располагаем под кнопкой */
-  left: 40px; /* Совпадаем по левому краю с кнопкой */
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 10; /* Убедимся, что выпадающий список поверх другого контента */
-  min-width: 150px; /* Минимальная ширина выпадающего списка */
-  border-radius: 5px;
+  top: 100%;
+  margin-top: 10px;
+  left: 40px;
+  background-color: #cdc5bccf;
+  /* border: 1px solid #b5ada5; */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 100px;
+  border-radius: 4px;
+  overflow: hidden;
+  will-change: transform, opacity;
+  transform-origin: top center;
+  color: #423125;
+}
+
+.sort-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  /* border-bottom: 1px solid #b5ada5; */
+  font-weight: 700;
+}
+
+.sort-option:hover {
+  background-color: #f5f5f5;
+}
+
+.sort-option:last-child {
+  border-bottom: none;
 }
 
 /* Каталог */
@@ -164,28 +236,26 @@ body, html, #app {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
-
-}.sort-option {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
 }
-</style>
 
-<style scoped>
 /* Animations for the sort dropdown */
-.sort-dropdown-enter-active, .sort-dropdown-leave-active {
-  transition: opacity 0.3s ease, max-height 0.3s ease;
-  overflow: hidden;
+.sort-dropdown-enter-active {
+  transition: all 0.3s ease-out;
 }
 
-.sort-dropdown-enter, .sort-dropdown-leave-to {
+.sort-dropdown-leave-active {
+  transition: all 0.2s ease-in 0.1s;
+}
+
+.sort-dropdown-enter-from,
+.sort-dropdown-leave-to {
   opacity: 0;
-  max-height: 0;
+  transform: translateY(-10px);
 }
 
-.sort-dropdown-enter-to, .sort-dropdown-leave {
+.sort-dropdown-enter-to,
+.sort-dropdown-leave-from {
   opacity: 1;
-  max-height: 500px; /* Adjust based on the maximum possible height of your dropdown */
+  transform: translateY(0);
 }
 </style>
