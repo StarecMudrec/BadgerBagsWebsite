@@ -1,6 +1,6 @@
 <template>
   <div class="bag-card">
-    <img :src="bag.image" alt="Bag Image" class="bag-image" />
+    <img :src="bag.img" alt="Bag Image" class="bag-image" />
     <div class="bag-price">{{ bag.price }}₽</div>
   </div>
 </template>
