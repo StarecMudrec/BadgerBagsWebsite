@@ -148,7 +148,7 @@ body, html, #app {
   min-height: calc(100vh - 4px);
   left: 0;
   top: 4px;
-  background-color: #e0d8ce;
+  background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
 }
 
 /* Стили для контейнера сортировки */

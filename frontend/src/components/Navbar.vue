@@ -28,11 +28,27 @@ export default {
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin: 30px 0 50px 0;
+  margin: 30px 0 20px 0;
+  left: 0;
+  top: 0;
   padding: 0;
-  position: relative;
+  position: absolute;
   z-index: 100;
-  background-color: transparent;
+  /* background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); */
+  width: 100%;
+}
+
+/* Add a pseudo-element for the gradient background */
+.menu::before {
+  content: '';
+  position: absolute;
+  top: -30px; /* Compensate for top margin */
+  left: 0;
+  right: 0;
+  bottom: -20px; /* Compensate for bottom margin */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.57) 0%, rgba(0,0,0,0) 100%);
+  z-index: -1;
+  width: 100%;
 }
 
 .nav-btn {
