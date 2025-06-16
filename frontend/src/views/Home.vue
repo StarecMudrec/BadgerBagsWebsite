@@ -12,10 +12,10 @@
     <div class="sort-container">
       <button class="sort-button" @click="toggleSortDropdown">Sort</button>
       <div v-if="showSortDropdown" class="sort-dropdown">
-              <div class="sort-option">Price: Low to High</div>
-              <div class="sort-option">Price: High to Low</div>
+              <div class="sort-option" @click="sortByPriceAscending">Price: Low to High</div>
+              <div class="sort-option" @click="sortByPriceDescending">Price: High to Low</div>
               <div class="sort-option">Newest</div>
-      </div>
+      </div> 
     </div>
 
 
@@ -43,7 +43,17 @@ export default {
   methods: {
     toggleSortDropdown() {
       this.showSortDropdown = !this.showSortDropdown;
-    }
+    },
+    sortByPriceAscending() {
+      this.bags.sort((a, b) => a.price - b.price);
+      this.showSortDropdown = false;
+    },
+    sortByPriceDescending() {
+      this.bags.sort((a, b) => b.price - a.price);
+      this.showSortDropdown = false;
+    },
+    // Add sortByNewest method here later if needed bag
+
   },
 
   async created() {
@@ -147,5 +157,10 @@ body, html, #app {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
+
+}.sort-option {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
 }
 </style>
