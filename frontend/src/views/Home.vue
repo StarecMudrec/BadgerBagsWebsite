@@ -1,101 +1,82 @@
 <template>
-  <div>
+  <!-- Фон (прижат к самому верху) -->
+  <div class="background-wrapper">
     <div class="background-container"></div>
-    <hr class="separator-line">
+  </div>
+  
+  <!-- Линия-разделитель -->
+  <hr class="separator-line" />
+  
+  <!-- Основной контент -->
+  <div class="content">
     <div class="bag-catalog">
       <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
     </div>
   </div>
 </template>
+
 <style scoped>
-.background-container {
-  position: absolute;
-  left: 0;
-  width: 100%;  
-  height: 100vh; /* Adjust height as needed */
-  background-image: url('/background.jpg');
-  background-size: cover;
-  background-position: center 57%; /* Position the vertical center 80% down from the top, center horizontally */
-  bottom: 0; /* Anchor to the bottom */
+/* Жёсткий сброс всех отступов */
+body, html, #app {
+  margin: 0 !important;
+  padding: 0 !important;
 }
-.separator-line {
-  position: absolute;
-  bottom: 0; /* Position at the bottom edge of the background container */
-  left: 0;
-  height: 4px;
-  width: 100%;  background-color: white;
-  z-index: 2; /* Ensure it's above the background */
-}
-.error-message {
-  position: relative; /* Ensure it's positioned relative to the flow */
-  text-align: center;
-  margin: 50px 0;
-  color: #ff5555; /* Red color for errors */
-}
-page-container {
-  position: relative;
+
+.page-container {
   min-height: 100vh;
 }
 
-.content-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 400px); /* Учитываем высоту хедера */
+/* Обёртка для фона */
+.background-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
 }
 
+/* Сам фон */
+.background-container { 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center 57%;
+}
 
+/* Линия разделения */
+.separator-line {
+  position: absolute;
+  top: 100vh;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: white;
+  margin: 0;
+  border: none;
+}
+
+/* Основной контент */
+.content {
+  position: absolute;
+  margin-top: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 4px);
+  left: 0;
+  top: 4px;
+}
+
+/* Каталог */
 .bag-catalog {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust minmax for card size */
-  gap: 20px; /* Adjust gap between cards */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
   padding: 20px;
-  margin-top: 100vh; /* Push the catalog down below the background image */
-  background-color: #e0d8ce; /* Match the background color from the image */
+  background-color: #e0d8ce;
 }
-
 </style>
-
-<script>
-import BagCard from '@/components/BagCard.vue' // Import BagCard component
-import axios from 'axios'; // Import axios
-export default {
-  components: {
-    BagCard // Register BagCard component
-  },
-
-  data() {
-    return {
-      isUserAllowed: false,
-      bags: [] // Add bags data property
-    };
-  },
-
-  methods: {
-    navigateToCard(cardUuid) { // Deprecated - use @card-clicked on card component directly
-      this.$router.push(`/card/${cardUuid}`);
-    },
-    updateUserAllowedStatus(isAllowed) {
-      console.log('Received user allowed status:', isAllowed);
-      this.isUserAllowed = isAllowed;
-    },
-    navigateToAddCard() {
-    },
-    async fetchBagData() { // Add method to fetch bag data
-      try {
-        const response = await axios.get('/api/bags');
-        this.bags = response.data;
-      } catch (error) {
-        console.error('Error fetching bag data:', error);
-      }
-    }
-  },
-  mounted() {
-    this.fetchBagData(); // Call fetchBagData in mounted hook
-  },
-  // Add a new method to handle season deletion
-  handleSeasonDeleted(deletedSeasonUuid) {
-    // Call the mutation to remove the season from the VueX store
-    this.REMOVE_SEASON(deletedSeasonUuid);
-  }
-}
-</script>
