@@ -33,13 +33,13 @@ export default {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
 }
 
 .bag-price {
   font-weight: bold;
   color: #423125;
-  font-size: 16px;
+  font-size: 24px;
   font-family: 'Aclonica', sans-serif;
 }
 </style>
