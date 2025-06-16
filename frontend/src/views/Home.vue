@@ -1,32 +1,37 @@
 <template>
   <!-- Фон (прижат к самому верху) -->
-  <div class="background-wrapper">
-    <div class="background-container"></div>
-  </div>
-  
-  <!-- Линия-разделитель -->
-  <hr class="separator-line" />
-  
-  <!-- Основной контент -->
-  <div class="content">
-    <div class="sort-container">
-      <div class="sort-icon" @click.stop="toggleSortDropdown">
-        <span class="sort-icon-line"></span>
-        <span class="sort-icon-line"></span>
-        <span class="sort-icon-line"></span>
+  <div class="homepage">
+    <div class="scroll-item">
+      <div class="background-wrapper">
+        <div class="background-container"></div>
       </div>
-      <transition name="sort-dropdown">
-        <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
-          <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
-          <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
-          <div class="sort-option">Сначала новые</div>
-        </div> 
-      </transition>
     </div>
+    <div class="scroll-item">
+      <!-- Линия-разделитель -->
+      <hr class="separator-line" />
+      
+      <!-- Основной контент -->
+      <div class="content">
+        <div class="sort-container">
+          <div class="sort-icon" @click.stop="toggleSortDropdown">
+            <span class="sort-icon-line"></span>
+            <span class="sort-icon-line"></span>
+            <span class="sort-icon-line"></span>
+          </div>
+          <transition name="sort-dropdown">
+            <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
+              <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
+              <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
+              <div class="sort-option">Сначала новые</div>
+            </div> 
+          </transition>
+        </div>
 
-    <div v-if="loading">Loading bags...</div>
-    <div v-else class="bag-catalog">
-      <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+        <div v-if="loading">Loading bags...</div>
+        <div v-else class="bag-catalog">
+          <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -107,7 +112,7 @@ body, html, #app {
 
 /* Обёртка для фона */
 .background-wrapper {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   left: 0;
   width: 100%;
@@ -116,9 +121,20 @@ body, html, #app {
   z-index: -1;
 }
 
+.scroll-item {
+  scroll-snap-align: start;
+  min-height: 100vh; /* Высота каждой "страницы" равна высоте экрана */
+}
+
+.homepage {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh; /* Высота контейнера равна высоте экрана */
+}
+
 /* Сам фон */
 .background-container { 
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   left: 0;
   width: 100%;
@@ -130,7 +146,7 @@ body, html, #app {
 
 /* Линия разделения */
 .separator-line {
-  position: absolute;
+  /* position: absolute; */
   top: 100vh;
   left: 0;
   width: 100%;
@@ -142,8 +158,8 @@ body, html, #app {
 
 /* Основной контент */
 .content {
-  position: absolute;
-  margin-top: 100vh;
+  /* position: absolute; */
+  /* margin-top: 100vh; */
   width: 100%;
   min-height: calc(100vh - 4px);
   left: 0;
@@ -198,7 +214,7 @@ body, html, #app {
 
 /* Стили для выпадающего списка */
 .sort-dropdown {
-  position: absolute;
+  /* position: absolute; */
   top: 100%;
   margin-top: 10px;
   left: 40px;
