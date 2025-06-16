@@ -23,6 +23,7 @@
     <div v-if="loading">Loading bags...</div>
     <div v-else class="bag-catalog">
       <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+    </div>
   </div>
 </template>
 
