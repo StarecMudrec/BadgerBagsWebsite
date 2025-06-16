@@ -86,6 +86,22 @@ export default {
       this.bags.sort((a, b) => b.price - a.price);
       this.showSortDropdown = false;
     },
+    smoothScroll() {
+      const homepage = document.querySelector('.homepage');
+      let isScrolling = false;
+      
+      homepage.addEventListener('scroll', () => {
+        if (!isScrolling) {
+          window.requestAnimationFrame(() => {
+            isScrolling = false;
+          });
+          isScrolling = true;
+        }
+      }, { passive: true });
+    },
+  },
+  mounted() {
+    this.smoothScroll();
   },
 
   async created() {
@@ -100,81 +116,81 @@ export default {
 </script>
 
 <style scoped>
-/* Жёсткий сброс всех отступов */
+/* Reset and base styles */
 body, html, #app {
   margin: 0 !important;
   padding: 0 !important;
 }
 
-.page-container {
-  min-height: 100vh;
+html {
+  scrollbar-gutter: stable; /* Prevents layout shift */
 }
 
-/* Обёртка для фона */
-.background-wrapper {
-  /* position: absolute; */
-  top: 0;
-  left: 0;
-  width: 100%;
+/* Improved scroll-snap container */
+.homepage {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
   height: 100vh;
-  overflow: hidden;
-  z-index: -1;
+  /* Add these: */
+  -webkit-overflow-scrolling: touch; /* For smoother iOS scrolling */
+  backface-visibility: hidden; /* Prevents rendering artifacts */
 }
 
 .scroll-item {
   scroll-snap-align: start;
-  min-height: 100vh; /* Высота каждой "страницы" равна высоте экрана */
+  min-height: 100vh;
+  /* Add these: */
+  transform: translateZ(0); /* Creates a new stacking context */
+  outline: 1px solid transparent; /* Prevents flickering in Chrome */
+}
+/* Background wrapper with smooth transitions */
+.background-wrapper {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  transition: transform 0.3s ease; /* Smooth background movement */
 }
 
-.homepage {
-  scroll-snap-type: y mandatory;
-  overflow-y: scroll;
-  height: 100vh; /* Высота контейнера равна высоте экрана */
-}
-
-/* Сам фон */
-.background-container { 
-  /* position: absolute; */
-  top: 0;
-  left: 0;
+.background-container {
+  /* Remove background-attachment: fixed */
   width: 100%;
   height: 100%;
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center 57%;
+  /* Add these: */
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-/* Линия разделения */
+/* Separator line with smooth appearance */
 .separator-line {
-  /* position: absolute; */
-  top: 100vh;
-  left: 0;
   width: 100%;
   height: 4px;
   background-color: white;
   margin: 0;
   border: none;
+  transition: opacity 0.3s ease;
 }
 
-/* Основной контент */
+/* Content area with smooth transitions */
 .content {
-  /* position: absolute; */
-  /* margin-top: 100vh; */
   width: 100%;
   min-height: calc(100vh - 4px);
-  left: 0;
-  top: 4px;
   background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
+  transition: transform 0.3s ease;
 }
 
-/* Стили для контейнера сортировки */
+/* The rest of your styles remain unchanged */
 .sort-container {
   position: relative;
   margin-bottom: -20px;
   padding-top: 20px;
 }
 
-/* Стили для иконки сортировки (гамбургер) */
 .sort-icon {
   display: flex;
   flex-direction: column;
@@ -212,14 +228,11 @@ body, html, #app {
   opacity: 0.8;
 }
 
-/* Стили для выпадающего списка */
 .sort-dropdown {
-  /* position: absolute; */
   top: 100%;
   margin-top: 10px;
   left: 40px;
   background-color: #cdc5bccf;
-  /* border: 1px solid #b5ada5; */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   min-width: 100px;
@@ -234,7 +247,6 @@ body, html, #app {
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  /* border-bottom: 1px solid #b5ada5; */
   font-weight: 700;
 }
 
@@ -242,11 +254,6 @@ body, html, #app {
   background-color: #f5f5f5;
 }
 
-.sort-option:last-child {
-  border-bottom: none;
-}
-
-/* Каталог */
 .bag-catalog {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -254,7 +261,6 @@ body, html, #app {
   padding: 20px;
 }
 
-/* Animations for the sort dropdown */
 .sort-dropdown-enter-active {
   transition: all 0.3s ease-out;
 }
