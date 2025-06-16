@@ -11,11 +11,13 @@
   <div class="content">
     <div class="sort-container">
       <button class="sort-button" @click="toggleSortDropdown">Sort</button>
-      <div v-if="showSortDropdown" class="sort-dropdown">
-              <div class="sort-option" @click="sortByPriceAscending">Price: Low to High</div>
-              <div class="sort-option" @click="sortByPriceDescending">Price: High to Low</div>
-              <div class="sort-option">Newest</div>
-      </div> 
+      <transition name="sort-dropdown">
+        <div v-if="showSortDropdown" class="sort-dropdown">
+          <div class="sort-option" @click="sortByPriceAscending">Price: Low to High</div>
+          <div class="sort-option" @click="sortByPriceDescending">Price: High to Low</div>
+          <div class="sort-option">Newest</div>
+        </div> 
+      </transition>
     </div>
 
 
@@ -162,5 +164,23 @@ body, html, #app {
   padding: 10px;
   cursor: pointer;
   border-bottom: 1px solid #eee;
+}
+</style>
+
+<style scoped>
+/* Animations for the sort dropdown */
+.sort-dropdown-enter-active, .sort-dropdown-leave-active {
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  overflow: hidden;
+}
+
+.sort-dropdown-enter, .sort-dropdown-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.sort-dropdown-enter-to, .sort-dropdown-leave {
+  opacity: 1;
+  max-height: 200px; /* Adjust based on the maximum possible height of your dropdown */
 }
 </style>
