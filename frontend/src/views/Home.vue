@@ -9,6 +9,16 @@
   
   <!-- Основной контент -->
   <div class="content">
+    <div class="sort-container">
+      <button class="sort-button" @click="toggleSortDropdown">Sort</button>
+      <div v-if="showSortDropdown" class="sort-dropdown">
+              <div class="sort-option">Price: Low to High</div>
+              <div class="sort-option">Price: High to Low</div>
+              <div class="sort-option">Newest</div>
+      </div>
+    </div>
+
+
     <div class="bag-catalog">
       <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
     </div>
@@ -22,11 +32,20 @@ export default {
   components: {
     BagCard
   },
+
   data() {
     return {
-      bags: []
+      bags: [],
+      showSortDropdown: false, // Data property to control dropdown visibility
     };
   },
+
+  methods: {
+    toggleSortDropdown() {
+      this.showSortDropdown = !this.showSortDropdown;
+    }
+  },
+
   async created() {
     const response = await fetch('/api/bags');
     this.bags = await response.json();
@@ -89,6 +108,37 @@ body, html, #app {
   left: 0;
   top: 4px;
   background-color: #e0d8ce;
+}
+
+/* Стили для контейнера сортировки */
+.sort-container {
+  position: relative; /* Для позиционирования выпадающего списка */
+  margin-bottom: 20px; /* Отступ перед каталогом */
+  padding-top: 20px; /* Отступ сверху */
+}
+
+/* Стили для кнопки сортировки */
+.sort-button {
+  background-color: #423125;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-left: 40px; /* Отступ слева */
+  border-radius: 5px;
+}
+
+/* Стили для выпадающего списка */
+.sort-dropdown {
+  position: absolute;
+  top: 100%; /* Располагаем под кнопкой */
+  left: 40px; /* Совпадаем по левому краю с кнопкой */
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Убедимся, что выпадающий список поверх другого контента */
+  min-width: 150px; /* Минимальная ширина выпадающего списка */
+  border-radius: 5px;
 }
 
 /* Каталог */
