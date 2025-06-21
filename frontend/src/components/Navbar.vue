@@ -32,10 +32,11 @@ export default {
   left: 0;
   top: 0;
   padding: 0;
-  position: absolute;
+  position: fixed;
   z-index: 100;
   /* background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); */
   width: 100%;
+  pointer-events: none; /* This makes the entire menu click-through */
 }
 
 /* Add a pseudo-element for the gradient background */
@@ -49,6 +50,7 @@ export default {
   background: linear-gradient(to bottom, rgba(0,0,0,0.57) 0%, rgba(0,0,0,0) 100%);
   z-index: -1;
   width: 100%;
+  pointer-events: none; /* Make the gradient click-through too */
 }
 
 .nav-btn {
@@ -61,6 +63,7 @@ export default {
   padding: 5px 0;
   transition: color 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow to transition */
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Semi-transparent dark shadow */
+  pointer-events: auto; /* But make the buttons clickable */
 }
 
 .nav-btn:hover {

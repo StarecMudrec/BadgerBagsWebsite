@@ -2,6 +2,21 @@
   <!-- Фон (прижат к самому верху) -->
   <div class="background-wrapper">
     <div class="background-container"></div>
+    <!-- Стрелка для скролла -->
+    <div class="cover-arrow" @click="scrollToContent">
+      <div class="cover-arrow__inner">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
+          <defs>
+            <!-- Fading shadow filter -->
+            <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+              <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+              <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+            </filter>
+          </defs>
+          <path class="arrow-path" fill="white"  filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
+        </svg>
+      </div>
+    </div>
   </div>
   
   <!-- Линия-разделитель -->
@@ -81,6 +96,12 @@ export default {
       this.bags.sort((a, b) => b.price - a.price);
       this.showSortDropdown = false;
     },
+    scrollToContent() {
+      const contentSection = document.querySelector('.content');
+      if (contentSection) {
+        contentSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
   },
 
   async created() {
@@ -118,7 +139,7 @@ body, html, #app {
 
 /* Сам фон */
 .background-container { 
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -163,16 +184,16 @@ body, html, #app {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   margin-left: 40px;
   cursor: pointer;
-  padding: 2px 0;
+  padding: 3px 0;
 }
 
 .sort-icon-line {
   display: block;
-  height: 2px;
+  height: 3px;
   background-color: #423125;
   transition: all 0.3s ease;
 }
@@ -203,7 +224,6 @@ body, html, #app {
   margin-top: 10px;
   left: 40px;
   background-color: #cdc5bccf;
-  /* border: 1px solid #b5ada5; */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   min-width: 100px;
@@ -218,7 +238,6 @@ body, html, #app {
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  /* border-bottom: 1px solid #b5ada5; */
   font-weight: 700;
 }
 
@@ -257,5 +276,73 @@ body, html, #app {
 .sort-dropdown-leave-from {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* New styles for the arrow button */
+.cover-arrow {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.cover-arrow__inner {
+  animation: bounce 2s infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 85px;
+  height: 67px;
+  /* background-color: rgba(255, 255, 255, 0.2); */
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.arrow-icon {
+  width: 100%;
+  height: 100%;
+  shape-rendering: geometricPrecision;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  pointer-events: bounding-box; /* Only detect hovers on visible shape */
+}
+
+.arrow-icon:hover {
+  transform: scale(0.85);
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+
+.arrow-icon:hover ~ .cover-arrow__inner,
+.arrow-icon:hover {
+  animation-play-state: paused;
+}
+
+.arrow-path {
+  transition: fill 0.3s ease;
+  transform-origin: center;
+  pointer-events: visible; /* Only respond to hovers on visible pixels */
+}
+
+/* .cover-arrow svg {
+  width: 170px;
+  height: 170px;
+  shape-rendering: geometricPrecision;
+  transition: all 0.3s ease;
+  will-change: transform;
+} */
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 </style>
