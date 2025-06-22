@@ -18,9 +18,6 @@ export default {
 
 <style scoped>
 .bottom-navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
   width: 100%;
   background-color: #D4CBC2;
   display: flex;
