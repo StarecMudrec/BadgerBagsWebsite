@@ -14,6 +14,7 @@
       </span> -->
     </div>
   </div>
+  <BottomNavbar />
 </template>
 
 <script>
