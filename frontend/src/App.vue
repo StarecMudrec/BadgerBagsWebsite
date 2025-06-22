@@ -13,9 +13,8 @@
         {{ user.first_name }} {{ user.last_name }}
       </span> -->
     </div>
+    <BottomNavbar />
   </div>
-
-  <BottomNavbar />
 </template>
 
 <script>
