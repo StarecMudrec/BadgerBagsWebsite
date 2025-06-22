@@ -49,8 +49,7 @@
 
 <script>
 import BagCard from '@/components/BagCard.vue';
-
-// Директива для обработки кликов вне элемента
+import BottomNavbar from '@/components/BottomNavbar.vue';
 const clickOutside = {
   beforeMount(el, binding) {
     el.clickOutsideEvent = function(event) {
@@ -67,7 +66,8 @@ const clickOutside = {
 
 export default {
   components: {
-    BagCard
+    BagCard,
+    BottomNavbar
   },
 
   directives: {
@@ -104,6 +104,7 @@ export default {
       }
     },
   },
+  
 
   async created() {
     const response = await fetch('/api/bags');
