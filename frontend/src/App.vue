@@ -53,8 +53,8 @@ export default {
   --card-bg: #1e1e1e;
   --text-color: #e0e0e0;
   --accent-color: #ffffff;
-  --hover-color: #bb86fc;
-  --hover-border-color: #9a62df;
+  --hover-color: #b4aaa3;
+  --hover-border-color: #a69d96;
   --card-border-color:  #bebebe;
 }
 

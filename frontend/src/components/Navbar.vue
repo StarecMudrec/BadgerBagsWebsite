@@ -1,9 +1,11 @@
 <template>
-  <div class="menu">
-    <router-link to="/" class="nav-btn">CARDS</router-link>
-    <router-link to="/termins" class="nav-btn">TERMINS</router-link>
-    <a v-if="isAuthenticated" href="/auth/logout" class="nav-btn" @click.prevent="logout">LOGOUT</a>
-    <router-link v-else to="/login" class="nav-btn">LOGIN</router-link>
+  <div class="menu-wrapper" @mouseenter="showMenu" @mouseleave="hideMenu">
+    <div class="menu" :class="{ 'menu-hidden': isHidden }">
+      <router-link to="/" class="nav-btn">КАТАЛОГ</router-link>
+      <router-link to="/termins" class="nav-btn">О НАС</router-link>
+      <!-- <a v-if="isAuthenticated" href="/auth/logout" class="nav-btn" @click.prevent="logout">ВЫЙТИ</a> -->
+      <!-- <router-link to="/login" class="nav-btn">ТЕЛЕГРАМ</router-link> -->
+    </div>
   </div>
 </template>
 
@@ -11,63 +13,127 @@
 import { mapState } from 'vuex'
 
 export default {
+  data() {
+    return {
+      isHidden: false,
+      lastScrollPosition: 0,
+      hideTimeout: null
+    }
+  },
   computed: {
     ...mapState(['isAuthenticated'])
   },
   methods: {
     async logout() {
       await this.$store.dispatch('logout')
-      // Перенаправление уже обрабатывается в роутере
+    },
+    onScroll() {
+      const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
+      if (currentScrollPosition < 0) return
+      
+      if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 60) return
+      
+      this.isHidden = currentScrollPosition > this.lastScrollPosition && currentScrollPosition > 100
+      this.lastScrollPosition = currentScrollPosition
+    },
+    showMenu() {
+      clearTimeout(this.hideTimeout)
+      this.isHidden = false
+    },
+    hideMenu() {
+      if (window.pageYOffset > 100) {
+        this.hideTimeout = setTimeout(() => {
+          this.isHidden = true
+        }, 300)
+      }
     }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.onScroll)
+  },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.onScroll)
+    clearTimeout(this.hideTimeout)
   }
 }
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
+
+.menu-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px; /* Small hover area at top of screen */
+  z-index: 100;
+  pointer-events: auto; /* Enable hover detection */
+}
+
 .menu {
   display: flex;
   justify-content: center;
   gap: 30px;
-  margin: 30px 0 20px 0;
+  margin: 0;
   left: 0;
   top: 0;
-  padding: 0;
-  position: absolute;
-  z-index: 100;
-  /* background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); */
+  padding: 30px 0 20px 0;
+  position: fixed;
   width: 100%;
+  transition: transform 0.3s ease, padding 0.3s ease, background-color 0.3s ease;
+  z-index: 101;
+}
+
+.menu-hidden {
+  transform: translateY(-100%);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  pointer-events: none; /* Make hidden menu click-through */
+}
+
+/* Buttons should always be clickable when menu is visible */
+.menu:not(.menu-hidden) .nav-btn {
+  pointer-events: auto;
 }
 
 /* Add a pseudo-element for the gradient background */
 .menu::before {
   content: '';
   position: absolute;
-  top: -30px; /* Compensate for top margin */
+  top: 0;
   left: 0;
   right: 0;
-  bottom: -20px; /* Compensate for bottom margin */
+  bottom: 0;
   background: linear-gradient(to bottom, rgba(0,0,0,0.57) 0%, rgba(0,0,0,0) 100%);
   z-index: -1;
   width: 100%;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.menu-hidden::before {
+  opacity: 0;
 }
 
 .nav-btn {
   color: var(--accent-color);
   text-decoration: none;
   font-weight: 500;
-  font-size: 25px; /* Increased font size */
-  letter-spacing: 1px; /* Slightly increased letter spacing for better readability with outline */
+  font-size: 25px;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  letter-spacing: 1px;
   position: relative;
   padding: 5px 0;
-  transition: color 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow to transition */
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Semi-transparent dark shadow */
+  transition: color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .nav-btn:hover {
   color: var(--hover-color);
   -webkit-text-stroke: 0.15px var(--hover-border-color);
-  transition: color 0.3s ease, box-shadow 0.3s ease; /* Add box-shadow to transition */
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Semi-transparent dark shadow */
+  transition: color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .nav-btn::after {
@@ -77,7 +143,7 @@ export default {
   left: 0;
   width: 0;
   height: 1px;
-  background-color: var(--hover-color);
+  background-color: var(--hover-border-color);
   transition: width 0.3s ease;
 }
 
@@ -86,9 +152,13 @@ export default {
 }
 
 @media (max-width: 480px) {
+  .menu-wrapper {
+    height: 15px;
+  }
+  
   .menu {
     gap: 20px;
-    margin-bottom: 30px;
+    padding-bottom: 30px;
   }
   
   .nav-btn {
