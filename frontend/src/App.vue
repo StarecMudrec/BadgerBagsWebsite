@@ -2,17 +2,12 @@
   <div id="app">
     <Navbar :user="user"/>
     <router-view v-slot="{ Component, route }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" :key="route.fullPath" />
-      </transition>
+      <div class="router-view-container">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :key="route.fullPath" />
+        </transition>
+      </div>
     </router-view>
-    <div class="user-info" v-if="user">
-
-      <!-- <img :src="'/proxy/avatar?url=' + encodeURIComponent(user.photo_url)" alt="User Avatar" class="avatar">
-      <span class="username">
-        {{ user.first_name }} {{ user.last_name }}
-      </span> -->
-    </div>
     <BottomNavbar />
   </div>
 </template>
