@@ -3,6 +3,7 @@
   <div class="background-wrapper">
     <div class="background-container"></div>
     <!-- Стрелка для скролла -->
+    <h1 class="title">Badger bags</h1>
     <div class="cover-arrow" @click="scrollToContent">
       <div class="cover-arrow__inner">
         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
@@ -116,6 +117,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDPMincho&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
 /* Жёсткий сброс всех отступов */
 body, html, #app {
   margin: 0 !important;
@@ -135,6 +138,22 @@ body, html, #app {
   height: 100vh;
   overflow: hidden;
   z-index: -1;
+}
+
+.title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 7rem;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  font-weight: 200;
+  text-align: center;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  margin: 0;
+  z-index: 1;
+  width: 100%;
 }
 
 /* Сам фон */
@@ -166,7 +185,7 @@ body, html, #app {
   position: absolute;
   margin-top: 100vh;
   width: 100%;
-  min-height: calc(100vh - 4px);
+  min-height: calc(100vh - 0px);
   left: 0;
   top: 4px;
   background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
@@ -176,7 +195,7 @@ body, html, #app {
 .sort-container {
   position: relative;
   margin-bottom: -20px;
-  padding-top: 20px;
+  padding-top: 32px;
 }
 
 /* Стили для иконки сортировки (гамбургер) */
@@ -186,7 +205,7 @@ body, html, #app {
   justify-content: space-between;
   width: 30px;
   height: 30px;
-  margin-left: 40px;
+  margin-left: 52px;
   cursor: pointer;
   padding: 3px 0;
 }
@@ -214,7 +233,7 @@ body, html, #app {
 }
 
 .sort-icon:hover .sort-icon-line {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 /* Стили для выпадающего списка */
@@ -238,7 +257,9 @@ body, html, #app {
   padding: 10px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  font-weight: 700;
+  font-weight: 500;
+  font-size: 1.15rem;
+  /* font-family: 'Noto Serif TC', 'Noto Serif', serif; */
 }
 
 .sort-option:hover {

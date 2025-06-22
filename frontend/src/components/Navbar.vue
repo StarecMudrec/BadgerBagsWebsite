@@ -24,6 +24,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
 .menu {
   display: flex;
   justify-content: center;
@@ -58,6 +59,7 @@ export default {
   text-decoration: none;
   font-weight: 500;
   font-size: 25px; /* Increased font size */
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
   letter-spacing: 1px; /* Slightly increased letter spacing for better readability with outline */
   position: relative;
   padding: 5px 0;
