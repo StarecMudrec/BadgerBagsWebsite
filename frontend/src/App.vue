@@ -7,6 +7,7 @@
       </transition>
     </router-view>
     <div class="user-info" v-if="user">
+
       <!-- <img :src="'/proxy/avatar?url=' + encodeURIComponent(user.photo_url)" alt="User Avatar" class="avatar">
       <span class="username">
         {{ user.first_name }} {{ user.last_name }}
@@ -17,12 +18,14 @@
 
 <script>
 import axios from 'axios'; // Import axios
-import Navbar from '@/components/Navbar.vue'
+import Navbar from '@/components/Navbar.vue';
+import BottomNavbar from '@/components/BottomNavbar.vue'; // Import the new component
 import router from './router'; // Import router
 
 export default {
-  name: 'App',
-  components: { Navbar },
+  name: 'App', components: {
+    Navbar, BottomNavbar
+  },
   data() {
     return {
       user: null // Initialize user data to null
