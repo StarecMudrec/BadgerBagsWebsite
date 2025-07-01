@@ -8,19 +8,20 @@
         </transition>
       </div>
     </router-view>
-    <BottomNavbar />
+    <!-- <BottomNavbar /> -->
   </div>
 </template>
 
 <script>
 import axios from 'axios'; // Import axios
 import Navbar from '@/components/Navbar.vue';
-import BottomNavbar from '@/components/BottomNavbar.vue'; // Import the new component
+// import BottomNavbar from '@/components/BottomNavbar.vue'; // Import the new component
 import router from './router'; // Import router
 
 export default {
   name: 'App', components: {
-    Navbar, BottomNavbar
+    Navbar, 
+    // BottomNavbar
   },
   data() {
     return {

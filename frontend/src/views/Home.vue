@@ -1,55 +1,64 @@
 <template>
-  <!-- Фон (прижат к самому верху) -->
-  <div class="background-wrapper">
-    <div class="background-container"></div>
-    <!-- Стрелка для скролла -->
-    <h1 class="title">Badger bags</h1>
-    <div class="cover-arrow" @click="scrollToContent">
-      <div class="cover-arrow__inner">
-        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
-          <defs>
-            <!-- Fading shadow filter -->
-            <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-              <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-              <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-            </filter>
-          </defs>
-          <path class="arrow-path" fill="white"  filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
-        </svg>
+  <div class="page-container">
+    <!-- Фон (прижат к самому верху) -->
+    <div class="hero-section">
+      <div class="background-container"></div>
+      <h1 class="title">Badger bags</h1>
+      <div class="cover-arrow" @click="scrollToContent">
+        <div class="cover-arrow__inner">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
+            <defs>
+              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+              </filter>
+            </defs>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
+          </svg>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Линия-разделитель -->
-  <hr class="separator-line" />
-  
-  <!-- Основной контент -->
-  <div class="content">
-    <div class="sort-container">
-      <div class="sort-icon" @click.stop="toggleSortDropdown">
-        <span class="sort-icon-line"></span>
-        <span class="sort-icon-line"></span>
-        <span class="sort-icon-line"></span>
+    
+    <!-- Линия-разделитель -->
+    <hr class="separator-line" />
+    
+    <!-- Основной контент -->
+    <div id="content-section" class="content">
+      <div class="sort-container">
+        <div class="sort-icon" @click.stop="toggleSortDropdown">
+          <span class="sort-icon-line"></span>
+          <span class="sort-icon-line"></span>
+          <span class="sort-icon-line"></span>
+        </div>
+        <transition name="sort-dropdown">
+          <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
+            <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
+            <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
+            <div class="sort-option">Сначала новые</div>
+          </div> 
+        </transition>
       </div>
-      <transition name="sort-dropdown">
-        <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
-          <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
-          <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
-          <div class="sort-option">Сначала новые</div>
-        </div> 
-      </transition>
-    </div>
 
-    <div v-if="loading">Loading bags...</div>
-    <div v-else class="bag-catalog">
-      <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+      <div v-if="loading">Loading bags...</div>
+      <div v-else class="bag-catalog">
+        <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+      </div>
     </div>
+    <nav class="bottom-navbar">
+      <button class="navbar-button">О НАС</button>
+      <button class="navbar-button telegram-button">
+        ТЕЛЕГРАМ
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
+        </svg>
+      </button>
+    </nav>
   </div>
 </template>
 
 <script>
 import BagCard from '@/components/BagCard.vue';
-import BottomNavbar from '@/components/BottomNavbar.vue';
+
 const clickOutside = {
   beforeMount(el, binding) {
     el.clickOutsideEvent = function(event) {
@@ -67,7 +76,6 @@ const clickOutside = {
 export default {
   components: {
     BagCard,
-    BottomNavbar
   },
 
   directives: {
@@ -100,11 +108,13 @@ export default {
     scrollToContent() {
       const contentSection = document.querySelector('.content');
       if (contentSection) {
-        contentSection.scrollIntoView({ behavior: 'smooth' });
+        contentSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
       }
     },
   },
-  
 
   async created() {
     const response = await fetch('/api/bags');
@@ -120,25 +130,24 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=BIZ+UDPMincho&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
-/* Жёсткий сброс всех отступов */
+
 body, html, #app {
   margin: 0 !important;
   padding: 0 !important;
 }
 
 .page-container {
+  position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Обёртка для фона */
-.background-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+.hero-section {
+  position: relative;
   height: 100vh;
+  width: 100%;
   overflow: hidden;
-  z-index: -1;
 }
 
 .title {
@@ -157,9 +166,8 @@ body, html, #app {
   width: 100%;
 }
 
-/* Сам фон */
-.background-container { 
-  position: fixed;
+.background-container {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -167,39 +175,37 @@ body, html, #app {
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center 57%;
+  z-index: -1;
 }
 
-/* Линия разделения */
 .separator-line {
   position: absolute;
   top: 100vh;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 3px;
   background-color: white;
   margin: 0;
   border: none;
 }
 
-/* Основной контент */
 .content {
-  position: absolute;
-  margin-top: 100vh;
+  position: relative;
+  /* margin-top: 100vh; */
   width: 100%;
-  min-height: calc(100vh - 0px);
+  min-height: calc(100vh - 57px);
   left: 0;
-  top: 4px;
+  top: 3px;
+  flex: 1;
   background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
 }
 
-/* Стили для контейнера сортировки */
 .sort-container {
   position: relative;
   margin-bottom: -20px;
   padding-top: 32px;
 }
 
-/* Стили для иконки сортировки (гамбургер) */
 .sort-icon {
   display: flex;
   flex-direction: column;
@@ -237,7 +243,6 @@ body, html, #app {
   opacity: 0.7;
 }
 
-/* Стили для выпадающего списка */
 .sort-dropdown {
   position: absolute;
   top: 100%;
@@ -260,7 +265,6 @@ body, html, #app {
   transition: background-color 0.2s ease;
   font-weight: 500;
   font-size: 1.15rem;
-  /* font-family: 'Noto Serif TC', 'Noto Serif', serif; */
 }
 
 .sort-option:hover {
@@ -271,7 +275,6 @@ body, html, #app {
   border-bottom: none;
 }
 
-/* Каталог */
 .bag-catalog {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -279,7 +282,6 @@ body, html, #app {
   padding: 20px;
 }
 
-/* Animations for the sort dropdown */
 .sort-dropdown-enter-active {
   transition: all 0.3s ease-out;
 }
@@ -300,26 +302,27 @@ body, html, #app {
   transform: translateY(0);
 }
 
-/* New styles for the arrow button */
 .cover-arrow {
   position: absolute;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
-  z-index: 2;
-}
-
-.cover-arrow__inner {
-  animation: bounce 2s infinite;
+  z-index: 10;
+  width: 85px;
+  height: 67px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 85px;
-  height: 67px;
-  /* background-color: rgba(255, 255, 255, 0.2); */
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
+}
+
+.cover-arrow__inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: bounce 2s infinite;
 }
 
 .arrow-icon {
@@ -328,33 +331,22 @@ body, html, #app {
   shape-rendering: geometricPrecision;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: transform;
-  pointer-events: bounding-box; /* Only detect hovers on visible shape */
+  pointer-events: none;
 }
 
-.arrow-icon:hover {
+.cover-arrow:hover .arrow-icon {
   transform: scale(0.85);
   opacity: 0.9;
-  transition: all 0.2s ease;
 }
 
-.arrow-icon:hover ~ .cover-arrow__inner,
-.arrow-icon:hover {
+.cover-arrow:hover .cover-arrow__inner {
   animation-play-state: paused;
 }
 
 .arrow-path {
   transition: fill 0.3s ease;
   transform-origin: center;
-  pointer-events: visible; /* Only respond to hovers on visible pixels */
 }
-
-/* .cover-arrow svg {
-  width: 170px;
-  height: 170px;
-  shape-rendering: geometricPrecision;
-  transition: all 0.3s ease;
-  will-change: transform;
-} */
 
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
@@ -366,5 +358,43 @@ body, html, #app {
   60% {
     transform: translateY(-5px);
   }
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bottom-navbar {
+  width: 100%;
+  background: linear-gradient(to bottom, #dad4ce 0%, #c9c4bd 100%);;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: auto;
+}
+
+.navbar-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* font-size: 1rem; */
+  color: #333;
+  display: flex;
+  align-items: center;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  font-weight: 1000;
+  font-size: 22px;
+  transition: color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.telegram-button .telegram-icon {
+  width: 27px;
+  height: 27px;
+  margin-left: 10px;
+  margin-top: auto;
 }
 </style>
