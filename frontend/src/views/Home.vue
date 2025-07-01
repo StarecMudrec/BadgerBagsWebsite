@@ -41,23 +41,39 @@
 
       <div v-if="loading">Loading bags...</div>
       <div v-else class="bag-catalog">
-        <BagCard v-for="bag in bags" :key="bag.id" :bag="bag" />
+        <transition-group 
+          name="list" 
+          tag="div" 
+          class="bag-grid"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @leave="leave"
+        >
+          <BagCard 
+            v-for="bag in sortedBags" 
+            :key="'bag-' + bag.id"  
+            :bag="bag" 
+            class="bag-item"
+            data-test="bag-card"
+          />
+        </transition-group>
       </div>
     </div>
     <nav class="bottom-navbar">
-      <button class="navbar-button">О НАС</button>
-      <button class="navbar-button telegram-button">
+      <router-link to="/about" class="navbar-button" style="text-decoration: none;">О НАС</router-link>
+      <a href="https://t.me/kurorooooo" class="navbar-button telegram-button" style="text-decoration: none;" target="_blank">
         ТЕЛЕГРАМ
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
         </svg>
-      </button>
+      </a>
     </nav>
   </div>
 </template>
 
 <script>
 import BagCard from '@/components/BagCard.vue';
+import { gsap } from 'gsap';
 
 const clickOutside = {
   beforeMount(el, binding) {
@@ -87,7 +103,18 @@ export default {
       bags: [],
       showSortDropdown: false,
       loading: true,
+      sortMethod: 'default',
     };
+  },
+  computed: {
+    sortedBags() {
+      if (this.sortMethod === 'price-asc') {
+        return [...this.bags].sort((a, b) => a.price - b.price);
+      } else if (this.sortMethod === 'price-desc') {
+        return [...this.bags].sort((a, b) => b.price - a.price);
+      }
+      return this.bags;
+    }
   },
 
   methods: {
@@ -98,11 +125,11 @@ export default {
       this.showSortDropdown = false;
     },
     sortByPriceAscending() {
-      this.bags.sort((a, b) => a.price - b.price);
+      this.sortMethod = 'price-asc';
       this.showSortDropdown = false;
     },
     sortByPriceDescending() {
-      this.bags.sort((a, b) => b.price - a.price);
+      this.sortMethod = 'price-desc';
       this.showSortDropdown = false;
     },
     scrollToContent() {
@@ -114,12 +141,44 @@ export default {
         });
       }
     },
+    // Animation methods
+    beforeEnter(el) {
+      gsap.set(el, {
+        opacity: 0,
+        y: 30
+      });
+    },
+    
+    enter(el, done) {
+      console.log('Animating element:', el, 'with key:', el.__vnode.key);
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: done
+      });
+    },
+    
+    leave(el, done) {
+      gsap.to(el, {
+        opacity: 0,
+        y: -30,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: done
+      });
+    },
+    afterEnter(el) {
+      el.style.transform = '';
+    },
   },
 
   async created() {
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
+      console.log('Bags data:', this.bags); // Verify IDs exis
     } finally {
       this.loading = false;
     }
@@ -183,7 +242,7 @@ body, html, #app {
   top: 100vh;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   background-color: white;
   margin: 0;
   border: none;
@@ -191,11 +250,10 @@ body, html, #app {
 
 .content {
   position: relative;
-  /* margin-top: 100vh; */
   width: 100%;
-  min-height: calc(100vh - 57px);
+  min-height: calc(100vh - 67px);
   left: 0;
-  top: 3px;
+  top: 4px;
   flex: 1;
   background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
 }
@@ -268,7 +326,7 @@ body, html, #app {
 }
 
 .sort-option:hover {
-  background-color: #f5f5f5;
+  background-color: #dbd5cf;
 }
 
 .sort-option:last-child {
@@ -276,10 +334,60 @@ body, html, #app {
 }
 
 .bag-catalog {
+  width: 100%;
+  padding: 20px;
+}
+
+.bag-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
+  width: 100%;
   padding: 20px;
+  position: relative;
+}
+
+/* Animation styles */
+.list-item {
+  transition: all 0.5s ease;
+  will-change: transform, opacity;
+}
+
+/* .list-enter-active,
+.list-leave-active,
+.list-enter-from,
+.list-leave-to {
+  
+} */
+
+.list-move {
+  transition: transform 0.5s ease;
+}
+
+.bag-catalog >>> .bag-card {
+  transition: transform 0.3s ease;
+}
+
+.bag-catalog >>> .bag-card .bag-image {
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.bag-catalog >>> .bag-card .bag-image:hover {
+  transform: translateY(-5px);
+  filter: brightness(1.05) contrast(1.05);
+}
+
+.bag-catalog >>> .bag-card .bag-image:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .sort-dropdown-enter-active {
@@ -374,13 +482,13 @@ body, html, #app {
   padding: 10px 0;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   margin-top: auto;
+  min-height: 71px;
 }
 
 .navbar-button {
   background: none;
   border: none;
   cursor: pointer;
-  /* font-size: 1rem; */
   color: #333;
   display: flex;
   align-items: center;
@@ -389,12 +497,68 @@ body, html, #app {
   font-size: 22px;
   transition: color 0.3s ease, box-shadow 0.3s ease;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.navbar-button:hover {
+  color: var(--hover-color);
+  -webkit-text-stroke: 0.15px #a69d96;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #a69d96;
+  transition: width 0.3s ease;
+  bottom: 5px;
+}
+
+.navbar-button:hover::after {
+  width: 100%;
+}
+
+.telegram-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.telegram-button:hover {
+  color: var(--hover-color);
+  -webkit-text-stroke: 0.15px #a69d96;
+}
+
+.telegram-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #a69d96;
+  transition: width 0.3s ease;
+  bottom: 5px;
+}
+
+.telegram-button:hover::after {
+  width: 100%;
+}
+
+.telegram-button:hover .telegram-icon {
+  fill: var(--hover-color);
+  transform: scale(1.1);
 }
 
 .telegram-button .telegram-icon {
   width: 27px;
   height: 27px;
-  margin-left: 10px;
-  margin-top: auto;
+  transition: all 0.3s ease;
+  fill: #333333;
 }
 </style>

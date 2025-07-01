@@ -2,7 +2,7 @@
   <div class="menu-wrapper" @mouseenter="showMenu" @mouseleave="hideMenu">
     <div class="menu" :class="{ 'menu-hidden': isHidden }">
       <router-link to="/" class="nav-btn">КАТАЛОГ</router-link>
-      <router-link to="/termins" class="nav-btn">О НАС</router-link>
+      <router-link to="/about" class="nav-btn">О НАС</router-link>
       <!-- <a v-if="isAuthenticated" href="/auth/logout" class="nav-btn" @click.prevent="logout">ВЫЙТИ</a> -->
       <!-- <router-link to="/login" class="nav-btn">ТЕЛЕГРАМ</router-link> -->
     </div>
