@@ -261,7 +261,7 @@ def generate_admin_link(message):
     token = str(uuid.uuid4())
     if save_admin_token(message.from_user.id, token):
         markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton("🔑 Login as Admin", url=f"https://dahole.ru/auth/telegram-callback?admin_token={token}"))
+        markup.add(InlineKeyboardButton("🔑 Login as Admin", url=f"https://dahole.online/auth/telegram-callback?admin_token={token}"))
         
         bot.send_message(
             message.chat.id,

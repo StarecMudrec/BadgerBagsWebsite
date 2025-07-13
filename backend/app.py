@@ -209,7 +209,7 @@ def logout():
 @app.after_request
 def apply_csp(response):
     response.headers['Content-Security-Policy'] = (
-        "frame-ancestors 'self' https://dahole.ru; "
+        "frame-ancestors 'self' https://dahole.online; "
         "frame-src 'self' https://oauth.telegram.org;"
     )
     return response
