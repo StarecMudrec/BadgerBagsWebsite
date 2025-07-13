@@ -49,7 +49,7 @@ export default {
 <style>
 /* Глобальные стили */
 :root {
-  --bg-color: #121212;
+  --bg-color: #dfd9d2;
   --card-bg: #1e1e1e;
   --text-color: #e0e0e0;
   --accent-color: #ffffff;

@@ -1,8 +1,18 @@
 <template>
   <div class="menu-wrapper" @mouseenter="showMenu" @mouseleave="hideMenu">
     <div class="menu" :class="{ 'menu-hidden': isHidden }">
-      <router-link to="/" class="nav-btn">КАТАЛОГ</router-link>
-      <router-link to="/about" class="nav-btn">О НАС</router-link>
+      <template v-if="$route.path === '/'">
+        <span class="nav-btn nav-btn--current">КАТАЛОГ</span>
+      </template>
+      <template v-else>
+        <router-link to="/" class="nav-btn">КАТАЛОГ</router-link>
+      </template>
+      <template v-if="$route.path === '/about'">
+        <span class="nav-btn nav-btn--current">О НАС</span>
+      </template>
+      <template v-else>
+        <router-link to="/about" class="nav-btn">О НАС</router-link>
+      </template>
       <!-- <a v-if="isAuthenticated" href="/auth/logout" class="nav-btn" @click.prevent="logout">ВЫЙТИ</a> -->
       <!-- <router-link to="/login" class="nav-btn">ТЕЛЕГРАМ</router-link> -->
     </div>
@@ -114,6 +124,16 @@ export default {
 
 .menu-hidden::before {
   opacity: 0;
+}
+
+.nav-btn--current {
+  color: var(--hover-color);
+  cursor: default;
+  /* -webkit-text-stroke: 0.15px var(--hover-border-color); */
+}
+
+.nav-btn--current::after {
+  /* width: 100% !important; */
 }
 
 .nav-btn {

@@ -3,6 +3,7 @@ import Home from '@/views/Home.vue'
 import Login from '@/components/Login.vue'
 import CardDetail from '@/views/CardDetail.vue'
 import AddCard from '@/views/AddCard.vue'
+import About from '@/views/About.vue' // Import the About component
 
 const routes = [
   {
@@ -38,9 +39,9 @@ const routes = [
     }
   },
   {
-    path: '/termins',
-    name: 'Termins',
-    component: () => import('@/views/Termins.vue')
+    path: '/about',
+    name: 'About',
+    component: About // Add the new route
   }
 ]
 

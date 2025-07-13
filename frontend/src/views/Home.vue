@@ -280,6 +280,7 @@ body, html, #app {
   height: 3px;
   background-color: #423125;
   transition: all 0.3s ease;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 .sort-icon-line:nth-child(1) {

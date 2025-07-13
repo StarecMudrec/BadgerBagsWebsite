@@ -10,8 +10,9 @@ import requests  # Import the requests library
 from joserfc.errors import JoseError
 import logging
 from flask_sqlalchemy import SQLAlchemy  # Database integration
-from models import db, AuthToken, Item, AllowedUser
+from models import db, AuthToken, Item, AllowedUser, AdminToken
 from config import Config
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -28,30 +29,70 @@ with app.app_context():
     db.create_all()
 
 
+def validate_admin_token(user_id, token):
+    """Check if the admin token is valid and unused"""
+    try:
+        token_record = AdminToken.query.filter_by(
+            telegram_id=user_id,
+            token=token,
+            is_used=False
+        ).first()
+        
+        if not token_record:
+            logging.warning(f"Token not found or already used: {token}")
+            return False
+            
+        if datetime.utcnow() > token_record.expires_at:
+            logging.warning(f"Expired token used: {token}")
+            return False
+            
+        # Mark token as used
+        token_record.is_used = True
+        db.session.commit()
+        return True
+        
+    except Exception as e:
+        logging.error(f"Token validation error: {e}")
+        db.session.rollback()
+        return False
+
+def create_admin_token(user_id, expires_minutes=5):
+    """Generate a new admin token (for bot use)"""
+    try:
+        # First expire any existing tokens
+        AdminToken.query.filter_by(telegram_id=user_id).update({'is_used': True})
+        
+        # Create new token
+        new_token = AdminToken(
+            telegram_id=user_id,
+            token=str(uuid.uuid4()),
+            expires_at=datetime.utcnow() + timedelta(minutes=expires_minutes)
+        )
+        db.session.add(new_token)
+        db.session.commit()
+        return new_token.token
+    except Exception as e:
+        logging.error(f"Token creation error: {e}")
+        db.session.rollback()
+        return None
+
 # Authentication Helper Function
 def is_authenticated(request, session):
     token = request.args.get("token") or request.cookies.get("token")
     if not token:
-        logging.debug("No token found in request")
         return False, None
 
     try:
-        print(token)
         auth_token = AuthToken.query.filter_by(token=token).first()
-        if auth_token is None:
-            logging.debug("Token not found in database")
+        if not auth_token:
             return False, None
 
-        # Optionally store user_id in session for easier access later
         session['user_id'] = auth_token.user_id
-
-        logging.debug("Token is valid (database check)")
-        # In a real app, you might fetch more user info here
-        # For now, we just return the user_id from the token
+        session['is_admin'] = getattr(auth_token, 'is_admin', False)
+        
         return True, auth_token.user_id
-
     except Exception as e:
-        logging.exception(f"Authentication error: {e}")
+        logging.exception(f"Auth error: {e}")
         return False, None
 
 
@@ -76,7 +117,8 @@ def download_avatar(url, user_id):
 # Telegram OAuth Callback Route
 @app.route("/auth/telegram-callback")
 def telegram_callback():
-    user_id = request.args.get("id", type=int)
+    admin_token = request.args.get("admin_token")
+    user_id = request.args.get("id")
     auth_date = request.args.get("auth_date")
     query_hash = request.args.get("hash")
     print(query_hash)
@@ -93,6 +135,18 @@ def telegram_callback():
 
     if not hmac.compare_digest(computed_hash, query_hash):
         return "Authorization failed. Please try again", 401
+    
+    is_admin = False
+    if admin_token and user_id:
+        if validate_admin_token(user_id, admin_token):
+            is_admin = True
+            logging.info(f"Admin access granted to user {user_id}")
+        else:
+            logging.warning(f"Invalid admin token from user {user_id}")
+            return "Invalid or expired admin token", 403
+
+    # Store admin status in session
+    session['is_admin'] = is_admin
 
     # Extract user data from Telegram
     telegram_id = request.args.get("id", type=int)
@@ -155,7 +209,7 @@ def logout():
 @app.after_request
 def apply_csp(response):
     response.headers['Content-Security-Policy'] = (
-        "frame-ancestors 'self' https://cardswood.ru; "
+        "frame-ancestors 'self' https://dahole.ru; "
         "frame-src 'self' https://oauth.telegram.org;"
     )
     return response
@@ -545,3 +599,7 @@ def proxy_avatar():
     except requests.exceptions.RequestException as e:
         logging.error(f"Error proxying avatar from {url}: {e}")
         return "Image not found or could not be downloaded.", 404
+    
+# Export for bot.py
+if __name__ != "__main__":
+    from app import app, db

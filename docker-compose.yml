@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: badgerbags  # Главная база данных
+      POSTGRES_DB: badgerbags
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d badgerbags"]
       interval: 5s
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./frontend:/app:rw
       - frontend_node_modules:/app/node_modules
-      - card_images:/usr/share/nginx/html/user_avatars:ro # Монтируем том с аватарками для Nginx
+      - card_images:/usr/share/nginx/html/user_avatars:ro
     environment:
       NODE_ENV: development
     command: sh -c "chown -R node:node /app/node_modules && npm run dev"
@@ -42,13 +42,27 @@ services:
         condition: service_healthy
     environment:      
       SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/badgerbags
-      BOT_TOKEN_HASH: 7505659847:AAF3AoBU0HFInjsPPOqz4KaPmX3M15l9f1U
-      SECRET_KEY: VUPSENPUPSENROSTIC)
+      BOT_TOKEN: ${BOT_TOKEN}  # Will use from .env
+      SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: wsgi:app
     command: >      
-      sh -c "flask --app wsgi db migrate  &&
-      flask --app wsgi db upgrade &&
+      sh -c "flask db migrate &&
+      flask db upgrade &&
       gunicorn --bind 0.0.0.0:8000 wsgi:app"
+
+  bot:
+    build: ./backend
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/badgerbags
+      BOT_TOKEN: ${BOT_TOKEN}
+      MAIN_ADMIN_ID: ${MAIN_ADMIN_ID}
+    command: python bot.py
 
 volumes:
   postgres_data: {}
