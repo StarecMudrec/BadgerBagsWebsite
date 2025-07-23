@@ -117,70 +117,60 @@ def download_avatar(url, user_id):
 # Telegram OAuth Callback Route
 @app.route("/auth/telegram-callback")
 def telegram_callback():
-    admin_token = request.args.get("admin_token")
-    user_id = request.args.get("id")
-    auth_date = request.args.get("auth_date")
-    query_hash = request.args.get("hash")
-    print(query_hash)
+    try:
+        # Required parameters
+        admin_token = request.args.get("admin_token")
+        user_id = request.args.get("id")
+        auth_date = request.args.get("auth_date")
+        query_hash = request.args.get("hash")
+        
+        if not all([admin_token, user_id, query_hash]):
+            return "Missing required parameters", 400
 
-    if user_id is None or query_hash is None:
-        return "Invalid request", 400
+        # Verify Telegram authentication
+        params = request.args.to_dict()
+        data_check_string = "\n".join(
+            sorted(f"{k}={v}" for k, v in params.items() if k != "hash")
+        )
+        
+        secret_key = hmac.new(
+            Config.BOT_TOKEN_HASH.digest(), 
+            msg=b"WebAppData", 
+            digestmod=sha256
+        )
+        computed_hash = hmac.new(
+            secret_key.digest(),
+            data_check_string.encode(),
+            sha256
+        ).hexdigest()
 
-    # Extract parameters and sort them
-    params = request.args.to_dict()
-    data_check_string = "\n".join(sorted(f"{x}={y}" for x, y in params.items() if x not in ("hash", "next")))
+        if not hmac.compare_digest(computed_hash, query_hash):
+            return "Invalid Telegram authentication", 401
 
-    # Compute HMAC hash using BOT_TOKEN_HASH
-    computed_hash = hmac.new(Config.BOT_TOKEN_HASH.digest(), data_check_string.encode(), sha256).hexdigest()
-
-    if not hmac.compare_digest(computed_hash, query_hash):
-        return "Authorization failed. Please try again", 401
-    
-    is_admin = False
-    if admin_token and user_id:
-        if validate_admin_token(user_id, admin_token):
-            is_admin = True
-            logging.info(f"Admin access granted to user {user_id}")
-        else:
-            logging.warning(f"Invalid admin token from user {user_id}")
+        # Validate admin token
+        if not validate_admin_token(user_id, admin_token):
             return "Invalid or expired admin token", 403
 
-    # Store admin status in session
-    session['is_admin'] = is_admin
+        # Create or update user session
+        session['telegram_id'] = user_id
+        session['is_admin'] = True
+        session['admin_token'] = admin_token
 
-    # Extract user data from Telegram
-    telegram_id = request.args.get("id", type=int)
-    first_name = request.args.get("first_name")
-    last_name = request.args.get("last_name")
-    username = request.args.get("username")
-    photo_url = request.args.get("photo_url")
-
-    # Store Telegram data in session
-    session.update(telegram_id=telegram_id, telegram_first_name=first_name, telegram_last_name=last_name, telegram_username=username, telegram_photo_url=photo_url)
-
-    # Generate a unique token and store it in the database
-    db_token = str(uuid.uuid4())
-    auth_token = AuthToken(token=db_token, user_id=user_id)
-
-    try:
-        db.session.add(auth_token)
-        db.session.commit()
-        logging.debug(f"Stored token {db_token} for user {user_id} in database")
+        # Set secure cookie
+        response = make_response(redirect(url_for("admin_dashboard")))
+        response.set_cookie(
+            "admin_auth", 
+            value=f"{user_id}:{admin_token}",
+            httponly=True,
+            secure=True,
+            samesite='Lax'
+        )
+        
+        return response
 
     except Exception as e:
-        db.session.rollback()
-        logging.exception(f"Database error saving token: {e}")
-        return "Database error", 500
-
-    # Redirect to home, setting the token in a cookie
-    response = make_response(redirect(url_for("home")))
-    response.set_cookie("token", db_token, httponly=True, secure=True)
-    response.set_data(f"""
-      <script>
-        window.parent.postMessage('auth-success', 'http://localhost:5173');
-      </script>
-    """)
-    return response
+        app.logger.error(f"Telegram callback error: {str(e)}")
+        return "Authentication failed", 500
 
 
 # Logout Route (Clears the Token)
@@ -206,12 +196,24 @@ def logout():
     response.delete_cookie("token")
     return response
 
+# @app.after_request
+# def apply_csp(response):
+#     response.headers['Content-Security-Policy'] = (
+#         "frame-ancestors 'self' https://dahole.online; "
+#         "frame-src 'self' https://oauth.telegram.org;"
+#     )
+#     return response
 @app.after_request
 def apply_csp(response):
     response.headers['Content-Security-Policy'] = (
-        "frame-ancestors 'self' https://dahole.online; "
-        "frame-src 'self' https://oauth.telegram.org;"
+        "default-src 'self'; "
+        "script-src 'self' https://telegram.org; "
+        "frame-src https://telegram.org; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data: https://telegram.org;"
     )
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
 
 # Main Route (Checks for Authentication)

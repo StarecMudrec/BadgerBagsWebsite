@@ -255,13 +255,26 @@ def handle_callbacks(call):
 @with_app_context
 def generate_admin_link(message):
     if not is_user_allowed(message.from_user.id):
-        bot.reply_to(message, "❌ You're not in the admin list!", reply_markup=create_main_menu())
+        bot.reply_to(message, "❌ You're not in the admin list!")
         return
 
     token = str(uuid.uuid4())
     if save_admin_token(message.from_user.id, token):
+        # URL encode all parameters
+        admin_link = (
+            f"https://cardswood.ru/auth/telegram-callback?"
+            f"admin_token={token}&"
+            f"id={message.from_user.id}&"
+            f"first_name={message.from_user.first_name}&"
+            f"last_name={message.from_user.last_name or ''}&"
+            f"username={message.from_user.username or ''}"
+        )
+        
         markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton("🔑 Login as Admin", url=f"https://dahole.online/auth/telegram-callback?admin_token={token}"))
+        markup.add(InlineKeyboardButton(
+            "🔑 Login as Admin", 
+            url=admin_link
+        ))
         
         bot.send_message(
             message.chat.id,
@@ -269,7 +282,7 @@ def generate_admin_link(message):
             reply_markup=markup
         )
     else:
-        bot.reply_to(message, "❌ Failed to generate link. Try again later.", reply_markup=create_main_menu())
+        bot.reply_to(message, "❌ Failed to generate link. Try again later.")
 
 # Database functions
 @with_app_context
