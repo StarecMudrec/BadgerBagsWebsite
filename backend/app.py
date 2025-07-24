@@ -551,15 +551,13 @@ def check_auth():
 
 @app.route("/api/user", methods=['GET'])
 def get_user_info():
-    user_id = session.get('user_id')
-    if user_id:
-        # Retrieve Telegram user info directly from the session, using keys set in telegram_callback
+    if 'telegram_id' in session:
         user_data = {
             "id": session.get('telegram_id'),
-            "first_name": session.get('telegram_first_name'),
-            "last_name": session.get('telegram_last_name'),
-            "photo_url": session.get('telegram_photo_url'),
-            "username": session.get('telegram_username') # Add username
+            "first_name": session.get('user_data', {}).get('first_name'),
+            "last_name": session.get('user_data', {}).get('last_name'),
+            "username": session.get('user_data', {}).get('username'),
+            "is_admin": session.get('is_admin', False)
         }
         return jsonify(user_data), 200
     return jsonify({'error': 'User not authenticated'}), 401

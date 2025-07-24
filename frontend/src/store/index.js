@@ -29,19 +29,16 @@ export default createStore({
     async checkAuth({ commit }) {
       try {
         const response = await axios.get('/api/user')
-        if (response.data && response.data.id) {
+        if (response.data) {
           commit('SET_USER', response.data)
           return true
         }
-        commit('SET_USER', null)
-        return false
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          // Expected unauthorized error
+        if (error.response?.status === 401) {
+          // Expected behavior for logged-out users
           commit('SET_USER', null)
         } else {
-          console.error('Auth check failed:', error)
-          commit('SET_ERROR', error)
+          console.error('Auth error:', error)
         }
         return false
       }
