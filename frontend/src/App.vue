@@ -8,7 +8,6 @@
         </transition>
       </div>
     </router-view>
-    <!-- <BottomNavbar /> -->
   </div>
 </template>
 
