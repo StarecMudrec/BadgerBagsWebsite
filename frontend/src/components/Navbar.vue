@@ -44,9 +44,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isAuthenticated'])
+    ...mapState(['isAuthenticated']),
+    ...mapState(['user'])
   },
   methods: {
+    ...mapActions(['logout']),
     async logout() {
       try {
         const response = await fetch('/auth/logout', {

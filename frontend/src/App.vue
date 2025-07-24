@@ -22,6 +22,12 @@ export default {
     Navbar, 
     // BottomNavbar
   },
+  computed: {
+    ...mapState(['user'])
+  },
+  async created() {
+    await this.$store.dispatch('checkAuth')
+  },
   data() {
     return {
       user: null // Initialize user data to null
