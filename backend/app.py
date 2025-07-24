@@ -168,7 +168,7 @@ def telegram_callback():
             }
         })
 
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('home'))
 
     except Exception as e:
         app.logger.error(f"Callback error: {str(e)}")
