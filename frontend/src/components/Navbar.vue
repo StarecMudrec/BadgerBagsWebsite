@@ -91,25 +91,18 @@ export default {
 </script>
 
 <style scoped>
-/* Add to existing styles */
-.logout-btn {
-  margin-left: auto; /* Pushes the button to the right */
-  display: flex;
-  align-items: center;
-  gap: 8px;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
+
+.menu-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 20px; /* Small hover area at top of screen */
+  z-index: 100;
+  pointer-events: auto; /* Enable hover detection */
 }
 
-.logout-icon {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.2s ease;
-}
-
-.logout-btn:hover .logout-icon {
-  transform: translateX(2px);
-}
-
-/* Adjust menu to allow space for logout button */
 .menu {
   display: flex;
   justify-content: center;
@@ -117,10 +110,101 @@ export default {
   margin: 0;
   left: 0;
   top: 0;
-  padding: 30px 40px 20px 40px; /* Increased padding on sides */
+  padding: 30px 0 20px 0;
   position: fixed;
   width: 100%;
   transition: transform 0.3s ease, padding 0.3s ease, background-color 0.3s ease;
   z-index: 101;
+}
+
+.menu-hidden {
+  transform: translateY(-100%);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  pointer-events: none; /* Make hidden menu click-through */
+}
+
+/* Buttons should always be clickable when menu is visible */
+.menu:not(.menu-hidden) .nav-btn {
+  pointer-events: auto;
+}
+
+/* Add a pseudo-element for the gradient background */
+.menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.57) 0%, rgba(0,0,0,0) 100%);
+  z-index: -1;
+  width: 100%;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.menu-hidden::before {
+  opacity: 0;
+}
+
+.nav-btn--current {
+  color: var(--hover-color);
+  cursor: default;
+  /* -webkit-text-stroke: 0.15px var(--hover-border-color); */
+}
+
+.nav-btn--current::after {
+  /* width: 100% !important; */
+}
+
+.nav-btn {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 25px;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  letter-spacing: 1px;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.nav-btn:hover {
+  color: var(--hover-color);
+  -webkit-text-stroke: 0.15px var(--hover-border-color);
+  transition: color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--hover-border-color);
+  transition: width 0.3s ease;
+}
+
+.nav-btn:hover::after {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .menu-wrapper {
+    height: 15px;
+  }
+  
+  .menu {
+    gap: 20px;
+    padding-bottom: 30px;
+  }
+  
+  .nav-btn {
+    font-size: 16px;
+  }
 }
 </style>
