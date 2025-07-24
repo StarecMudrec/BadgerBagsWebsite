@@ -333,13 +333,13 @@ def save_admin_token(user_id, token, expires_minutes=5):
 # Remove the infinity_polling line and replace with:
 if __name__ == '__main__':
     print("Starting Telegram bot...")
-    if os.environ.get('PRODUCTION') == 'true':
-        # Webhook mode for production
-        bot.remove_webhook()
-        bot.set_webhook(
-            url='https://dahole.oline.ru/telegram-webhook',
-            certificate=open('/path/to/cert.pem', 'r') if os.path.exists('/path/to/cert.pem') else None
-        )
-    else:
-        # Polling mode for development
-        bot.infinity_polling()
+    # if os.environ.get('PRODUCTION') == 'true':
+    #     # Webhook mode for production
+    #     bot.remove_webhook()
+    #     bot.set_webhook(
+    #         url='https://dahole.oline/telegram-webhook',
+    #         certificate=open('/path/to/cert.pem', 'r') if os.path.exists('/path/to/cert.pem') else None
+    #     )
+    # else:
+    #     # Polling mode for development
+    bot.infinity_polling()
