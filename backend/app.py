@@ -120,46 +120,58 @@ def telegram_callback():
     try:
         # Verify required parameters
         required_params = ['id', 'auth_date', 'hash', 'admin_token']
-        if not all(param in request.args for param in required_params):
+        if not all(p in request.args for p in required_params):
             return "Missing required parameters", 400
 
-        # Verify hash
-        params = {k: v for k, v in request.args.items()}
+        params = request.args.to_dict()
+        
+        # Verify auth_date is recent (within 5 minutes)
+        auth_date = int(params['auth_date'])
+        if abs(time.time() - auth_date) > 300:  # 5 minutes
+            return "Authentication expired", 401
+
+        # Reconstruct data_check_string
         data_check_string = "\n".join(
             f"{k}={v}" for k, v in sorted(params.items()) if k != 'hash'
         )
         
+        # Generate validation hash
         secret_key = hmac.new(
-            Config.BOT_TOKEN_HASH.digest(),
+            bytes(Config.BOT_TOKEN, 'utf-8'),
             msg=b"WebAppData",
             digestmod=sha256
-        )
+        ).digest()
+        
         computed_hash = hmac.new(
-            secret_key.digest(),
+            secret_key,
             data_check_string.encode(),
             sha256
         ).hexdigest()
 
+        # Verify hash
         if not hmac.compare_digest(computed_hash, params['hash']):
-            return "Invalid hash", 401
+            app.logger.error(f"Hash mismatch: {params['hash']} vs {computed_hash}")
+            return "Invalid Telegram authentication", 401
 
-        # Verify token
+        # Validate admin token
         if not validate_admin_token(params['id'], params['admin_token']):
-            return "Invalid or expired token", 403
+            return "Invalid or expired admin token", 403
 
         # Create session
-        session['telegram_user'] = {
-            'id': params['id'],
-            'first_name': params.get('first_name'),
-            'last_name': params.get('last_name'),
-            'username': params.get('username'),
-            'is_admin': True
-        }
+        session.update({
+            'telegram_id': params['id'],
+            'is_admin': True,
+            'user_data': {
+                'first_name': params.get('first_name'),
+                'last_name': params.get('last_name'),
+                'username': params.get('username')
+            }
+        })
 
         return redirect(url_for('admin_dashboard'))
 
     except Exception as e:
-        print(f"Callback error: {str(e)}")
+        app.logger.error(f"Callback error: {str(e)}")
         return "Authentication failed", 500
 
 @app.route('/telegram-webhook', methods=['POST'])

@@ -253,58 +253,54 @@ def handle_callbacks(call):
 # Get link command
 @bot.message_handler(commands=['getlink'])
 def generate_admin_link(message):
-    try:
-        if not is_user_allowed(message.from_user.id):
-            bot.reply_to(message, "❌ You're not in the admin list!")
-            return
-
-        token = str(uuid.uuid4())
-        if save_admin_token(message.from_user.id, token):
-            params = {
-                'id': message.from_user.id,
-                'first_name': message.from_user.first_name or '',
-                'last_name': message.from_user.last_name or '',
-                'username': message.from_user.username or '',
-                'auth_date': int(datetime.now().timestamp()),
-                'admin_token': token
-            }
-
-            # Generate the hash
-            data_check_string = "\n".join(
-                f"{k}={v}" for k, v in sorted(params.items()) if k != 'hash'
-            )
-            secret_key = hmac.new(
-                Config.BOT_TOKEN_HASH.digest(),
-                msg=b"WebAppData",
-                digestmod=sha256
-            )
-            params['hash'] = hmac.new(
-                secret_key.digest(),
-                data_check_string.encode(),
-                sha256
-            ).hexdigest()
-
-            # Build the URL
-            query_string = "&".join(f"{k}={v}" for k, v in params.items())
-            login_url = f"https://cardswood.ru/auth/telegram-callback?{query_string}"
-
-            # Verify URL length
-            if len(login_url) > 2000:
-                raise ValueError("Generated URL too long")
-
-            markup = InlineKeyboardMarkup()
-            markup.add(InlineKeyboardButton("🔑 Login as Admin", url=login_url))
-
-            bot.send_message(
-                message.chat.id,
-                "Your admin login link (expires in 5 minutes):",
-                reply_markup=markup
-            )
-        else:
-            bot.reply_to(message, "❌ Failed to generate link. Try again later.")
-    except Exception as e:
-        bot.reply_to(message, f"⚠️ Error generating link: {str(e)}")
-        print(f"Error generating login link: {str(e)}")
+    token = str(uuid.uuid4())
+    if save_admin_token(message.from_user.id, token):
+        params = {
+            'id': message.from_user.id,
+            'first_name': message.from_user.first_name or '',
+            'last_name': message.from_user.last_name or '',
+            'username': message.from_user.username or '',
+            'auth_date': int(datetime.now().timestamp()),
+            'admin_token': token
+        }
+        
+        # Generate the hash correctly
+        data_check_string = "\n".join(
+            f"{k}={v}" for k, v in sorted(params.items()) if k != 'hash'
+        )
+        
+        secret_key = hmac.new(
+            bytes(Config.BOT_TOKEN, 'utf-8'),  # Use raw token string
+            msg=b"WebAppData",
+            digestmod=sha256
+        ).digest()
+        
+        params['hash'] = hmac.new(
+            secret_key,
+            data_check_string.encode(),
+            sha256
+        ).hexdigest()
+        
+        # Build URL for YOUR domain
+        query_string = "&".join(f"{k}={v}" for k, v in params.items())
+        admin_link = f"https://dahole.online/auth/telegram-callback?{query_string}"
+        
+        # Debug output
+        print(f"Generated Login URL: {admin_link}")
+        
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton(
+            "🔑 Login as Admin", 
+            url=admin_link
+        ))
+        
+        bot.send_message(
+            message.chat.id,
+            "Your admin login link (expires in 5 minutes):",
+            reply_markup=markup
+        )
+    else:
+        bot.reply_to(message, "❌ Failed to generate link. Try again later.")
 
 # Database functions
 @with_app_context
