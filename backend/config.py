@@ -9,3 +9,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:postgres@db:5432/badgerbags"  # SQLite database
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get("SECRET_KEY")
+    BOT_TOKEN = os.getenv('BOT_TOKEN')
