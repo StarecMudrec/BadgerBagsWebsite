@@ -16,6 +16,7 @@ import axios from 'axios'; // Import axios
 import Navbar from '@/components/Navbar.vue';
 // import BottomNavbar from '@/components/BottomNavbar.vue'; // Import the new component
 import router from './router'; // Import router
+import { mapState } from 'vuex'
 
 export default {
   name: 'App', components: {
