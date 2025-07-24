@@ -1,4 +1,6 @@
 import os
+import hmac
+import hashlib
 import telebot
 from telebot import apihelper
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
@@ -273,15 +275,15 @@ def generate_admin_link(message):
         )
         
         secret_key = hmac.new(
-            bytes(Config.BOT_TOKEN, 'utf-8'),  # Use raw token string
+            BOT_TOKEN.encode('utf-8'),  # Use raw token string
             msg=b"WebAppData",
-            digestmod=sha256
+            digestmod=hashlib.sha256
         ).digest()
         
         params['hash'] = hmac.new(
             secret_key,
             data_check_string.encode(),
-            sha256
+            hashlib.sha256
         ).hexdigest()
         
         # Build URL for YOUR domain
