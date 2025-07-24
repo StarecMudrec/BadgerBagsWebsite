@@ -62,7 +62,7 @@ services:
       SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/badgerbags
       BOT_TOKEN: ${BOT_TOKEN}
       MAIN_ADMIN_ID: ${MAIN_ADMIN_ID}
-      PRODUCTION: 'true'  # Set to 'false' for development
+      PRODUCTION: 'false'  # Set to 'false' for development
     command: python bot.py
 
 volumes:
