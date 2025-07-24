@@ -19,7 +19,8 @@ import router from './router'; // Import router
 import { mapState } from 'vuex'
 
 export default {
-  name: 'App', components: {
+  name: 'App', 
+  components: {
     Navbar, 
     // BottomNavbar
   },

@@ -44,8 +44,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isAuthenticated']),
-    ...mapState(['user'])
+    ...mapState(['isAuthenticated'])
   },
   methods: {
     ...mapActions(['logout']),
