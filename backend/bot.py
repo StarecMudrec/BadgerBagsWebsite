@@ -1,6 +1,6 @@
 import os
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, apihelper 
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
@@ -13,6 +13,8 @@ if not BOT_TOKEN:
     raise ValueError("No BOT_TOKEN environment variable set")
 
 bot = telebot.TeleBot(BOT_TOKEN)
+
+apihelper.delete_webhook(os.getenv('BOT_TOKEN'))
 
 # Define the with_app_context decorator
 def with_app_context(func):
