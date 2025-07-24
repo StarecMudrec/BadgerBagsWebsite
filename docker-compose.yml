@@ -15,12 +15,12 @@ services:
       timeout: 5s
       retries: 10
     ports:
-      - "0.0.0.0:5433:5432"
+      - "0.0.0.0:3451:5432"
 
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
+      - "3452:5173"
     volumes:
       - ./frontend:/app:rw
       - frontend_node_modules:/app/node_modules
@@ -33,19 +33,19 @@ services:
     build: ./backend
     working_dir: /app
     ports:
-      - "8000:8000"
+      - "3453:8000"
     volumes:
       - ./backend:/app
       - card_images:/app/card_imgs
     depends_on:
       db:
         condition: service_healthy
-    environment:      
+    environment:
       SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@db:5432/badgerbags
       BOT_TOKEN: ${BOT_TOKEN}  # Will use from .env
       SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: wsgi:app
-    command: >      
+    command: >
       sh -c "flask db migrate &&
       flask db upgrade &&
       gunicorn --bind 0.0.0.0:8000 wsgi:app"
