@@ -1,6 +1,7 @@
 import os
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, apihelper 
+from telebot import apihelper
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 import uuid
 from datetime import datetime, timedelta
 from functools import wraps
