@@ -242,7 +242,7 @@ export default {
 .price {
   font-family: 'Aclonica', sans-serif;
   font-size: 2.5rem;
-  color: #423125;
+  color: #333333;
 }
 
 .buy-button {
@@ -253,7 +253,7 @@ export default {
     -webkit-backdrop-filter: blur(10px);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #423125;
+    color: #333333;
     text-decoration: none;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
     font-size: 1.5rem;    
@@ -285,6 +285,13 @@ export default {
   background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
   border-radius: 8px;
   z-index: -1;
+}
+
+.telegram-icon {
+  width: 27px;
+  height: 27px;
+  transition: all 0.3s ease;
+  fill: #333333;
 }
 
 @media (max-width: 768px) {
