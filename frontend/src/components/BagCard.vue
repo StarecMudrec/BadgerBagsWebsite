@@ -1,5 +1,5 @@
 <template>
-  <div class="bag-card">
+  <div class="bag-card" @click="goToDetail">
     <img :src="'/bags_imgs/' + bag.image" alt="Bag Image" class="bag-image" />
     <div class="bag-price">{{ bag.price }}₽</div>
   </div>
@@ -11,6 +11,11 @@ export default {
     bag: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    goToDetail() {
+      this.$router.push({ name: 'BagDetail', params: { id: this.bag.id } });
     }
   }
 };

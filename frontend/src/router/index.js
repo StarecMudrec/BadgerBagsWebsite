@@ -4,6 +4,7 @@ import Login from '@/components/Login.vue'
 import CardDetail from '@/views/CardDetail.vue'
 import AddCard from '@/views/AddCard.vue'
 import About from '@/views/About.vue' // Import the About component
+import BagDetail from '@/views/BagDetail.vue'
 
 const routes = [
   {
@@ -42,6 +43,12 @@ const routes = [
     path: '/about',
     name: 'About',
     component: About // Add the new route
+  },
+  { 
+    path: '/bag/:id',
+    name: 'BagDetail',
+    component: BagDetail,
+    props: true
   }
 ]
 

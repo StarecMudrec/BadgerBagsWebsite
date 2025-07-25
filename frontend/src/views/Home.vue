@@ -178,7 +178,9 @@ export default {
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
-      console.log('Bags data:', this.bags); // Verify IDs exis
+      // Ensure each bag has an ID
+      this.bags = this.bags.map((bag, index) => ({ ...bag, id: bag.id || index }));
+      console.log('Bags data:', this.bags);
     } finally {
       this.loading = false;
     }
