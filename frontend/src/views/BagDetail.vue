@@ -306,13 +306,18 @@ export default {
   
   .image-section {
     width: 100%;
-    height: 100vh; /* Changed from 50vh to 100vh */
+    height: auto; /* Changed to auto to match image height */
+    min-height: 50vh; /* Fallback minimum height */
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .bag-image {
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 100vh;
     object-fit: contain;
   }
   
