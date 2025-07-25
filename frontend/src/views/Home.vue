@@ -371,7 +371,7 @@ body, html, #app {
 .bag-item, .add-item-button {
   display: flex;
   flex-direction: column;
-  /* min-height: 100%; Ensure they take full height */
+  min-height: 100%; Ensure they take full height
 }
 
 .bag-item {
