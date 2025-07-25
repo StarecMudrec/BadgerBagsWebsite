@@ -371,7 +371,7 @@ body, html, #app {
 .bag-item, .add-item-button {
   display: flex;
   flex-direction: column;
-  min-height: 100%; /* Ensure they take full height */
+  /* min-height: 100%; Ensure they take full height */
 }
 
 .bag-item {
@@ -432,6 +432,9 @@ body, html, #app {
   padding: 0;
   margin: 0;
   position: relative;
+  width: 100%;
+  height: 84%;
+  margin-bottom: 10px;
 }
 
 .add-item-button:hover {
