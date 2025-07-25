@@ -56,11 +56,10 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <div class="add-item-button" @click="navigateToAddItem">
-            <div class="add-item-inner">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
+          <div class="add-card-button" @click="navigateToAddCard" data-test="add-card-button">
+            <div class="add-card-inner">
+              <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
           </div>
@@ -412,33 +411,35 @@ body, html, #app {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background-color: rgba(255, 255, 255, 0.1);
-  min-height: 300px; /* Adjust to match your card height */
+  background-color: rgba(255, 255, 255, 0.05);
+  aspect-ratio: 3/4; /* Match your card aspect ratio */
+  min-height: 0; /* Important for grid sizing */
+  padding: 0;
+  margin: 0;
 }
 
 .add-item-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(66, 49, 37, 0.05);
   transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-item-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
 }
 
-.add-item-button svg {
-  width: 40px;
-  height: 40px;
-  stroke: #423125;
+.plus-icon {
+  width: 50px;
+  height: 50px;
   transition: all 0.3s ease;
 }
 
-.add-item-button:hover svg {
+.add-item-button:hover .plus-icon {
   transform: scale(1.1);
-  stroke: #000;
 }
 
 .sort-dropdown-enter-active {
