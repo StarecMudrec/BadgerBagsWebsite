@@ -174,12 +174,12 @@ export default {
   transform-origin: center;
 }
 
-.arrow-path:hover .arrow-icon {
+.arrow-nav:hover .arrow-icon {
   transform: scale(0.85);
   opacity: 0.9;
 }
 
-.arrow-path:hover .arrow-inner {
+.arrow-nav:hover .arrow-inner {
   animation-play-state: paused;
 }
 /* 
