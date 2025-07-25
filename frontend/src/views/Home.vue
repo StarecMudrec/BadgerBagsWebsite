@@ -56,15 +56,12 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <div style="margin: 20px; display: flex; flex-direction: column; align-items: center;">
-            <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
-              <div class="add-item-inner">
-                <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
+          <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
+            <div class="add-item-inner">
+              <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
+              </svg>
             </div>
-            <div data-v-db91d383="" class="bag-price" style="color: rgb(0, 0, 0, 0);">.</div>
           </div>
         </transition-group>
       </div>
@@ -361,6 +358,22 @@ body, html, #app {
   width: 100%;
   padding: 20px;
   position: relative;
+  align-items: stretch; /* This ensures all items stretch to same height */
+}
+
+.bag-grid > * {
+  height: 100%;
+}
+
+.bag-item, .add-item-button {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; /* Ensure they take full height */
+}
+
+.bag-item {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Animation styles */
@@ -407,21 +420,15 @@ body, html, #app {
 }
 
 .add-item-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: 2px dashed #423125;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
   aspect-ratio: 3/4; /* Match your card aspect ratio */
-  min-height: 0; /* Important for grid sizing */
   padding: 0;
   margin: 0;
-  height: 100%;
-  max-width: 100%;
-  margin-bottom: 10px;
+  position: relative;
 }
 
 .add-item-button:hover {
@@ -436,6 +443,9 @@ body, html, #app {
   justify-content: center;
   width: 100%;
   height: 100%;
+  position: absolute; /* Fill the container */
+  top: 0;
+  left: 0;
 }
 
 .plus-icon {
