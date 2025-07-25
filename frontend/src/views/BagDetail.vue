@@ -312,22 +312,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-bottom: 2px solid #ffffff;
   }
   
   .bag-image {
     width: 100%;
     height: auto;
-    max-height: 100vh;
+    /* max-height: 100vh; */
     object-fit: contain;
   }
   
   .text-section {
     width: 100%;
     padding: 30px 20px;
+    padding-top: 10px;
   }
   
   .section-title {
     font-size: 2.4rem;
+    margin-top: 0px;
   }
   
   .section-text {
