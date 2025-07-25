@@ -11,7 +11,7 @@
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M30.41 33.59L19.83 24l10.58-9.59L26 12l-12 12 12 12 3.41-3.41z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M30.41 33.59L19.83 24l10.58-9.59L26 12l-12 12 12 12 4.41-4.41z"/>
           </svg>
         </div>
       </div>
@@ -27,7 +27,7 @@
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M17.59 33.59L28.17 24 17.59 14.41 20 12l12 12-12 12-2.41-2.41z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M17.59 33.59L28.17 24 17.59 14.41L22 12l12 12-12 12-4.41-4.41z"/>
           </svg>
         </div>
       </div>
