@@ -240,7 +240,7 @@ export default {
     display: inline-block;
     padding: 9px 17px;
     padding-top: 5px;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 8px;
