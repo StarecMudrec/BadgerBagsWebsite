@@ -56,10 +56,16 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <AddItemCard 
-            class="bag-item"
-            data-test="bag-card"
-          />
+          <div class="bag-item">
+            <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
+              <div class="add-item-inner">
+                <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <div data-v-db91d383="" class="bag-price" style="font-family: 'Noto Serif TC', 'Noto Serif', serif; font-weight: 1000; font-size: 24px;">Добавить товар</div>
+          </div>
         </transition-group>
       </div>
     </div>
@@ -77,7 +83,6 @@
 
 <script>
 import BagCard from '@/components/BagCard.vue';
-import AddItemCard from '@/components/AddItemCard.vue';
 import { gsap } from 'gsap';
 
 const clickOutside = {
@@ -399,6 +404,45 @@ body, html, #app {
   background: rgba(255, 255, 255, 0.1);
   pointer-events: none;
   border-radius: inherit;
+}
+
+.add-item-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #423125;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.05);
+  aspect-ratio: 3/4; /* Match your card aspect ratio */
+  min-height: 0; /* Important for grid sizing */
+  padding: 0;
+  margin: 0;
+}
+
+.add-item-button:hover {
+  background-color: rgba(66, 49, 37, 0.05);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-item-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.plus-icon {
+  width: 50px;
+  height: 50px;
+  transition: all 0.3s ease;
+}
+
+.add-item-button:hover .plus-icon {
+  transform: scale(1.1);
 }
 
 .sort-dropdown-enter-active {
