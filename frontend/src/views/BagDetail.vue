@@ -11,10 +11,7 @@
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <!-- Left arrow with rounded corners -->
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" 
-                  d="M15.5,16.5 L11.5,12.5 L15.5,8.5 C15.8,8.2 15.8,7.7 15.5,7.4 C15.2,7.1 14.7,7.1 14.4,7.4 L9.9,11.9 C9.7,12.1 9.7,12.4 9.9,12.6 L14.4,17.1 C14.7,17.4 15.2,17.4 15.5,17.1 C15.8,16.8 15.8,16.3 15.5,16 Z"
-                  stroke-linejoin="round" stroke-linecap="round"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
           </svg>
         </div>
       </div>
@@ -30,10 +27,7 @@
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <!-- Right arrow with rounded corners -->
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" 
-                  d="M8.5,16.5 L12.5,12.5 L8.5,8.5 C8.2,8.2 8.2,7.7 8.5,7.4 C8.8,7.1 9.3,7.1 9.6,7.4 L14.1,11.9 C14.3,12.1 14.3,12.4 14.1,12.6 L9.6,17.1 C9.3,17.4 8.8,17.4 8.5,17.1 C8.2,16.8 8.2,16.3 8.5,16 Z"
-                  stroke-linejoin="round" stroke-linecap="round"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
           </svg>
         </div>
       </div>
