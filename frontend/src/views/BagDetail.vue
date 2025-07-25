@@ -1,35 +1,31 @@
 <template>
   <div class="bag-detail-page">
-    <!-- Image Section (40% width, full height) -->
+    <!-- Image Section -->
     <div class="image-section" @wheel="handleWheel">
       <div class="arrow-nav left" @click="prevImage">
-        <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="48px" height="48px">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
-          </svg>
-        </div>
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+          <defs>
+            <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+              <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+              <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+            </filter>
+          </defs>
+          <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+        </svg>
       </div>
       
       <img :src="currentImage" :alt="bag.name" class="bag-image" />
       
       <div class="arrow-nav right" @click="nextImage">
-        <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="48px" height="48px">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-          </svg>
-        </div>
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+          <defs>
+            <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+              <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+              <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+            </filter>
+          </defs>
+          <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
       </div>
     </div>
 
@@ -134,22 +130,20 @@ export default {
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 48px; /* Match SVG width */
-  height: 48px; /* Match SVG height */
+  width: 36px;
+  height: 36px;
+  padding: 18px; /* Clickable area */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px; /* Add padding to increase clickable area while keeping visual size */
 }
 
 .arrow-nav.left {
-  left: 30px;
+  left: 20px;
 }
 
 .arrow-nav.right {
-  right: 30px;
-  /* Remove the rotation transform since we're using proper left/right arrows now */
-  transform: translateY(-50%);
+  right: 20px;
 }
 
 .arrow-inner {
@@ -166,7 +160,6 @@ export default {
   height: 100%;
   shape-rendering: geometricPrecision;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform;
   pointer-events: none;
 }
 
@@ -320,9 +313,9 @@ export default {
   }
   
   .arrow-nav {
-    width: 40px;
-    height: 40px;
-    padding: 15px;
+    width: 28px;
+    height: 28px;
+    padding: 14px;
   }
   
   .arrow-inner {
@@ -331,11 +324,11 @@ export default {
   }
   
   .arrow-nav.left {
-    left: 15px;
+    left: 10px;
   }
   
   .arrow-nav.right {
-    right: 15px;
+    right: 10px;
   }
 }
 </style>
