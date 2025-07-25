@@ -130,12 +130,11 @@ export default {
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 36px;
-  height: 36px;
-  padding: 18px; /* Clickable area */
+  width: 52px;
+  height: 60px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .arrow-nav.left {
