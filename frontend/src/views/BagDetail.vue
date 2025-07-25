@@ -4,14 +4,8 @@
     <div class="image-section" @wheel="handleWheel">
       <div class="arrow-nav left" @click="prevImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
           </svg>
         </div>
       </div>
@@ -20,14 +14,8 @@
       
       <div class="arrow-nav right" @click="nextImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
           </svg>
         </div>
       </div>
@@ -122,18 +110,29 @@ export default {
   object-fit: contain;
 }
 
-/* Arrow Navigation */
+/* Arrow Navigation - Horizontal */
 .arrow-nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 85px;
-  height: 67px;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.arrow-nav:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateY(-50%) scale(1.05);
 }
 
 .arrow-nav.left {
@@ -142,51 +141,13 @@ export default {
 
 .arrow-nav.right {
   right: 30px;
-  transform: translateY(-50%) rotate(180deg);
-}
-
-.arrow-inner {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: bounce 2s infinite;
 }
 
 .arrow-icon {
-  width: 100%;
-  height: 100%;
-  shape-rendering: geometricPrecision;
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform;
-  pointer-events: none;
-}
-
-.arrow-path {
-  transition: fill 0.3s ease;
-  transform-origin: center;
-}
-
-.arrow-nav:hover .arrow-icon {
-  transform: scale(0.85);
-  opacity: 0.9;
-}
-
-.arrow-nav:hover .arrow-inner {
-  animation-play-state: paused;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+  width: 24px;
+  height: 24px;
+  stroke: #423125;
+  stroke-width: 2;
 }
 
 /* Text Section (60% width) */
@@ -218,7 +179,7 @@ export default {
 
 .section-text {
   font-family: 'Cormorant Garamond', serif;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 1.8rem;
   line-height: 1.7;
   color: #423125;
@@ -239,20 +200,47 @@ export default {
   color: #423125;
 }
 
+/* iOS-style glass button */
 .buy-button {
   display: inline-block;
   padding: 15px 30px;
-  background-color: #423125;
-  color: white;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #423125;
   text-decoration: none;
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  font-weight: 600;
   font-size: 1.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .buy-button:hover {
-  background-color: #5a4a3a;
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.buy-button:active {
+  transform: translateY(0);
+}
+
+/* Optional: Add a subtle gradient to the button */
+.buy-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 8px;
+  z-index: -1;
 }
 
 @media (max-width: 768px) {
@@ -280,7 +268,7 @@ export default {
   }
   
   .arrow-nav {
-    width: 60px;
+    width: 50px;
     height: 50px;
   }
   
@@ -290,6 +278,11 @@ export default {
   
   .arrow-nav.right {
     right: 15px;
+  }
+  
+  .buy-button {
+    padding: 12px 24px;
+    font-size: 1.2rem;
   }
 }
 </style>
