@@ -257,7 +257,7 @@ body, html, #app {
   left: 0;
   top: 4px;
   flex: 1;
-  background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
+  background: linear-gradient(to bottom, #f3efeb 0%, #e7e2dc 100%);
 }
 
 .sort-container {
@@ -479,7 +479,7 @@ body, html, #app {
 
 .bottom-navbar {
   width: 100%;
-  background: linear-gradient(to bottom, #dad4ce 0%, #c9c4bd 100%);;
+  background: linear-gradient(to bottom, #dad4ce 0%, #d0cbc4 100%);;
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
