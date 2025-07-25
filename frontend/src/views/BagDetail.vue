@@ -129,8 +129,8 @@ export default {
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 85px;
-  height: 67px;
+  width: 90px; /* Slightly increased from 85px */
+  height: 72px; /* Slightly increased from 67px */
   display: flex;
   justify-content: center;
   align-items: center;
