@@ -4,14 +4,14 @@
     <div class="image-section" @wheel="handleWheel">
       <div class="arrow-nav left" @click="prevImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 7.5 9 9" fill="white" width="24px" height="24px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M11 7.5l-3 3 3 3c.2.2.2.5 0 .7-.2.2-.5.2-.7 0l-3.5-3.5c-.2-.2-.2-.5 0-.7L10.3 7.8c.2-.2.5-.2.7 0 .2.2.2.5 0 .7z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
           </svg>
         </div>
       </div>
@@ -20,14 +20,14 @@
       
       <div class="arrow-nav right" @click="nextImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 7.5 9 9" fill="white" width="24px" height="24px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="7.5 11 9 4" fill="white" width="24px" height="24px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M11 7.5l3 3-3 3c-.2.2-.5.2-.7 0-.2-.2-.2-.5 0-.7l3.5-3.5c.2-.2.5-.2.7 0l3.5 3.5c.2.2.2.5 0 .7-.2.2-.5.2-.7 0l-3-3z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M9 11l3 3 3-3c.2-.2.5-.2.7 0 .2.2.2.5 0 .7l-3.5 3.5c-.2.2-.5.2-.7 0L8.3 11.7c-.2-.2-.2-.5 0-.7.2-.2.5-.2.7 0z"/>
           </svg>
         </div>
       </div>
