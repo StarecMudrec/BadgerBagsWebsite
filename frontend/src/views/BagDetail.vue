@@ -217,7 +217,7 @@ export default {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 700;
   font-size: 1.8rem;
-  line-height: 1.7;
+  line-height: 1.3;
   color: #423125;
   letter-spacing: 0.2px;
   margin-bottom: 40px;
