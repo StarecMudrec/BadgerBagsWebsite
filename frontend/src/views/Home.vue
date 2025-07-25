@@ -361,6 +361,7 @@ body, html, #app {
   width: 100%;
   padding: 20px;
   position: relative;
+  align-items: stretch; /* This ensures all items stretch to same height */
 }
 
 .bag-grid > * {
@@ -427,13 +428,13 @@ body, html, #app {
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
-  aspect-ratio: 3/4; /* Maintain same aspect ratio as images */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  aspect-ratio: 3/4; /* Match your card aspect ratio */
+  padding: 0;
+  margin: 0;
   position: relative;
-  height: 0;
-  padding-bottom: 133.33%; /* 4:3 aspect ratio (3/4 = 0.75 = 75%) */
+  width: 100%;
+  height: 84%;
+  margin-bottom: 10px;
 }
 
 .add-item-button:hover {
@@ -454,7 +455,6 @@ body, html, #app {
 }
 
 .plus-icon {
-  position: absolute;
   width: 50px;
   height: 50px;
   transition: all 0.3s ease;
