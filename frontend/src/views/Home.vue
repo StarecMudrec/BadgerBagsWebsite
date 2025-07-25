@@ -56,7 +56,7 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <div class="bag-item">
+          <div style="margin: 20px; display: flex; flex-direction: column; align-items: center;">
             <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
               <div class="add-item-inner">
                 <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +64,7 @@
                 </svg>
               </div>
             </div>
-            <div data-v-db91d383="" class="bag-price" style="font-family: 'Noto Serif TC', 'Noto Serif', serif; font-weight: 1000; font-size: 24px;">Добавить товар</div>
+            <div data-v-db91d383="" class="bag-price" style="color: rgb(0, 0, 0, 0);">.</div>
           </div>
         </transition-group>
       </div>
@@ -419,6 +419,9 @@ body, html, #app {
   min-height: 0; /* Important for grid sizing */
   padding: 0;
   margin: 0;
+  height: 100%;
+  max-width: 100%;
+  margin-bottom: 10px;
 }
 
 .add-item-button:hover {
