@@ -56,7 +56,7 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <div class="bag-item">
+          <div style="margin: 20px; display: flex; flex-direction: column; align-items: center;">
             <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
               <div class="add-item-inner">
                 <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
