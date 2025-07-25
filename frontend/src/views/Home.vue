@@ -433,7 +433,7 @@ body, html, #app {
   margin: 0;
   position: relative;
   width: 100%;
-  height: 84%;
+  height: 100%; /* Change from 84% to 100% */
   margin-bottom: 10px;
 }
 
