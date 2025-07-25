@@ -113,12 +113,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden; /* Add this to contain the image */
 }
 
 .bag-image {
-  max-height: 100vh;
-  max-width: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* This maintains aspect ratio while filling space */
+  object-position: center; /* Ensures image is centered */
+  min-width: 0; /* Allows proper flex behavior */
+  min-height: 0; /* Allows proper flex behavior */
 }
 
 /* Arrow Navigation - Horizontal */
@@ -302,7 +306,12 @@ export default {
   
   .image-section {
     width: 100%;
-    height: 50vh;
+    height: 50vh; /* Adjust as needed */
+  }
+  
+  .bag-image {
+    /* Optional: you might want cover instead of contain for mobile */
+    object-fit: contain;
   }
   
   .text-section {
