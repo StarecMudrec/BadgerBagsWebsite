@@ -239,6 +239,7 @@ export default {
 .buy-button {
     display: inline-block;
     padding: 10px 20px;
+    padding-top: 5px;
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -253,6 +254,7 @@ export default {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    gap: 8px; /* Add space between text and icon */
 }
 
 .buy-button:hover {
