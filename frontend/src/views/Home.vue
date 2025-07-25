@@ -366,8 +366,6 @@ body, html, #app {
 
 .bag-grid > * {
   height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .bag-item, .add-item-button {
@@ -435,9 +433,8 @@ body, html, #app {
   margin: 0;
   position: relative;
   width: 100%;
+  height: 84%;
   margin-bottom: 10px;
-  /* Remove fixed height and let it be determined by grid */
-  height: auto;
 }
 
 .add-item-button:hover {
