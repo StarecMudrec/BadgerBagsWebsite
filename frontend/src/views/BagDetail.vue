@@ -4,7 +4,7 @@
     <div class="image-section" @wheel="handleWheel">
       <div class="arrow-nav left" @click="prevImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="48px" height="48px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
@@ -20,7 +20,7 @@
       
       <div class="arrow-nav right" @click="nextImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="48px" height="48px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
@@ -134,11 +134,12 @@ export default {
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 120px; /* Doubled from 60px (original was 85px, then 90px) */
-  height: 96px; /* Doubled from 48px (original was 67px, then 72px) */
+  width: 48px; /* Match SVG width */
+  height: 48px; /* Match SVG height */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px; /* Add padding to increase clickable area while keeping visual size */
 }
 
 .arrow-nav.left {
@@ -152,8 +153,8 @@ export default {
 }
 
 .arrow-inner {
-  width: 100%;
-  height: 100%;
+  width: 48px; /* Match SVG width */
+  height: 48px; /* Match SVG height */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -319,8 +320,14 @@ export default {
   }
   
   .arrow-nav {
-    width: 60px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
+    padding: 15px;
+  }
+  
+  .arrow-inner {
+    width: 40px;
+    height: 40px;
   }
   
   .arrow-nav.left {
