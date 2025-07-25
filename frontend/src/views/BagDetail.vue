@@ -4,14 +4,14 @@
     <div class="image-section" @wheel="handleWheel">
       <div class="arrow-nav left" @click="prevImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white" width="32px" height="32px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="white" width="48px" height="48px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M20.41 22.59L13.83 16l6.58-6.59L18 8l-8 8 8 8 2.41-2.41z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M30.41 33.59L19.83 24l10.58-9.59L26 12l-12 12 12 12 3.41-3.41z"/>
           </svg>
         </div>
       </div>
@@ -20,14 +20,14 @@
       
       <div class="arrow-nav right" @click="nextImage">
         <div class="arrow-inner">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="white" width="32px" height="32px">
+          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="white" width="48px" height="48px">
             <defs>
               <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
                 <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
                 <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
               </filter>
             </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M11.59 22.59L18.17 16l-6.58-6.59L14 8l8 8-8 8-2.41-2.41z"/>
+            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M17.59 33.59L28.17 24 17.59 14.41 20 12l12 12-12 12-2.41-2.41z"/>
           </svg>
         </div>
       </div>
@@ -129,8 +129,8 @@ export default {
   transform: translateY(-50%);
   cursor: pointer;
   z-index: 10;
-  width: 90px; /* Slightly increased from 85px */
-  height: 72px; /* Slightly increased from 67px */
+  width: 120px; /* Doubled from 60px (original was 85px, then 90px) */
+  height: 96px; /* Doubled from 48px (original was 67px, then 72px) */
   display: flex;
   justify-content: center;
   align-items: center;
