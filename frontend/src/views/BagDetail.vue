@@ -306,11 +306,13 @@ export default {
   
   .image-section {
     width: 100%;
-    height: 50vh; /* Adjust as needed */
+    height: 100vh; /* Changed from 50vh to 100vh */
+    position: relative;
   }
   
   .bag-image {
-    /* Optional: you might want cover instead of contain for mobile */
+    width: 100%;
+    height: 100%;
     object-fit: contain;
   }
   
@@ -331,11 +333,6 @@ export default {
     width: 28px;
     height: 28px;
     padding: 14px;
-  }
-  
-  .arrow-inner {
-    width: 40px;
-    height: 40px;
   }
   
   .arrow-nav.left {
