@@ -423,19 +423,20 @@ body, html, #app {
 }
 
 .add-item-button {
+  display: flex;
+  flex-direction: column;
   border: 2px dashed #423125;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
-  aspect-ratio: 3/4; /* Match your card aspect ratio */
-  padding: 0;
-  margin: 0;
-  position: relative;
+  aspect-ratio: 3 / 4;
   width: 100%;
-  height: 84%;
+  height: auto; /* Let aspect-ratio define the height */
   margin-bottom: 10px;
+  position: relative;
 }
+
 
 .add-item-button:hover {
   background-color: rgba(66, 49, 37, 0.05);
