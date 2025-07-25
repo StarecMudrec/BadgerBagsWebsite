@@ -56,8 +56,8 @@
             class="bag-item"
             data-test="bag-card"
           />
-          <div class="add-card-button" @click="navigateToAddCard" data-test="add-card-button">
-            <div class="add-card-inner">
+          <div class="add-item-button" @click="navigateToAddCard" data-test="add-item-button">
+            <div class="add-item-inner">
               <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
               </svg>
