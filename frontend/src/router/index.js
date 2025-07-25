@@ -5,6 +5,7 @@ import CardDetail from '@/views/CardDetail.vue'
 import AddCard from '@/views/AddCard.vue'
 import About from '@/views/About.vue' // Import the About component
 import BagDetail from '@/views/BagDetail.vue'
+import AddItem from '@/views/AddItem.vue'
 
 const routes = [
   {
@@ -49,6 +50,11 @@ const routes = [
     name: 'BagDetail',
     component: BagDetail,
     props: true
+  },
+  {
+    path: '/add-item',
+    name: 'AddItem',
+    component: AddItem
   }
 ]
 

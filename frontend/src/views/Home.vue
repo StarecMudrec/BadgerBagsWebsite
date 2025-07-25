@@ -56,6 +56,14 @@
             class="bag-item"
             data-test="bag-card"
           />
+          <div class="add-item-button" @click="navigateToAddCard">
+            <div class="add-item-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+          </div>
         </transition-group>
       </div>
     </div>
@@ -131,6 +139,9 @@ export default {
     sortByPriceDescending() {
       this.sortMethod = 'price-desc';
       this.showSortDropdown = false;
+    },
+    navigateToAddItem() {
+      this.$router.push('/add-item');
     },
     scrollToContent() {
       const contentSection = document.querySelector('.content');
@@ -391,6 +402,43 @@ body, html, #app {
   background: rgba(255, 255, 255, 0.1);
   pointer-events: none;
   border-radius: inherit;
+}
+
+.add-item-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #423125;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  min-height: 300px; /* Adjust to match your card height */
+}
+
+.add-item-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+}
+
+.add-item-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.add-item-button svg {
+  width: 40px;
+  height: 40px;
+  stroke: #423125;
+  transition: all 0.3s ease;
+}
+
+.add-item-button:hover svg {
+  transform: scale(1.1);
+  stroke: #000;
 }
 
 .sort-dropdown-enter-active {
