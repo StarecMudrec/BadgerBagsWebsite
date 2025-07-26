@@ -64,7 +64,7 @@
                 </svg>
               </div>
             </div>
-            <div data-v-db91d383="" class="bag-price" style="color: rgb(0, 0, 0, 0);">.</div>
+            <div data-v-db91d383="" class="bag-price unselectable" style="color: rgb(0, 0, 0, 0);">.</div>
           </div>
         </transition-group>
       </div>
@@ -383,6 +383,13 @@ body, html, #app {
 .list-item {
   transition: all 0.5s ease;
   will-change: transform, opacity;
+}
+
+.unselectable {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 /* .list-enter-active,
