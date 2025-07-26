@@ -430,13 +430,12 @@ body, html, #app {
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
-  aspect-ratio: 3 / 4;
   width: 100%;
-  height: auto; /* Let aspect-ratio define the height */
-  margin-bottom: 10px;
+  height: 0; /* Set initial height to 0 */
+  padding-bottom: calc(100% * (4 / 3)); /* Maintain 3:4 aspect ratio */
   position: relative;
+  overflow: hidden;
 }
-
 
 .add-item-button:hover {
   background-color: rgba(66, 49, 37, 0.05);
