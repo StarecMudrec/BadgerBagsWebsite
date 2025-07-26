@@ -121,9 +121,14 @@ export default {
     },
     applyCrop() {
       this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
-        this.item.image = new File([blob], 'cropped_' + document.getElementById('image').files[0].name, {
+        const fileName = 'cropped_' + document.getElementById('image').files[0].name;
+        this.item.image = new File([blob], fileName, {
           type: blob.type
         });
+        
+        // Create a temporary URL for the cropped image
+        this.croppedImageUrl = URL.createObjectURL(blob);
+        
         this.showCropModal = false;
       });
     },
