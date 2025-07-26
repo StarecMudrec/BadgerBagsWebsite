@@ -365,7 +365,7 @@ body, html, #app {
 }
 
 .bag-grid > * {
-  height: 100%;
+  /* height: 100%; */
 }
 
 .bag-item, .add-item-button {
