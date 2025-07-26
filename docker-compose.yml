@@ -36,7 +36,7 @@ services:
       - "3453:8000"
     volumes:
       - ./backend:/app
-      - ./frontend/public/bag_imgs:/app/frontend/public/bag_imgs
+      - ./frontend/public/bags_imgs:/app/frontend/public/bags_imgs  # Plural and full path
     depends_on:
       db:
         condition: service_healthy
