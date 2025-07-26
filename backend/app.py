@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config.from_object(Config)
 
-UPLOAD_FOLDER = 'bag_imgs'
+UPLOAD_FOLDER = 'frontend/public/bag_imgs'  # Changed from just 'bag_imgs'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
