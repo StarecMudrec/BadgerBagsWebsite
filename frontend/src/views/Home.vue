@@ -371,7 +371,7 @@ body, html, #app {
 .bag-item, .add-item-button {
   display: flex;
   flex-direction: column;
-  min-height: 100%; /* Ensure they take full height */
+  /* min-height: 100%; Ensure they take full height */
 }
 
 .bag-item {
@@ -431,10 +431,10 @@ body, html, #app {
   transition: all 0.3s ease;
   background-color: rgba(255, 255, 255, 0.05);
   width: 100%;
-  height: 0; /* Set initial height to 0 */
-  padding-bottom: calc(100% * (4 / 3)); /* Maintain 3:4 aspect ratio */
   position: relative;
   overflow: hidden;
+  aspect-ratio: 1 / 1.56630057630;
+  margin-bottom: 10px;
 }
 
 .add-item-button:hover {
