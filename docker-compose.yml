@@ -35,8 +35,8 @@ services:
     ports:
       - "3453:8000"
     volumes:
+      - ./frontend/public/bags_imgs:/app/frontend/public/bags_imgs
       - ./backend:/app
-      - ./frontend/public/bags_imgs:/app/frontend/public/bags_imgs  # Plural and full path
     depends_on:
       db:
         condition: service_healthy

@@ -120,17 +120,14 @@ export default {
       document.getElementById('image').value = '';
     },
     applyCrop() {
-      this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
-        const fileName = 'cropped_' + document.getElementById('image').files[0].name;
-        this.item.image = new File([blob], fileName, {
-          type: blob.type
-        });
+      this.$refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
+        const fileName = 'cropped_' + Date.now() + '.png'; // Unique filename
+        this.item.image = new File([blob], fileName, { type: 'image/png' });
         
-        // Create a temporary URL for the cropped image
-        this.croppedImageUrl = URL.createObjectURL(blob);
-        
+        // Preview the cropped image
+        this.croppedPreview = URL.createObjectURL(blob);
         this.showCropModal = false;
-      });
+      }, 'image/png');
     },
     closeModal() {
       this.showErrorModal = false;

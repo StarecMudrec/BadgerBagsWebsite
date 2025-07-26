@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config.from_object(Config)
 
-UPLOAD_FOLDER = '../frontend/public/bag_imgs'  # Changed from just 'bag_imgs'
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'public', 'bags_imgs'))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -557,14 +557,12 @@ def allowed_file(filename):
 
 @app.route('/bags_imgs/<filename>')
 def serve_bag_image(filename):
-    try:
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-    except FileNotFoundError:
-        app.logger.error(f"File not found: {filename} in {app.config['UPLOAD_FOLDER']}")
-        # abort(404)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
+    print("Current working directory:", os.getcwd())
+    print("Upload folder contents:", os.listdir(app.config['UPLOAD_FOLDER']))
     if 'img' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400
     
