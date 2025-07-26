@@ -36,7 +36,7 @@ services:
       - "3453:8000"
     volumes:
       - ./backend:/app
-      - ./frontend/public/bag_imgs:/app/bag_imgs  # Add this line
+      - ./frontend/public/bag_imgs:/app/frontend/public/bag_imgs
     depends_on:
       db:
         condition: service_healthy
