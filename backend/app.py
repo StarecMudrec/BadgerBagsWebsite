@@ -18,6 +18,11 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config.from_object(Config)
 
+UPLOAD_FOLDER = '../frontend/public/bag_imgs'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -546,14 +551,13 @@ def get_bags():
         })
     return jsonify(bags_data), 200
 
-UPLOAD_FOLDER = '../frontend/public/bag_imgs'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/bags_imgs/<filename>')
+def serve_bag_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
