@@ -1,4 +1,5 @@
 import os
+from werkzeug.utils import secure_filename
 import hmac
 from hashlib import sha256
 import uuid  # For generating unique tokens
@@ -544,6 +545,64 @@ def get_bags():
             'price': item.price
         })
     return jsonify(bags_data), 200
+
+UPLOAD_FOLDER = '../frontend/public/bag_imgs'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/api/bags', methods=['POST'])
+def add_bag():
+    if 'img' not in request.files:
+        return jsonify({'error': 'No image file provided'}), 400
+    
+    file = request.files['img']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    
+    if not (file and allowed_file(file.filename)):
+        return jsonify({'error': 'Invalid file type'}), 400
+
+    try:
+        # Create directory if it doesn't exist
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        # Secure the filename and save
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Get other form data
+        name = request.form.get('name')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        
+        # Create new bag in database
+        new_bag = Item(
+            name=name,
+            description=description,
+            price=price,
+            img=filename  # Store just the filename
+        )
+        db.session.add(new_bag)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Bag added successfully',
+            'bag': {
+                'id': new_bag.id,
+                'name': new_bag.name,
+                'image': filename
+            }
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route("/api/bags/<int:bag_id>")
 def get_bag_details(bag_id):

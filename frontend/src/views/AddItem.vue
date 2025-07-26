@@ -151,13 +151,12 @@ export default {
           }
         });
         
-        console.log('Bag added successfully:', response.data);
-        this.resetForm();
         this.$router.push('/');
       } catch (error) {
-        this.errorMessage = 'Error adding bag: ' + (error.response?.data?.message || error.message);
+        this.errorMessage = 'Error adding bag: ' + 
+          (error.response?.data?.error || error.message);
         this.showErrorModal = true;
-        console.error('Error adding bag:', error);
+        console.error('Error details:', error.response);
       }
     },
     resetForm() {
