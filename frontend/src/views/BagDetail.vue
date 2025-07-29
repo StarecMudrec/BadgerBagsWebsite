@@ -67,25 +67,24 @@ export default {
   methods: {
     async fetchBagDetails() {
       try {
-        const response = await fetch(`/api/bags/${this.$route.params.id}`);
-        this.bag = await response.json();
-        // For now, we'll just use the main image, but you can expand this to multiple images
-        this.images = [this.bag.image ? `/bags_imgs/${this.bag.image}` : '/placeholder.jpg'];
+        const response = await fetch(`/api/bags/${this.bagId}`);
+        
+        // First check if response is OK
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+          throw new Error(error.message || 'Failed to fetch bag details');
+        }
+        
+        // Then parse JSON
+        const data = await response.json();
+        this.bag = data;
       } catch (error) {
         console.error('Error fetching bag details:', error);
-      }
-    },
-    nextImage() {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
-    },
-    prevImage() {
-      this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
-    },
-    handleWheel(event) {
-      if (event.deltaY > 0) {
-        this.nextImage();
-      } else {
-        this.prevImage();
+        this.error = error.message;
+        // Optionally redirect to 404 page
+        if (error.message.includes('not found')) {
+          this.$router.push('/not-found');
+        }
       }
     }
   },
