@@ -51,59 +51,45 @@
 
 <script>
 export default {
-  props: {
-    id: {  // Must match the route param name
-      type: [Number, String],
-      required: true
-    }
-  },
+  name: 'BagDetail',
   data() {
     return {
-      bag: null,
-      error: null,
-      loading: false
+      bag: {},
+      images: [], // Array of image URLs
+      currentImageIndex: 0
+    }
+  },
+  computed: {
+    currentImage() {
+      return this.images.length > 0 ? this.images[this.currentImageIndex] : '/placeholder.jpg';
     }
   },
   methods: {
     async fetchBagDetails() {
-      this.loading = true;
-      this.error = null;
-      
       try {
-        const response = await fetch(`/api/bags/${this.id}`);
+        const response = await fetch(`/api/bags/${this.bagId}`);
         
+        // First check if response is OK
         if (!response.ok) {
-          throw new Error(response.status === 404 
-            ? 'Bag not found' 
-            : 'Failed to fetch bag details');
+          const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+          throw new Error(error.message || 'Failed to fetch bag details');
         }
         
-        this.bag = await response.json();
-      } catch (err) {
-        this.error = err.message;
-        console.error('Error:', err);
-        
-        // Optional: redirect to 404 page
-        if (err.message.includes('not found')) {
-          this.$router.replace('/404');
+        // Then parse JSON
+        const data = await response.json();
+        this.bag = data;
+      } catch (error) {
+        console.error('Error fetching bag details:', error);
+        this.error = error.message;
+        // Optionally redirect to 404 page
+        if (error.message.includes('not found')) {
+          this.$router.push('/not-found');
         }
-      } finally {
-        this.loading = false;
       }
     }
   },
   mounted() {
-    if (this.id) {
-      this.fetchBagDetails();
-    } else {
-      this.error = 'Invalid bag ID';
-    }
-  },
-  watch: {
-    // Refetch if the ID changes
-    id() {
-      this.fetchBagDetails();
-    }
+    this.fetchBagDetails();
   }
 }
 </script>
