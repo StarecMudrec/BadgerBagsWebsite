@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 10
     ports:
-      - "0.0.0.0:3451:5432"
+      - "0.0.0.0:3451:5433"
 
   frontend:
     build: ./frontend
