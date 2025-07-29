@@ -557,7 +557,13 @@ def allowed_file(filename):
 
 @app.route('/bags_imgs/<filename>')
 def serve_bag_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    try:
+        return send_from_directory(
+            app.config['UPLOAD_FOLDER'],
+            filename
+        )
+    except FileNotFoundError:
+        app.logger.error(f"Missing file: {filename} in {app.config['UPLOAD_FOLDER']}")
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():

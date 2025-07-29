@@ -141,17 +141,13 @@ export default {
       }
 
       try {
-        const formData = new FormData();
-        formData.append('name', this.item.name);
-        formData.append('description', this.item.description);
-        formData.append('price', this.item.price);
-        formData.append('img', this.item.image);
-
-        const response = await axios.post('/api/bags', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        const response = await axios.post('/api/bags', formData);
+        
+        // Add artificial delay to ensure file is fully written
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Use the URL with cache-busting query parameter
+        this.imageUrl = `/bags_imgs/${response.data.filename}?t=${Date.now()}`;
         
         this.$router.push('/');
       } catch (error) {
