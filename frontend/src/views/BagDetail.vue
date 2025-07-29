@@ -1,38 +1,48 @@
 <template>
-  <div class="bag-detail-page">
-    <!-- Loading State -->
-    <div v-if="loading" class="loading-state">
-      Loading bag details...
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="error-state">
-      {{ error }}
-      <button @click="$router.push('/')" class="back-button">
-        Return to Home
-      </button>
-    </div>
-
-    <!-- Content (only shown when bag exists) -->
-    <template v-else-if="bag">
-      <!-- Image Section -->
-      <div class="image-section" @wheel="handleWheel">
-        <!-- ... your existing image section code ... -->
+  <div class="bag-detail-page" v-if="!loading && !error">
+    <!-- Image Section -->
+    <div class="image-section" @wheel="handleWheel" v-if="bag">
+      <div class="arrow-nav left" @click="prevImage">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+          <!-- SVG content remains the same -->
+        </svg>
       </div>
-
-      <!-- Text Section -->
-      <div class="text-section">
-        <!-- ... your existing text section code ... -->
+      
+      <img :src="currentImage" :alt="bag?.name" class="bag-image" v-if="bag?.img" />
+      
+      <div class="arrow-nav right" @click="nextImage">
+        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+          <!-- SVG content remains the same -->
+        </svg>
       </div>
-    </template>
-
-    <!-- No Bag Found (fallback) -->
-    <div v-else class="no-bag-found">
-      Bag not found
-      <button @click="$router.push('/')" class="back-button">
-        Return to Home
-      </button>
     </div>
+
+    <!-- Text Section (60% width) -->
+    <div class="text-section" v-if="bag">
+      <div class="text-content">
+        <h2 class="section-title">О сумке:</h2>
+        <p class="section-text">{{ bag?.description || 'Здесь будет находиться информация о сумке' }}</p>
+        
+        <div class="price-section">
+            <div class="price">{{ bag?.price }}₽</div>
+            <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
+                <span class="button-text">КУПИТЬ</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
+                    <!-- SVG path remains the same -->
+                </svg>
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div v-if="loading" class="loading-state">
+    Loading bag details...
+  </div>
+  
+  <div v-if="error" class="error-state">
+    {{ error }}
   </div>
 </template>
 
@@ -41,8 +51,7 @@ export default {
   props: {
     id: {
       type: [Number, String],
-      required: true,
-      validator: value => value > 0 // Ensure ID is positive
+      required: true
     }
   },
   data() {
@@ -60,11 +69,6 @@ export default {
       this.bag = null;
       
       try {
-        // Validate ID before making request
-        if (!this.id || this.id <= 0) {
-          throw new Error('Invalid bag ID');
-        }
-
         const response = await fetch(`/api/bags/${this.id}`);
         
         if (!response.ok) {
@@ -74,23 +78,40 @@ export default {
         }
         
         this.bag = await response.json();
-        if (this.bag?.img) {
-          this.currentImage = `/bags_imgs/${this.bag.img}`;
-        }
+        this.currentImage = this.bag?.img ? `/bags_imgs/${this.bag.img}` : '';
       } catch (err) {
         this.error = err.message;
         console.error('Error:', err);
+        
+        if (err.message.includes('not found')) {
+          this.$router.replace('/404');
+        }
       } finally {
         this.loading = false;
       }
+    },
+    prevImage() {
+      // Implement if you have multiple images
+    },
+    nextImage() {
+      // Implement if you have multiple images
+    },
+    handleWheel(e) {
+      // Implement wheel handling if needed
     }
   },
   mounted() {
-    this.fetchBagDetails();
+    if (this.id && this.id !== 'undefined') {
+      this.fetchBagDetails();
+    } else {
+      this.error = 'Invalid bag ID';
+    }
   },
   watch: {
-    id() {
-      this.fetchBagDetails();
+    id(newId) {
+      if (newId && newId !== 'undefined') {
+        this.fetchBagDetails();
+      }
     }
   }
 }
@@ -98,10 +119,8 @@ export default {
 
 <style scoped>
 .loading-state,
-.error-state,
-.no-bag-found {
+.error-state {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -112,17 +131,6 @@ export default {
 
 .error-state {
   color: #d32f2f;
-}
-
-.back-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #423125;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Noto Serif TC', 'Noto Serif', serif;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
