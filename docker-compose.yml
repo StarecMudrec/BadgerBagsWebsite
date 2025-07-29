@@ -46,9 +46,12 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: wsgi:app
     command: >
-      sh -c "flask db init && flask db migrate &&
-      flask db upgrade &&
+      sh -c "
       gunicorn --bind 0.0.0.0:8000 wsgi:app"
+      
+    # flask db init && 
+    # flask db migrate &&
+    # flask db upgrade &&
 
   bot:
     build: ./backend
