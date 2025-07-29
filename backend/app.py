@@ -617,15 +617,18 @@ def add_bag():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@app.route("/api/bags/<int:bag_id>")
+@app.route('/api/bags/<int:bag_id>')
 def get_bag_details(bag_id):
-    item = Item.query.get_or_404(bag_id)
+    item = Item.query.get(bag_id)
+    if not item:
+        return jsonify({'error': 'Bag not found'}), 404  # Ensure JSON response
+    
     return jsonify({
         'id': item.id,
         'name': item.name,
         'description': item.description,
         'price': item.price,
-        'image': item.img
+        'image': url_for('serve_bag_image', filename=item.img, _external=True)
     })
 
 @app.route("/api/check_auth")
