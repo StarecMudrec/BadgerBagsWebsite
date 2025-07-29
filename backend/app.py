@@ -210,13 +210,11 @@ def logout():
     response.delete_cookie("token")
     return response
 
-# @app.after_request
-# def apply_csp(response):
-#     response.headers['Content-Security-Policy'] = (
-#         "frame-ancestors 'self' https://dahole.online; "
-#         "frame-src 'self' https://oauth.telegram.org;"
-#     )
-#     return response
+@app.after_request
+def add_cache_control(response):
+    if request.path.startswith('/bags_imgs/'):
+        response.headers['Cache-Control'] = 'no-store, max-age=0'
+    return response
 
 
 # Main Route (Checks for Authentication)
@@ -558,6 +556,9 @@ def allowed_file(filename):
 @app.route('/bags_imgs/<filename>')
 def serve_bag_image(filename):
     try:
+        print(f"Attempting to serve: {filename}")
+        print(f"Full path: {os.path.join(app.config['UPLOAD_FOLDER'], filename)}")
+        print(f"File exists: {os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename))}")
         return send_from_directory(
             app.config['UPLOAD_FOLDER'],
             filename
