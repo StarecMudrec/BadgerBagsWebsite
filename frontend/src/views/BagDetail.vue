@@ -42,11 +42,7 @@ export default {
     id: {
       type: [Number, String],
       required: true,
-      validator: value => {
-        // More flexible validation that handles string numbers
-        const num = Number(value);
-        return !isNaN(num) && num > 0;
-      }
+      validator: value => value > 0 // Ensure ID is positive
     }
   },
   data() {
@@ -64,14 +60,12 @@ export default {
       this.bag = null;
       
       try {
-        // Convert ID to number if it's a string
-        const idNum = Number(this.id);
-        
-        if (!idNum || idNum <= 0) {
+        // Validate ID before making request
+        if (!this.id || this.id <= 0) {
           throw new Error('Invalid bag ID');
         }
 
-        const response = await fetch(`/api/bags/${idNum}`);
+        const response = await fetch(`/api/bags/${this.id}`);
         
         if (!response.ok) {
           throw new Error(response.status === 404 
@@ -80,8 +74,8 @@ export default {
         }
         
         this.bag = await response.json();
-        if (this.bag?.image) {  // Changed from 'img' to 'image' to match your BagCard component
-          this.currentImage = `/bags_imgs/${this.bag.image}`;
+        if (this.bag?.img) {
+          this.currentImage = `/bags_imgs/${this.bag.img}`;
         }
       } catch (err) {
         this.error = err.message;
@@ -95,10 +89,8 @@ export default {
     this.fetchBagDetails();
   },
   watch: {
-    id(newId) {
-      if (newId) {
-        this.fetchBagDetails();
-      }
+    id() {
+      this.fetchBagDetails();
     }
   }
 }
