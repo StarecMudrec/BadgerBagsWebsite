@@ -51,45 +51,59 @@
 
 <script>
 export default {
-  name: 'BagDetail',
-  data() {
-    return {
-      bag: {},
-      images: [], // Array of image URLs
-      currentImageIndex: 0
+  props: {
+    id: {  // Must match the route param name
+      type: [Number, String],
+      required: true
     }
   },
-  computed: {
-    currentImage() {
-      return this.images.length > 0 ? this.images[this.currentImageIndex] : '/placeholder.jpg';
+  data() {
+    return {
+      bag: null,
+      error: null,
+      loading: false
     }
   },
   methods: {
     async fetchBagDetails() {
+      this.loading = true;
+      this.error = null;
+      
       try {
-        const response = await fetch(`/api/bags/${this.bagId}`);
+        const response = await fetch(`/api/bags/${this.id}`);
         
-        // First check if response is OK
         if (!response.ok) {
-          const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-          throw new Error(error.message || 'Failed to fetch bag details');
+          throw new Error(response.status === 404 
+            ? 'Bag not found' 
+            : 'Failed to fetch bag details');
         }
         
-        // Then parse JSON
-        const data = await response.json();
-        this.bag = data;
-      } catch (error) {
-        console.error('Error fetching bag details:', error);
-        this.error = error.message;
-        // Optionally redirect to 404 page
-        if (error.message.includes('not found')) {
-          this.$router.push('/not-found');
+        this.bag = await response.json();
+      } catch (err) {
+        this.error = err.message;
+        console.error('Error:', err);
+        
+        // Optional: redirect to 404 page
+        if (err.message.includes('not found')) {
+          this.$router.replace('/404');
         }
+      } finally {
+        this.loading = false;
       }
     }
   },
   mounted() {
-    this.fetchBagDetails();
+    if (this.id) {
+      this.fetchBagDetails();
+    } else {
+      this.error = 'Invalid bag ID';
+    }
+  },
+  watch: {
+    // Refetch if the ID changes
+    id() {
+      this.fetchBagDetails();
+    }
   }
 }
 </script>
