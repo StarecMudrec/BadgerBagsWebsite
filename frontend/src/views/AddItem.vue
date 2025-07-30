@@ -11,26 +11,27 @@
 
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
-      <div class="crop-modal-wrapper">
-        <div class="crop-modal-content">
-          <div class="crop-container">
+      <div class="crop-modal-content">
+        <div class="crop-scroll-container">
+          <div class="crop-container" :style="containerStyle">
             <vue-cropper
               ref="cropper"
               :src="imageToCrop"
               :aspect-ratio="1/1.25751633987"
               :drag-mode="dragMode"
               :view-mode="2"
-              :auto-crop-area="0.8"
+              :auto-crop-area="1"
               guides
               background-class="cropper-background"
+              @ready="onCropperReady"
               @cropstart="onCropStart"
               @cropend="onCropEnd"
             ></vue-cropper>
           </div>
-          <div class="crop-controls">
-            <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
-            <button @click="applyCrop" class="crop-button confirm">Apply Crop</button>
-          </div>
+        </div>
+        <div class="crop-controls">
+          <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
+          <button @click="applyCrop" class="crop-button confirm">Apply Crop</button>
         </div>
       </div>
     </div>
@@ -106,7 +107,15 @@ export default {
       dragStartX: 0,
       dragStartY: 0,
       dragMode: 'none', // Initial drag mode
-      isCropping: false
+      isCropping: false,
+      containerHeight: 'auto'
+    }
+  },
+  computed: {
+    containerStyle() {
+      return {
+        height: this.containerHeight
+      };
     }
   },
   methods: {
@@ -127,12 +136,10 @@ export default {
       }
     },
     onCropperReady() {
-      // Set initial crop area to match our aspect ratio
-      this.$refs.cropper.setAspectRatio(1/1.25751633987);
-      this.$refs.cropper.setData({
-        width: 100,
-        height: 100 * 1.25751633987
-      });
+      // Adjust container height to match the image height
+      const container = this.$refs.cropper.$el.parentElement;
+      const imgHeight = this.$refs.cropper.$el.querySelector('img').naturalHeight;
+      this.containerHeight = `${Math.min(imgHeight, window.innerHeight * 0.7)}px`;
     },
 
     onCropStart() {
@@ -233,7 +240,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped>                        
 .add-item-page {
   position: relative;
   min-height: 100vh;
@@ -443,27 +450,29 @@ textarea {
   padding: 20px;
 }
 
-.crop-modal-wrapper {
-  width: 100%;
-  max-width: 800px;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-}
-
 .crop-modal-content {
   background-color: #f4ebe2;
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+}
+
+.crop-scroll-container {
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align to top for short images */
 }
 
 .crop-container {
-  flex: 1;
   position: relative;
-  overflow: hidden;
+  width: 100%;
+  min-height: 200px; /* Minimum height */
 }
 
 .crop-controls {
