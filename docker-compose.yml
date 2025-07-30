@@ -46,7 +46,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       FLASK_APP: wsgi:app
     command: >
-      sh -c "
+      sh -c "flask db upgrade && 
       gunicorn --bind 0.0.0.0:8000 wsgi:app"
       
     # flask db init && 
