@@ -1,9 +1,5 @@
 FROM python:3.9-slim
 
-# Add this near the top of your Dockerfile
-COPY wait-for-db.sh /app/wait-for-db.sh
-RUN chmod +x /app/wait-for-db.sh
-
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -18,6 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn python-telegram-bot
 
 COPY . .
+
+# Fix permissions and make script executable
+RUN chmod a+x wait-for-db.sh && \
+    chown nobody:nogroup wait-for-db.sh
+
+ENTRYPOINT ["/app/wait-for-db.sh"]
 
 RUN mkdir -p /app/card_imgs
 
