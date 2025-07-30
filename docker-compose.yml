@@ -13,9 +13,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres -d badgerbags"]
       interval: 5s
       timeout: 5s
-      retries: 10
-    ports:
-      - "0.0.0.0:3451:5432"
+      retries: 30
+      start_period: 10s  # Give PostgreSQL extra time to initialize
 
   frontend:
     build: ./frontend
