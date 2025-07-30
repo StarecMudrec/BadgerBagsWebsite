@@ -373,6 +373,7 @@ textarea {
 }
 
 /* Crop Modal Styles */
+/* Crop Modal Styles */
 .crop-modal-overlay {
   position: fixed;
   top: 0;
@@ -384,6 +385,7 @@ textarea {
   justify-content: center;
   align-items: center;
   z-index: 1001;
+  padding: 20px; /* Add padding to ensure controls are visible */
 }
 
 .crop-modal-content {
@@ -392,12 +394,17 @@ textarea {
   overflow: hidden;
   width: 90%;
   max-width: 800px;
+  max-height: 90vh; /* Limit maximum height */
+  display: flex;
+  flex-direction: column;
 }
 
 .crop-container {
   width: 100%;
   height: 60vh;
+  max-height: calc(90vh - 70px); /* Account for controls height */
   position: relative;
+  overflow: auto; /* Add scrolling if content is too tall */
 }
 
 .cropper-background {
@@ -409,6 +416,10 @@ textarea {
   justify-content: space-between;
   padding: 15px;
   background-color: #e7e2dc;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .crop-button {
