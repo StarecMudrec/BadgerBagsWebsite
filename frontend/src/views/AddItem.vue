@@ -12,13 +12,16 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="crop-container">
+        <div class="crop-container" @mousedown="startDrag" @mousemove="doDrag" @mouseup="endDrag" @mouseleave="endDrag">
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
             :aspect-ratio="1/1.25751633987"
+            :drag-mode="dragMode"
             guides
             background-class="cropper-background"
+            @cropstart="onCropStart"
+            @cropend="onCropEnd"
           ></vue-cropper>
         </div>
         <div class="crop-controls">
@@ -94,7 +97,12 @@ export default {
       showErrorModal: false,
       errorMessage: '',
       showCropModal: false,
-      imageToCrop: ''
+      imageToCrop: '',
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      dragMode: 'none', // Initial drag mode
+      isCropping: false
     }
   },
   methods: {
@@ -113,6 +121,41 @@ export default {
         event.target.value = '';
         this.item.image = null;
       }
+    },
+    onCropStart() {
+      this.isCropping = true;
+    },
+    
+    onCropEnd() {
+      this.isCropping = false;
+    },
+    
+    startDrag(e) {
+      if (this.isCropping) return;
+      
+      this.isDragging = true;
+      this.dragStartX = e.clientX;
+      this.dragStartY = e.clientY;
+      this.dragMode = 'none';
+      e.preventDefault();
+    },
+    
+    doDrag(e) {
+      if (!this.isDragging || this.isCropping) return;
+      
+      const cropper = this.$refs.cropper;
+      const moveX = e.clientX - this.dragStartX;
+      const moveY = e.clientY - this.dragStartY;
+      
+      cropper.move(moveX, moveY);
+      
+      this.dragStartX = e.clientX;
+      this.dragStartY = e.clientY;
+    },
+    
+    endDrag() {
+      this.isDragging = false;
+      this.dragMode = 'crop'; // Reset to crop mode
     },
     cancelCrop() {
       this.showCropModal = false;
@@ -402,13 +445,23 @@ textarea {
 .crop-container {
   width: 100%;
   height: 60vh;
-  max-height: calc(90vh - 70px); /* Account for controls height */
+  max-height: calc(90vh - 70px);
   position: relative;
-  overflow: auto; /* Add scrolling if content is too tall */
+  overflow: auto;
+  cursor: grab;
+}
+
+.crop-container:active {
+  cursor: grabbing;
 }
 
 .cropper-background {
   background-color: #f4ebe2;
+  cursor: grab;
+}
+
+.cropper-background:active {
+  cursor: grabbing;
 }
 
 .crop-controls {
