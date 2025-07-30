@@ -18,9 +18,9 @@
             :src="imageToCrop"
             :aspect-ratio="1/1.25751633987"
             :drag-mode="dragMode"
-            :view-mode="2"  <!-- Restrict to container -->
-            :auto-crop-area="0.8"  <!-- Show 80% of image initially -->
-            :min-container-height="500"  <!-- Minimum container height -->
+            :view-mode="2"  
+            :auto-crop-area="0.8"  
+            :min-container-height="500"  
             :ready="onCropperReady"
             guides
             background-class="cropper-background"
