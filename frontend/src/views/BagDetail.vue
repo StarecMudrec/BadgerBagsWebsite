@@ -52,6 +52,12 @@
 <script>
 export default {
   name: 'BagDetail',
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
+    }
+  },
   data() {
     return {
       bag: {},
@@ -67,24 +73,41 @@ export default {
   methods: {
     async fetchBagDetails() {
       try {
-        const response = await fetch(`/api/bags/${this.bagId}`);
+        const response = await fetch(`/api/bags/${this.id}`);
         
-        // First check if response is OK
         if (!response.ok) {
           const error = await response.json().catch(() => ({ error: 'Unknown error' }));
           throw new Error(error.message || 'Failed to fetch bag details');
         }
         
-        // Then parse JSON
         const data = await response.json();
         this.bag = data;
+        // Assuming the API returns an array of images or you can construct it from the response
+        if (data.image) {
+          this.images = [data.image];
+        }
       } catch (error) {
         console.error('Error fetching bag details:', error);
-        this.error = error.message;
-        // Optionally redirect to 404 page
         if (error.message.includes('not found')) {
           this.$router.push('/not-found');
         }
+      }
+    },
+    nextImage() {
+      if (this.images.length > 0) {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+      }
+    },
+    prevImage() {
+      if (this.images.length > 0) {
+        this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+      }
+    },
+    handleWheel(event) {
+      if (event.deltaY > 0) {
+        this.nextImage();
+      } else {
+        this.prevImage();
       }
     }
   },
