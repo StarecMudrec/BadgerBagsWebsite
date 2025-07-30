@@ -16,7 +16,7 @@
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
-            :aspect-ratio="1/1.28437917223"
+            :aspect-ratio="1/1.25751633987"
             guides
             background-class="cropper-background"
           ></vue-cropper>
