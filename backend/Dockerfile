@@ -1,5 +1,9 @@
 FROM python:3.9-slim
 
+# Add this near the top of your Dockerfile
+COPY wait-for-db.sh /app/wait-for-db.sh
+RUN chmod +x /app/wait-for-db.sh
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
