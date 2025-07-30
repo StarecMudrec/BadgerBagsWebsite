@@ -15,12 +15,6 @@ RUN pip install gunicorn python-telegram-bot
 
 COPY . .
 
-# Fix permissions and make script executable
-RUN chmod a+x wait-for-db.sh && \
-    chown nobody:nogroup wait-for-db.sh
-
-ENTRYPOINT ["/app/wait-for-db.sh"]
-
 RUN mkdir -p /app/card_imgs
 
 EXPOSE 8000
