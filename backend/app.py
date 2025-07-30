@@ -568,8 +568,6 @@ def serve_bag_image(filename):
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
-    print("Current working directory:", os.getcwd())
-    print("Upload folder contents:", os.listdir(app.config['UPLOAD_FOLDER']))
     if 'img' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400
     
@@ -581,34 +579,32 @@ def add_bag():
         return jsonify({'error': 'Invalid file type'}), 400
 
     try:
-        # Create directory if it doesn't exist
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        
-        # Secure the filename and save
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         
-        # Get other form data
         name = request.form.get('name')
         description = request.form.get('description')
         price = request.form.get('price')
         
-        # Create new bag in database
         new_bag = Item(
             name=name,
             description=description,
             price=price,
-            img=filename  # Store just the filename
+            img=filename
         )
         db.session.add(new_bag)
         db.session.commit()
+        db.session.refresh(new_bag)  # This ensures we get the ID
         
         return jsonify({
             'message': 'Bag added successfully',
             'bag': {
-                'id': new_bag.id,
+                'id': new_bag.id,  # Now properly returning the database-generated ID
                 'name': new_bag.name,
+                'description': new_bag.description,
+                'price': new_bag.price,
                 'image': filename
             }
         }), 201
