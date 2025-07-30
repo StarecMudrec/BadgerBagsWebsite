@@ -544,6 +544,7 @@ def get_bags():
     bags_data = []
     for item in items:
         bags_data.append({
+            'id': item.id,  # Ensure this is included
             'image': item.img,
             'price': item.price
         })

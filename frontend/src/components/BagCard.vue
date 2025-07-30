@@ -10,12 +10,23 @@ export default {
   props: {
     bag: {
       type: Object,
-      required: true
+      required: true,
+      validator: (bag) => {
+        return typeof bag.id !== 'undefined' && typeof bag.image !== 'undefined'
+      }
     }
   },
   methods: {
     goToDetail() {
-      this.$router.push({ name: 'BagDetail', params: { id: this.bag.id } });
+      // Add validation and error handling
+      if (!this.bag?.id) {
+        console.error('Bag ID is missing', this.bag);
+        return;
+      }
+      this.$router.push({ 
+        name: 'BagDetail', 
+        params: { id: this.bag.id.toString() } // Ensure ID is string
+      });
     }
   }
 };

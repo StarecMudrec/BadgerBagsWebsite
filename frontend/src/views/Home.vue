@@ -191,8 +191,8 @@ export default {
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
-      // Ensure each bag has an ID
-      this.bags = this.bags.map((bag, index) => ({ ...bag, id: bag.id || index }));
+      // Remove this line that was overriding IDs with array indices:
+      // this.bags = this.bags.map((bag, index) => ({ ...bag, id: bag.id || index }));
       console.log('Bags data:', this.bags);
     } finally {
       this.loading = false;
