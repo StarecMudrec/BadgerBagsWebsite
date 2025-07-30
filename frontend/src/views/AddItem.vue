@@ -11,26 +11,26 @@
 
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
-      <div class="crop-modal-content">
-        <div class="crop-container" @mousedown="startDrag" @mousemove="doDrag" @mouseup="endDrag" @mouseleave="endDrag">
-          <vue-cropper
-            ref="cropper"
-            :src="imageToCrop"
-            :aspect-ratio="1/1.25751633987"
-            :drag-mode="dragMode"
-            :view-mode="2"  
-            :auto-crop-area="0.8"  
-            :min-container-height="500"  
-            :ready="onCropperReady"
-            guides
-            background-class="cropper-background"
-            @cropstart="onCropStart"
-            @cropend="onCropEnd"
-          ></vue-cropper>
-        </div>
-        <div class="crop-controls">
-          <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
-          <button @click="applyCrop" class="crop-button confirm">Apply Crop</button>
+      <div class="crop-modal-wrapper">
+        <div class="crop-modal-content">
+          <div class="crop-container">
+            <vue-cropper
+              ref="cropper"
+              :src="imageToCrop"
+              :aspect-ratio="1/1.25751633987"
+              :drag-mode="dragMode"
+              :view-mode="2"
+              :auto-crop-area="0.8"
+              guides
+              background-class="cropper-background"
+              @cropstart="onCropStart"
+              @cropend="onCropEnd"
+            ></vue-cropper>
+          </div>
+          <div class="crop-controls">
+            <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
+            <button @click="applyCrop" class="crop-button confirm">Apply Crop</button>
+          </div>
         </div>
       </div>
     </div>
@@ -440,22 +440,30 @@ textarea {
   justify-content: center;
   align-items: center;
   z-index: 1001;
+  padding: 20px;
+}
+
+.crop-modal-wrapper {
+  width: 100%;
+  max-width: 800px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .crop-modal-content {
   background-color: #f4ebe2;
   border-radius: 12px;
   overflow: hidden;
-  width: 800px; /* Fixed width */
-  height: 650px; /* Fixed height */
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .crop-container {
-  width: 100%;
-  height: 580px; /* Fixed height (650px - controls height) */
+  flex: 1;
   position: relative;
+  overflow: hidden;
 }
 
 .crop-controls {
@@ -463,7 +471,7 @@ textarea {
   justify-content: space-between;
   padding: 15px;
   background-color: #e7e2dc;
-  height: 70px; /* Fixed height for controls */
+  flex-shrink: 0;
 }
 
 .crop-container:active {
