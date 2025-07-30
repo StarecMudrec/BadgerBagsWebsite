@@ -270,7 +270,7 @@ body, html, #app {
   left: 0;
   top: 4px;
   flex: 1;
-  background: linear-gradient(to bottom, #f3efeb 0%, #e7e2dc 100%);
+  background: linear-gradient(to bottom, #f0e9e1 0%, #e7e2dc 100%);
 }
 
 .sort-container {
