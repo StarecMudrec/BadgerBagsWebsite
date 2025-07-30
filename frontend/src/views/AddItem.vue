@@ -117,13 +117,13 @@ export default {
         reader.onload = (e) => {
           this.imageToCrop = e.target.result;
           this.showCropModal = true;
+          this.$nextTick(() => {
+            if (this.$refs.cropper) {
+              this.$refs.cropper.replace(e.target.result);
+            }
+          });
         };
         reader.readAsDataURL(file);
-      } else {
-        this.errorMessage = 'Please select an image file (JPEG, PNG, GIF, etc.).';
-        this.showErrorModal = true;
-        event.target.value = '';
-        this.item.image = null;
       }
     },
     onCropperReady() {
