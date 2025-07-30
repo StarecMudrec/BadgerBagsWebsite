@@ -18,6 +18,10 @@
             :src="imageToCrop"
             :aspect-ratio="1/1.25751633987"
             :drag-mode="dragMode"
+            :view-mode="2"  <!-- Restrict to container -->
+            :auto-crop-area="0.8"  <!-- Show 80% of image initially -->
+            :min-container-height="500"  <!-- Minimum container height -->
+            :ready="onCropperReady"
             guides
             background-class="cropper-background"
             @cropstart="onCropStart"
@@ -122,6 +126,15 @@ export default {
         this.item.image = null;
       }
     },
+    onCropperReady() {
+      // Set initial crop area to match our aspect ratio
+      this.$refs.cropper.setAspectRatio(1/1.25751633987);
+      this.$refs.cropper.setData({
+        width: 100,
+        height: 100 * 1.25751633987
+      });
+    },
+
     onCropStart() {
       this.isCropping = true;
     },
@@ -416,7 +429,6 @@ textarea {
 }
 
 /* Crop Modal Styles */
-/* Crop Modal Styles */
 .crop-modal-overlay {
   position: fixed;
   top: 0;
@@ -428,27 +440,30 @@ textarea {
   justify-content: center;
   align-items: center;
   z-index: 1001;
-  padding: 20px; /* Add padding to ensure controls are visible */
 }
 
 .crop-modal-content {
   background-color: #f4ebe2;
   border-radius: 12px;
   overflow: hidden;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh; /* Limit maximum height */
+  width: 800px; /* Fixed width */
+  height: 650px; /* Fixed height */
   display: flex;
   flex-direction: column;
 }
 
 .crop-container {
   width: 100%;
-  height: 60vh;
-  max-height: calc(90vh - 70px);
+  height: 580px; /* Fixed height (650px - controls height) */
   position: relative;
-  overflow: auto;
-  cursor: grab;
+}
+
+.crop-controls {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: #e7e2dc;
+  height: 70px; /* Fixed height for controls */
 }
 
 .crop-container:active {
@@ -462,17 +477,6 @@ textarea {
 
 .cropper-background:active {
   cursor: grabbing;
-}
-
-.crop-controls {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background-color: #e7e2dc;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 
 .crop-button {
@@ -510,9 +514,14 @@ textarea {
   h1 {
     font-size: 1.8rem;
   }
+
+  .crop-modal-content {
+    width: 95vw;
+    height: 95vh;
+  }
   
   .crop-container {
-    height: 50vh;
+    height: calc(95vh - 70px);
   }
 }
 </style>
