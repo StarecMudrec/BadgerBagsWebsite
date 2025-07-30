@@ -15,6 +15,8 @@ services:
       timeout: 5s
       retries: 30
       start_period: 10s  # Give PostgreSQL extra time to initialize
+    ports:
+      - "0.0.0.0:3451:5432"
 
   frontend:
     build: ./frontend
