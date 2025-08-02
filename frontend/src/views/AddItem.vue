@@ -77,10 +77,7 @@
           class="submit-button"
         >
           <span v-if="!isSubmitting">Add Bag</span>
-          <span v-else class="loading-indicator">
-            <svg class="spinner" viewBox="0 0 50 50"><!-- Loading spinner SVG --></svg>
-            Processing...
-          </span>
+          <span v-else>Adding...</span>
         </button>
       </form>
       
