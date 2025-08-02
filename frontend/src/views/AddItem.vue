@@ -122,8 +122,18 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
-      this.fileError = false; // Reset error state
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
       const file = event.target.files[0];
+      this.fileError = false; // Reset error state
+
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        this.errorMessage = 'Image size must be less than 5MB.';
+        this.showErrorModal = true;
+        event.target.value = ''; // Clear the file input
+        return;
+      }
+      
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = async (e) => {

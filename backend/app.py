@@ -569,6 +569,10 @@ def serve_bag_image(filename):
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
+    # Check content length first
+    if request.content_length > Config.MAX_CONTENT_LENGTH:  # 10MB
+        return jsonify({'error': 'File too large (max 10MB)'}), 413
+
     if 'img' not in request.files:
         return jsonify({'error': 'No image file provided'}), 400
     
@@ -589,6 +593,9 @@ def add_bag():
         description = request.form.get('description')
         price = request.form.get('price')
         
+        if not all([name, description, price]):
+            return jsonify({'error': 'Missing required fields'}), 400
+
         new_bag = Item(
             name=name,
             description=description,
@@ -597,12 +604,12 @@ def add_bag():
         )
         db.session.add(new_bag)
         db.session.commit()
-        db.session.refresh(new_bag)  # This ensures we get the ID
+        db.session.refresh(new_bag)
         
         return jsonify({
             'message': 'Bag added successfully',
             'bag': {
-                'id': new_bag.id,  # Now properly returning the database-generated ID
+                'id': new_bag.id,
                 'name': new_bag.name,
                 'description': new_bag.description,
                 'price': new_bag.price,
@@ -612,6 +619,9 @@ def add_bag():
         
     except Exception as e:
         db.session.rollback()
+        # Clean up the file if it was saved but DB failed
+        if 'filepath' in locals() and os.path.exists(filepath):
+            os.remove(filepath)
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>')
