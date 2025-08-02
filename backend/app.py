@@ -584,9 +584,12 @@ def add_bag():
         return jsonify({'error': 'Invalid file type'}), 400
 
     try:
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        filename = secure_filename(file.filename)
+        # Generate a unique filename to prevent conflicts
+        file_ext = os.path.splitext(file.filename)[-1].lower()
+        filename = f"{uuid.uuid4()}{file_ext}"  # Random filename
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        # Save the file first (fast operation)
         file.save(filepath)
         
         name = request.form.get('name')
@@ -604,8 +607,7 @@ def add_bag():
         )
         db.session.add(new_bag)
         db.session.commit()
-        db.session.refresh(new_bag)
-        
+
         return jsonify({
             'message': 'Bag added successfully',
             'bag': {
