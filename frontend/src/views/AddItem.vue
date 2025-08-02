@@ -130,8 +130,7 @@ export default {
           this.$nextTick(() => {
             if (this.$refs.cropper) {
               this.$refs.cropper.replace(e.target.result);
-              // Set initial zoom to fit the image in the viewport
-              this.$refs.cropper.zoomTo(0.5);
+              this.initializeCropper();
             }
           });
         };
@@ -139,16 +138,28 @@ export default {
       }
     },
     initializeCropper() {
-      // Set fixed container dimensions
-      const container = this.$refs.cropper.$el.parentElement;
-      container.style.width = '500px';
-      container.style.height = '500px';
+      // Constrain the canvas to container dimensions
+      const container = this.$refs.cropper.$el;
+      const canvas = container.querySelector('.cropper-canvas');
+      const cropBox = container.querySelector('.cropper-crop-box');
       
-      // Reset cropper with new dimensions
-      this.$refs.cropper.reset();
+      // Set container overflow to hidden
+      container.style.overflow = 'hidden';
       
-      // Zoom to fit image in container
-      this.$refs.cropper.zoomTo(0.5);
+      // Set canvas dimensions to match container
+      if (canvas) {
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+      }
+      
+      // Initialize cropper with constraints
+      this.$refs.cropper.setAspectRatio(1/1.25751633987);
+      this.$refs.cropper.setDragMode('move');
+      
+      // Zoom to fit initially
+      this.$nextTick(() => {
+        this.$refs.cropper.zoomTo(0.5);
+      });
     },
     onCropperReady() {
       // Adjust container height to match the image height
@@ -490,12 +501,31 @@ textarea {
   width: 500px;
   height: 500px;
   position: relative;
+  overflow: hidden; /* Prevent anything from extending beyond container */
 }
 
 /* Force cropper container dimensions */
 .crop-container >>> .cropper-container {
-  width: 500px !important;
-  height: 500px !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.crop-container >>> .cropper-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.crop-container >>> .cropper-crop-box {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .crop-controls {
