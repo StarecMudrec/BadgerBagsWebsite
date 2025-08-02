@@ -12,7 +12,7 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="fixed-crop-container">
+        <div class="crop-container">
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
@@ -25,9 +25,6 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
-            :min-container-width="500"
-            :min-container-height="500"
-            :ready="initializeCropper"
             guides
             background-class="cropper-background"
           ></vue-cropper>
@@ -465,16 +462,14 @@ textarea {
   justify-content: center;
   align-items: center;
   z-index: 1001;
-  padding: 20px;
 }
 
 .crop-modal-content {
   background-color: #f4ebe2;
   border-radius: 12px;
-  overflow: hidden;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  padding: 20px;
 }
 
 .crop-viewport {
@@ -492,15 +487,21 @@ textarea {
 }
 
 .crop-container {
-  width: 100%;
-  height: 100%;
+  width: 500px;
+  height: 500px;
+  position: relative;
+}
+
+/* Force cropper container dimensions */
+.crop-container >>> .cropper-container {
+  width: 500px !important;
+  height: 500px !important;
 }
 
 .crop-controls {
   display: flex;
   justify-content: space-between;
-  padding: 15px 0 0 0;
-  background-color: transparent;
+  padding-top: 15px;
 }
 
 
@@ -572,7 +573,15 @@ textarea {
   }
   
   .crop-container {
-    height: calc(95vh - 70px);
+    width: 90vw;
+    height: 90vw;
+    max-width: 400px;
+    max-height: 400px;
+  }
+  
+  .crop-container >>> .cropper-container {
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .crop-viewport {
