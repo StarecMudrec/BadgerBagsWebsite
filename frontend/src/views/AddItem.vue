@@ -527,8 +527,6 @@ textarea {
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
 }
 
 .crop-controls {
