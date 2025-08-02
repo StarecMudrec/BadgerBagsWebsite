@@ -12,7 +12,7 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="crop-viewport">
+        <div class="fixed-crop-container">
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
@@ -25,6 +25,9 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
+            :min-container-width="500"
+            :min-container-height="500"
+            :ready="initializeCropper"
             guides
             background-class="cropper-background"
           ></vue-cropper>
@@ -137,6 +140,18 @@ export default {
         };
         reader.readAsDataURL(file);
       }
+    },
+    initializeCropper() {
+      // Set fixed container dimensions
+      const container = this.$refs.cropper.$el.parentElement;
+      container.style.width = '500px';
+      container.style.height = '500px';
+      
+      // Reset cropper with new dimensions
+      this.$refs.cropper.reset();
+      
+      // Zoom to fit image in container
+      this.$refs.cropper.zoomTo(0.5);
     },
     onCropperReady() {
       // Adjust container height to match the image height
@@ -459,8 +474,7 @@ textarea {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-width: 800px;
-  width: 100%;
+  padding: 20px;
 }
 
 .crop-viewport {
@@ -485,8 +499,8 @@ textarea {
 .crop-controls {
   display: flex;
   justify-content: space-between;
-  padding: 15px;
-  background-color: #e7e2dc;
+  padding: 15px 0 0 0;
+  background-color: transparent;
 }
 
 
@@ -530,6 +544,19 @@ textarea {
   background-color: #2a1f18;
 }
 
+.fixed-crop-container {
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  position: relative;
+  background-color: #f4ebe2;
+}
+
+.cropper-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 @media (max-width: 768px) {
   .add-item-container {
     padding: 25px 20px;
@@ -550,6 +577,13 @@ textarea {
 
   .crop-viewport {
     height: 60vh; /* Adjust for mobile */
+  }
+
+  .fixed-crop-container {
+    width: 90vw;
+    height: 90vw; /* Square aspect ratio */
+    max-width: 400px;
+    max-height: 400px;
   }
 }
 </style>
