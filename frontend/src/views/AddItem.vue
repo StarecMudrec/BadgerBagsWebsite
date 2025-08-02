@@ -12,22 +12,22 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="crop-scroll-container">
-          <div class="crop-container" :style="containerStyle">
-            <vue-cropper
-              ref="cropper"
-              :src="imageToCrop"
-              :aspect-ratio="1/1.25751633987"
-              :drag-mode="dragMode"
-              :view-mode="2"
-              :auto-crop-area="1"
-              guides
-              background-class="cropper-background"
-              @ready="onCropperReady"
-              @cropstart="onCropStart"
-              @cropend="onCropEnd"
-            ></vue-cropper>
-          </div>
+        <div class="crop-viewport">
+          <vue-cropper
+            ref="cropper"
+            :src="imageToCrop"
+            :aspect-ratio="1/1.25751633987"
+            :view-mode="1"
+            :auto-crop-area="0.8"
+            :zoomable="true"
+            :movable="true"
+            :scalable="true"
+            :zoom-on-touch="true"
+            :zoom-on-wheel="true"
+            :drag-mode="'move'"
+            guides
+            background-class="cropper-background"
+          ></vue-cropper>
         </div>
         <div class="crop-controls">
           <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
@@ -108,7 +108,8 @@ export default {
       dragStartY: 0,
       dragMode: 'none', // Initial drag mode
       isCropping: false,
-      containerHeight: 'auto'
+      containerHeight: 'auto',
+      dragMode: 'move', // Changed to 'move' to allow image movement
     }
   },
   computed: {
@@ -129,6 +130,8 @@ export default {
           this.$nextTick(() => {
             if (this.$refs.cropper) {
               this.$refs.cropper.replace(e.target.result);
+              // Set initial zoom to fit the image in the viewport
+              this.$refs.cropper.zoomTo(0.5);
             }
           });
         };
@@ -458,7 +461,12 @@ textarea {
   flex-direction: column;
   max-width: 800px;
   width: 100%;
-  max-height: 90vh;
+}
+
+.crop-viewport {
+  width: 100%;
+  height: 500px; /* Fixed height for the viewport */
+  position: relative;
 }
 
 .crop-scroll-container {
@@ -470,9 +478,8 @@ textarea {
 }
 
 .crop-container {
-  position: relative;
   width: 100%;
-  min-height: 200px; /* Minimum height */
+  height: 100%;
 }
 
 .crop-controls {
@@ -480,8 +487,8 @@ textarea {
   justify-content: space-between;
   padding: 15px;
   background-color: #e7e2dc;
-  flex-shrink: 0;
 }
+
 
 .crop-container:active {
   cursor: grabbing;
@@ -539,6 +546,10 @@ textarea {
   
   .crop-container {
     height: calc(95vh - 70px);
+  }
+
+  .crop-viewport {
+    height: 60vh; /* Adjust for mobile */
   }
 }
 </style>
