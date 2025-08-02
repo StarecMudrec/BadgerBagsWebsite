@@ -14,6 +14,9 @@ from flask_sqlalchemy import SQLAlchemy  # Database integration
 from models import db, AuthToken, Item, AllowedUser, AdminToken
 from config import Config
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
+
+executor = ThreadPoolExecutor(2)  # Background threads for file ops
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -569,62 +572,35 @@ def serve_bag_image(filename):
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
-    # Check content length first
-    if request.content_length > Config.MAX_CONTENT_LENGTH:  # 10MB
-        return jsonify({'error': 'File too large (max 10MB)'}), 413
-
     if 'img' not in request.files:
-        return jsonify({'error': 'No image file provided'}), 400
+        return jsonify({'error': 'No file'}), 400
     
     file = request.files['img']
     if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    
-    if not (file and allowed_file(file.filename)):
-        return jsonify({'error': 'Invalid file type'}), 400
+        return jsonify({'error': 'Empty file'}), 400
 
-    try:
-        # Generate a unique filename to prevent conflicts
-        file_ext = os.path.splitext(file.filename)[-1].lower()
-        filename = f"{uuid.uuid4()}{file_ext}"  # Random filename
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # Generate filename FIRST (no await)
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    filename = f"{uuid.uuid4()}{file_ext}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-        # Save the file first (fast operation)
-        file.save(filepath)
-        
-        name = request.form.get('name')
-        description = request.form.get('description')
-        price = request.form.get('price')
-        
-        if not all([name, description, price]):
-            return jsonify({'error': 'Missing required fields'}), 400
+    # Start async file save
+    executor.submit(file.save, filepath)
 
-        new_bag = Item(
-            name=name,
-            description=description,
-            price=price,
-            img=filename
-        )
-        db.session.add(new_bag)
-        db.session.commit()
+    # Immediate DB response
+    new_bag = Item(
+        name=request.form.get('name'),
+        description=request.form.get('description'),
+        price=request.form.get('price'),
+        img=filename
+    )
+    db.session.add(new_bag)
+    db.session.commit()
 
-        return jsonify({
-            'message': 'Bag added successfully',
-            'bag': {
-                'id': new_bag.id,
-                'name': new_bag.name,
-                'description': new_bag.description,
-                'price': new_bag.price,
-                'image': filename
-            }
-        }), 201
-        
-    except Exception as e:
-        db.session.rollback()
-        # Clean up the file if it was saved but DB failed
-        if 'filepath' in locals() and os.path.exists(filepath):
-            os.remove(filepath)
-        return jsonify({'error': str(e)}), 500
+    return jsonify({
+        'status': 'processing',
+        'filename': filename
+    }), 202  # Accepted (not completed)
 
 @app.route('/api/bags/<int:bag_id>')
 def get_bag_details(bag_id):
