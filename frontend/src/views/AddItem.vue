@@ -25,8 +25,8 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
-            :min-container-width="500"
-            :min-container-height="500"
+            :container-width="500"
+            :container-height="500"
             :ready="initializeCropper"
             guides
             background-class="cropper-background"
