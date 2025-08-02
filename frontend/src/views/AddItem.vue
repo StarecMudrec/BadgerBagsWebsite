@@ -165,10 +165,26 @@ export default {
       }
     },
     onCropperReady() {
-      // Adjust container height to match the image height
-      const container = this.$refs.cropper.$el.parentElement;
-      const imgHeight = this.$refs.cropper.$el.querySelector('img').naturalHeight;
-      this.containerHeight = `${Math.min(imgHeight, window.innerHeight * 0.7)}px`;
+      // Set initial zoom boundaries
+      this.$refs.cropper.setZoomRange({
+        min: 0.1,  // Minimum zoom level (10%)
+        max: 2.0   // Maximum zoom level (200%)
+      });
+      
+      // Set initial zoom to fit image nicely
+      this.$refs.cropper.zoomTo(0.5);
+      
+      // Prevent zooming beyond boundaries
+      this.$refs.cropper.on('zoom', (event) => {
+        const canvasData = this.$refs.cropper.getCanvasData();
+        const containerData = this.$refs.cropper.getContainerData();
+        
+        // Prevent zooming in too far
+        if (canvasData.width < containerData.width || 
+            canvasData.height < containerData.height) {
+          this.$refs.cropper.zoomTo(1.0); // Reset to 100% if too small
+        }
+      });
     },
 
     onCropStart() {
@@ -527,6 +543,14 @@ textarea {
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
+}
+
+.crop-container >>> .cropper-crop-box,
+.crop-container >>> .cropper-canvas,
+.crop-container >>> .cropper-img {
+  max-width: none !important; /* Allow natural image sizing */
+  max-height: none !important;
+  overflow: visible !important;
 }
 
 .crop-controls {
