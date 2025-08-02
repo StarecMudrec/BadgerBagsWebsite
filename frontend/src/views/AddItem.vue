@@ -124,42 +124,45 @@ export default {
       const file = event.target.files[0];
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           this.imageToCrop = e.target.result;
           this.showCropModal = true;
-          this.$nextTick(() => {
-            if (this.$refs.cropper) {
-              this.$refs.cropper.replace(e.target.result);
-              this.initializeCropper();
-            }
-          });
+          await this.$nextTick();
+          if (this.$refs.cropper) {
+            this.$refs.cropper.replace(e.target.result);
+            await this.initializeCropper();
+          }
         };
         reader.readAsDataURL(file);
       }
     },
-    initializeCropper() {
-      // Constrain the canvas to container dimensions
-      const container = this.$refs.cropper.$el;
-      const canvas = container.querySelector('.cropper-canvas');
-      const cropBox = container.querySelector('.cropper-crop-box');
-      
-      // Set container overflow to hidden
-      container.style.overflow = 'hidden';
-      
-      // Set canvas dimensions to match container
-      if (canvas) {
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-      }
-      
-      // Initialize cropper with constraints
-      this.$refs.cropper.setAspectRatio(1/1.25751633987);
-      this.$refs.cropper.setDragMode('move');
-      
-      // Zoom to fit initially
-      this.$nextTick(() => {
+    async initializeCropper() {
+      try {
+        // Wait for cropper to be fully initialized
+        await this.$nextTick();
+        
+        if (!this.$refs.cropper) return;
+        
+        // Set container dimensions
+        const container = this.$refs.cropper.$el;
+        container.style.width = '500px';
+        container.style.height = '500px';
+        container.style.overflow = 'hidden';
+        
+        // Reset and configure cropper
+        this.$refs.cropper.reset();
+        this.$refs.cropper.setAspectRatio(1/1.25751633987);
+        this.$refs.cropper.setDragMode('move');
+        
+        // Wait for cropper to update
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Zoom to fit
         this.$refs.cropper.zoomTo(0.5);
-      });
+        
+      } catch (error) {
+        console.error('Cropper initialization error:', error);
+      }
     },
     onCropperReady() {
       // Adjust container height to match the image height
