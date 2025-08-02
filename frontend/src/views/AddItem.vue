@@ -126,14 +126,14 @@ export default {
       const file = event.target.files[0];
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           this.imageToCrop = e.target.result;
           this.showCropModal = true;
-          this.$nextTick(() => {
-            if (this.$refs.cropper) {
-              this.$refs.cropper.replace(e.target.result);
-            }
-          });
+          await this.$nextTick();
+          if (this.$refs.cropper) {
+            this.$refs.cropper.replace(e.target.result);
+            await this.initializeCropper();
+          }
         };
         reader.readAsDataURL(file);
       } else {
