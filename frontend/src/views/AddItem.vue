@@ -54,7 +54,7 @@
           <input type="number" id="price" v-model.number="item.price" required>
         </div>
         
-        <div class="form-group file-upload-group">
+        <div class="form-group file-upload-group" :class="{ 'has-error': fileError }">
           <label for="image" class="file-upload-label">
             <span class="file-upload-text">
               {{ item.image ? item.image.name : 'Choose bag image...' }}
@@ -64,11 +64,11 @@
               type="file" 
               id="image" 
               @change="handleFileUpload" 
-              accept="image/*" 
-              required
+              accept="image/*"
               class="file-upload-input"
             >
           </label>
+          <span v-if="fileError" class="error-message">Please select an image</span>
         </div>
         
         <button type="submit" class="submit-button">
@@ -110,6 +110,7 @@ export default {
       isCropping: false,
       containerHeight: 'auto',
       dragMode: 'move', // Changed to 'move' to allow image movement
+      fileError: false
     }
   },
   computed: {
@@ -121,19 +122,22 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
+      this.fileError = false; // Reset error state
       const file = event.target.files[0];
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = async (e) => {
+        reader.onload = (e) => {
           this.imageToCrop = e.target.result;
           this.showCropModal = true;
-          await this.$nextTick();
-          if (this.$refs.cropper) {
-            this.$refs.cropper.replace(e.target.result);
-            await this.initializeCropper();
-          }
+          this.$nextTick(() => {
+            if (this.$refs.cropper) {
+              this.$refs.cropper.replace(e.target.result);
+            }
+          });
         };
         reader.readAsDataURL(file);
+      } else {
+        this.fileError = true;
       }
     },
     async initializeCropper() {
@@ -242,12 +246,14 @@ export default {
       this.errorMessage = '';
     },
     async submitForm() {
+      // Manual validation for file input
       if (!this.item.image) {
         this.errorMessage = 'Please select an image file.';
         this.showErrorModal = true;
         return;
       }
 
+      // Rest of your existing submit logic
       try {
         const formData = new FormData();
         formData.append('name', this.item.name);
@@ -354,6 +360,18 @@ textarea {
 }
 
 /* File Upload Styles */
+.has-error .file-upload-label {
+  border: 1px solid #ff4444;
+  border-radius: 8px;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
 .file-upload-group {
   margin-bottom: 20px;
 }
