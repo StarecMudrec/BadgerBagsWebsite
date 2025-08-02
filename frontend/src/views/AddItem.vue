@@ -71,8 +71,13 @@
           <span v-if="fileError" class="error-message">Please select an image</span>
         </div>
         
-        <button type="submit" class="submit-button">
-          <span class="submit-button-text">Add Bag</span>
+        <button 
+          type="submit" 
+          class="submit-button"
+          :disabled="isSubmitting"
+        >
+          <span v-if="!isSubmitting">Add Bag</span>
+          <span v-else>Adding...</span>
         </button>
       </form>
       
@@ -110,7 +115,8 @@ export default {
       isCropping: false,
       containerHeight: 'auto',
       dragMode: 'move', // Changed to 'move' to allow image movement
-      fileError: false
+      fileError: false,
+      isSubmitting: false,  // Add this
     }
   },
   computed: {
@@ -256,6 +262,9 @@ export default {
       this.errorMessage = '';
     },
     async submitForm() {
+      if (this.isSubmitting) return;  // Prevent duplicates
+      
+      this.isSubmitting = true;
       // Manual validation for file input
       if (!this.item.image) {
         this.errorMessage = 'Please select an image file.';
@@ -283,6 +292,8 @@ export default {
           (error.response?.data?.error || error.message);
         this.showErrorModal = true;
         console.error('Error details:', error.response);
+      } finally {
+        this.isSubmitting = false;  // Re-enable button
       }
     },
     resetForm() {
