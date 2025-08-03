@@ -361,7 +361,7 @@ body, html, #app {
   width: 100%;
   padding: 20px;
   position: relative;
-  align-items: stretch; /* This ensures all items stretch to same height */
+  /* Remove align-items: stretch */
 }
 
 .bag-grid > * {
@@ -377,6 +377,25 @@ body, html, #app {
 .bag-item {
   display: flex;
   flex-direction: column;
+  /* Add aspect ratio to maintain consistent sizing */
+  aspect-ratio: 1 / 1.56630057630; /* This matches your add-item-button ratio */
+}
+
+.bag-item >>> .bag-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bag-item >>> .bag-image-container {
+  flex-grow: 1;
+  position: relative;
+}
+
+.bag-item >>> .bag-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Animation styles */

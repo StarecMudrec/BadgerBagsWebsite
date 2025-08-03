@@ -43,11 +43,14 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%; /* Add this */
+  width: 100%; /* Add this */
 }
 
 .bag-image {
   width: 100%;
   height: 100%;
+  aspect-ratio: 1 / 1.56630057630; /* Match the same ratio as add-item-button */
   margin-bottom: 10px;
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
