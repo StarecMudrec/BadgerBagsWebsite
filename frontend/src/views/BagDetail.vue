@@ -176,7 +176,7 @@ export default {
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
   font-size: 2rem;
   color: #423125;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @keyframes spin {
