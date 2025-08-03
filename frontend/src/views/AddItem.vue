@@ -323,7 +323,7 @@ export default {
   position: relative;
   min-height: 100vh;
   padding: 40px 20px;
-  background: linear-gradient(to bottom, #f3efeb 0%, #e7e2dc 100%);
+  /* background: linear-gradient(to bottom, #f3efeb 0%, #e7e2dc 100%); */
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
   --accent-color: #423125; /* Same as your current text color */
   --hover-color: #2a1f18; /* Darker shade for hover */
@@ -349,7 +349,7 @@ export default {
   max-width: 500px;
   margin: 0 auto;
   padding: 30px;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: #f3efebd9;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   margin-top: 100px;
