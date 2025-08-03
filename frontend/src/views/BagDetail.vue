@@ -4,7 +4,7 @@
     <div v-if="loading" class="loading-overlay">
       <div class="loading-content">
         <div class="spinner"></div>
-        <p class="loading-text">Loading details...</p>
+        <p class="loading-text">Загрузка...</p>
       </div>
     </div>
 
