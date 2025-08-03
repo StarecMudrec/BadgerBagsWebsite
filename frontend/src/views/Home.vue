@@ -356,9 +356,10 @@ body, html, #app {
 
 .loading-container {
   position: absolute;
-  top: 50%;
+  /* top: 50%; */
+  margin-top: 50px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
