@@ -188,7 +188,6 @@ export default {
   height: 1px;
   background-color: var(--hover-border-color);
   transition: width 0.3s ease;
-  display: none; /* This completely removes the pseudo-element */
 }
 
 .nav-btn:hover::after {
