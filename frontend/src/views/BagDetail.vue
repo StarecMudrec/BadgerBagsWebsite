@@ -174,7 +174,7 @@ export default {
 
 .loading-text {
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #423125;
   font-weight: 600;
 }
