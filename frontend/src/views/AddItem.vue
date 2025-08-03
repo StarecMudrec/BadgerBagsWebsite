@@ -332,7 +332,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 70px;
+  margin-top: 100px;
 }
 
 h1 {
