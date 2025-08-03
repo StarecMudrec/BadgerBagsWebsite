@@ -1,6 +1,11 @@
 <template>
-  <div class="bag-card" @click="goToDetail">
-    <img :src="'/bags_imgs/' + bag.image" alt="Bag Image" class="bag-image" />
+  <div class="bag-card">
+    <img 
+      :src="'/bags_imgs/' + bag.image" 
+      alt="Bag Image" 
+      class="bag-image"
+      @click="goToDetail"
+    />
     <div class="bag-price">{{ bag.price }}₽</div>
   </div>
 </template>
@@ -18,14 +23,13 @@ export default {
   },
   methods: {
     goToDetail() {
-      // Add validation and error handling
       if (!this.bag?.id) {
         console.error('Bag ID is missing', this.bag);
         return;
       }
       this.$router.push({ 
         name: 'BagDetail', 
-        params: { id: this.bag.id.toString() } // Ensure ID is string
+        params: { id: this.bag.id.toString() }
       });
     }
   }
@@ -56,6 +60,12 @@ export default {
   border-radius: 4px;
   object-fit: cover;
   overflow: hidden;
+  cursor: pointer; /* Add pointer cursor to indicate clickability */
+  transition: transform 0.2s ease; /* Optional: Add hover effect */
+}
+
+.bag-image:hover {
+  transform: scale(1.02); /* Optional: Slight zoom on hover */
 }
 
 .bag-price {
@@ -63,5 +73,6 @@ export default {
   color: #423125;
   font-size: 24px;
   font-family: 'Aclonica', sans-serif;
+  pointer-events: none; /* Prevent any pointer events on price */
 }
 </style>
