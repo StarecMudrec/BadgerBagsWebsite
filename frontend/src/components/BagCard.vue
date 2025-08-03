@@ -61,7 +61,6 @@ export default {
   object-fit: cover;
   overflow: hidden;
   cursor: pointer; /* Add pointer cursor to indicate clickability */
-  transition: transform 0.2s ease; /* Optional: Add hover effect */
 }
 
 .bag-image:hover {
