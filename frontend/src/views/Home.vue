@@ -39,7 +39,12 @@
         </transition>
       </div>
 
-      <div v-if="loading"><div class="loading-text">Loading bags...</div></div>
+      <div v-if="loading">
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <div class="loading-text">Loading bags...</div>
+        </div>
+      </div>
       <div v-else class="bag-catalog">
         <transition-group 
           name="list" 
@@ -349,13 +354,35 @@ body, html, #app {
   border-bottom: none;
 }
 
+.loading-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
 .loading-text {
   font-weight: 700;
   font-size: 1.15rem;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 50px;
+  color: #423125;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f0e9e1;
+  border-top: 5px solid #423125;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .bag-catalog {
