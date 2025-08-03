@@ -179,7 +179,7 @@ export default {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-.nav-btn::after {
+/* .nav-btn::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -188,11 +188,12 @@ export default {
   height: 1px;
   background-color: var(--hover-border-color);
   transition: width 0.3s ease;
+  display: none; 
 }
 
 .nav-btn:hover::after {
   width: 100%;
-}
+} */
 
 @media (max-width: 480px) {
   .menu-wrapper {
