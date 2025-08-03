@@ -606,12 +606,12 @@ textarea {
 .crop-controls {
   display: flex;
   justify-content: space-between;
-  padding-top: 15px;
-  position: absolute;
+  /* position: absolute; */
   bottom: 20px;
   left: 0;
   right: 0;
   padding: 0 20px;
+  padding-top: 15px;
   z-index: 10;
 }
 
@@ -634,7 +634,7 @@ textarea {
   height: 50px;
   border-radius: 50%;
   border: none;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.2);
   color: white;
   display: flex;
   justify-content: center;
