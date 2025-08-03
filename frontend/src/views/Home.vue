@@ -349,6 +349,15 @@ body, html, #app {
   border-bottom: none;
 }
 
+.loading-text {
+  font-weight: 700;
+  font-size: 1.15rem;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 50px;
+}
+
 .bag-catalog {
   width: 100%;
   padding: 20px;
