@@ -30,8 +30,12 @@
           ></vue-cropper>
         </div>
         <div class="crop-controls">
-          <button @click="cancelCrop" class="crop-button cancel">Cancel</button>
-          <button @click="applyCrop" class="crop-button confirm">Apply Crop</button>
+          <button @click="cancelCrop" class="crop-button cancel">
+            <i class="fas fa-times"></i>
+          </button>
+          <button @click="applyCrop" class="crop-button confirm">
+            <i class="fas fa-check"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -603,6 +607,12 @@ textarea {
   display: flex;
   justify-content: space-between;
   padding-top: 15px;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  z-index: 10;
 }
 
 
@@ -620,30 +630,36 @@ textarea {
 }
 
 .crop-button {
-  padding: 10px 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 1.5rem;
+  backdrop-filter: blur(5px);
 }
 
-.crop-button.cancel {
-  background-color: #d0cbc4;
-  color: #423125;
+.crop-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
 }
 
-.crop-button.cancel:hover {
-  background-color: #c5beb6;
+.crop-button i {
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.crop-button.confirm {
-  background-color: #423125;
-  color: white;
+.crop-button.cancel:hover i {
+  color: #ff6b6b;
 }
 
-.crop-button.confirm:hover {
-  background-color: #2a1f18;
+.crop-button.confirm:hover i {
+  color: #51cf66;
 }
 
 .fixed-crop-container {
