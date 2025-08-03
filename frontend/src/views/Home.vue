@@ -375,10 +375,10 @@ body, html, #app {
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #f0e9e1;
-  border-top: 5px solid #423125;
+  border: 5px solid rgba(66, 49, 37, 0.2); /* Light brown with opacity */
+  border-top-color: #423125; /* Dark brown */
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1s ease-in-out infinite; /* Changed from linear to ease-in-out */
 }
 
 @keyframes spin {

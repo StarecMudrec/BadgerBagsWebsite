@@ -173,7 +173,7 @@ export default {
 }
 
 .loading-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
   font-size: 1.8rem;
   color: #423125;
   font-weight: 600;
