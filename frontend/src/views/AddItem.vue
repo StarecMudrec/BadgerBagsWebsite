@@ -37,29 +37,29 @@
     </div>
 
     <div class="add-item-container">
-      <h1>Add New Bag</h1>
+      <h1>Добавьте новый товар</h1>
       <form @submit.prevent="submitForm" class="item-form">
         <div class="form-group">
-          <label for="name">Bag Name:</label>
+          <label for="name">Название:</label>
           <input type="text" id="name" v-model="item.name" required>
         </div>
         
         <div class="form-group">
-          <label for="description">Description:</label>
+          <label for="description">Описание:</label>
           <textarea id="description" v-model="item.description" required></textarea>
         </div>
         
         <div class="form-group">
-          <label for="price">Price (₽):</label>
+          <label for="price">Цена (₽):</label>
           <input type="number" id="price" v-model.number="item.price" required>
         </div>
         
         <div class="form-group file-upload-group" :class="{ 'has-error': fileError }">
           <label for="image" class="file-upload-label">
             <span class="file-upload-text">
-              {{ item.image ? item.image.name : 'Choose bag image...' }}
+              {{ item.image ? item.image.name : 'Загрузите фото...' }}
             </span>
-            <span class="file-upload-button">Browse</span>
+            <span class="file-upload-button">Загрузить</span>
             <input 
               type="file" 
               id="image" 
@@ -68,7 +68,7 @@
               class="file-upload-input"
             >
           </label>
-          <span v-if="fileError" class="error-message">Please select an image</span>
+          <span v-if="fileError" class="error-message">Пожалуйста, загрузите фото</span>
         </div>
         
         <button 
@@ -76,8 +76,8 @@
           :disabled="isSubmitting"
           class="submit-button"
         >
-          <span v-if="!isSubmitting">Add Bag</span>
-          <span v-else>Adding...</span>
+          <span v-if="!isSubmitting">Добавить</span>
+          <span v-else>Добавляем...</span>
         </button>
       </form>
       
@@ -328,14 +328,15 @@ export default {
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 70px;
 }
 
 h1 {
   text-align: center;
   color: #423125;
   font-size: 2.2rem;
-  margin-bottom: 30px;
-  font-weight: 600;
+  margin-top: 10px;
+  font-weight: 700;
 }
 
 .item-form {
@@ -353,7 +354,7 @@ h1 {
 label {
   font-size: 1rem;
   color: #423125;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 input[type="text"],
@@ -394,7 +395,7 @@ textarea {
 }
 
 .file-upload-group {
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
 }
 
 .file-upload-label {
@@ -435,13 +436,18 @@ textarea {
 
 .submit-button {
   width: 100%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   padding: 14px;
   background-color: #423125;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: 700;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 10px;
