@@ -39,7 +39,7 @@
         </transition>
       </div>
 
-      <div v-if="loading">Loading bags...</div>
+      <div v-if="loading"><div class="loading-text">Loading bags...</div></div>
       <div v-else class="bag-catalog">
         <transition-group 
           name="list" 
