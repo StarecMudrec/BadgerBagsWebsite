@@ -368,7 +368,7 @@ body, html, #app {
 
 .loading-text {
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 2rem;
   color: #423125;
 }
 
