@@ -1,5 +1,7 @@
 <template>
   <div class="add-item-page">
+    <!-- Background image div -->
+    <div class="background-image"></div>
     <!-- Error Modal -->
     <div v-if="showErrorModal" class="modal-overlay">
       <div class="modal-content">
@@ -328,6 +330,21 @@ export default {
   --hover-border-color: #2a1f18; /* Color for underline */
 }
 
+/* Add these new styles for the background */
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px) brightness(0.8);
+  z-index: -1;
+}
+
 .add-item-container {
   max-width: 500px;
   margin: 0 auto;
@@ -336,6 +353,7 @@ export default {
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   margin-top: 100px;
+  position: relative; /* Ensure it stays above the background */
 }
 
 h1 {
