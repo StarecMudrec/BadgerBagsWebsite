@@ -540,9 +540,9 @@ textarea {
 }
 
 .crop-modal-content {
-  background-color: #f4ebe2;
+  /* background-color: #f4ebe2; */
   border-radius: 12px;
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   flex-direction: column;
 }
@@ -566,6 +566,7 @@ textarea {
   height: 500px;
   position: relative;
   overflow: hidden; /* Prevent anything from extending beyond container */
+  border-radius: 10px;
 }
 
 /* Force cropper container dimensions */
