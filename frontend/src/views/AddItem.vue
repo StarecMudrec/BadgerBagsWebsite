@@ -37,7 +37,7 @@
     </div>
 
     <div class="add-item-container">
-      <h1>Добавьте новый товар</h1>
+      <h1>Добавьте товар</h1>
       <form @submit.prevent="submitForm" class="item-form">
         <div class="form-group">
           <label for="name">Название:</label>
@@ -81,7 +81,7 @@
         </button>
       </form>
       
-      <router-link to="/" class="back-link">← Back to home</router-link>
+      <router-link to="/" class="back-link">← На главную</router-link>
     </div>
   </div>
 </template>
@@ -165,7 +165,7 @@ export default {
         
         // Set container dimensions
         const container = this.$refs.cropper.$el;
-        container.style.width = '500px';
+        container.style.width = '700px';
         container.style.height = '500px';
         container.style.overflow = 'hidden';
         
@@ -322,7 +322,7 @@ export default {
 }
 
 .add-item-container {
-  max-width: 500px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.7);
@@ -562,7 +562,7 @@ textarea {
 }
 
 .crop-container {
-  width: 500px;
+  width: 700px;
   height: 500px;
   position: relative;
   overflow: hidden; /* Prevent anything from extending beyond container */
@@ -646,7 +646,7 @@ textarea {
 }
 
 .fixed-crop-container {
-  width: 500px;
+  width: 700px;
   height: 500px;
   margin: 0 auto;
   position: relative;
