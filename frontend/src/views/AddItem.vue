@@ -326,7 +326,7 @@ export default {
 }
 
 .add-item-container {
-  max-width: 700px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.7);
