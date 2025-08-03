@@ -323,6 +323,9 @@ export default {
   padding: 40px 20px;
   background: linear-gradient(to bottom, #f3efeb 0%, #e7e2dc 100%);
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  --accent-color: #423125; /* Same as your current text color */
+  --hover-color: #2a1f18; /* Darker shade for hover */
+  --hover-border-color: #2a1f18; /* Color for underline */
 }
 
 .add-item-container {
@@ -439,7 +442,7 @@ textarea {
 }
 
 .submit-button {
-  width: 100%;
+  width: 150px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -464,15 +467,35 @@ textarea {
 .back-link {
   display: inline-block;
   margin-top: 20px;
-  color: #423125;
+  color: var(--accent-color);
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s ease;
+  position: relative;
+  padding: 5px 0;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .back-link:hover {
-  color: #2a1f18;
-  text-decoration: underline;
+  color: var(--hover-color);
+  -webkit-text-stroke: 0.15px var(--hover-border-color);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.back-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--hover-border-color);
+  transition: width 0.3s ease;
+}
+
+.back-link:hover::after {
+  width: 100%;
 }
 
 /* Modal Styles */
@@ -678,10 +701,6 @@ textarea {
 @media (max-width: 768px) {
   .add-item-container {
     padding: 25px 20px;
-  }
-  
-  h1 {
-    font-size: 1.8rem;
   }
 
   .crop-modal-content {
