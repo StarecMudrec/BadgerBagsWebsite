@@ -42,7 +42,7 @@
       <div v-if="loading">
         <div class="loading-container">
           <div class="spinner"></div>
-          <div class="loading-text">Loading bags...</div>
+          <div class="loading-text">Загрузка...</div>
         </div>
       </div>
       <div v-else class="bag-catalog">
