@@ -144,7 +144,7 @@ export default {
 
 /* Loading overlay styles */
 .loading-overlay {
-  position: fixed;
+  position: absolute; /* Changed from fixed to absolute */
   top: 0;
   left: 0;
   width: 100%;
@@ -153,7 +153,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10; /* Lower than navbar's z-index */
 }
 
 .loading-content {
