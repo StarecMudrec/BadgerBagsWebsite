@@ -47,7 +47,7 @@
         >
           <span v-if="isDeleting">Deleting...</span>
           <span v-else>
-            {{ selectedBags.size }} 
+            <!-- {{ selectedBags.size }}  -->
             <i class="bi bi-trash"></i>
           </span>
         </button>
@@ -522,7 +522,7 @@ body, html, #app {
   font-weight: 500;
   font-size: 42px;
   cursor: pointer;
-  text-shadow: 2px 4px 3px rgb(0 0 0 / 67%);
+  text-shadow: 1px 2px 3px rgb(0 0 0 / 67%);
   transition: all 0.2s ease;
   z-index: 100;
 }
