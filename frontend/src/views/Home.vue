@@ -119,6 +119,7 @@
 <script>
 import BagCard from '@/components/BagCard.vue';
 import { gsap } from 'gsap';
+import axios from 'axios'; // Add this import
 
 const clickOutside = {
   beforeMount(el, binding) {
