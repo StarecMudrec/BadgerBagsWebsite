@@ -268,47 +268,53 @@ export default {
     },
     
     async confirmDelete() {
+      this.isDeleting = true;
       try {
-        // Get the token from cookies or localStorage
-        const token = document.cookie.replace(
-          /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, 
-          "$1"
-        ) || localStorage.getItem('token');
-
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-
-        // Delete all selected bags with auth header
+        // Delete all selected bags
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          axios.delete(`/api/bags/${bagId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+          fetch(`/api/bags/${bagId}`, {
+            method: 'DELETE',
+            credentials: 'include' // Important for cookies/session
           })
         );
 
-        await Promise.all(deletePromises);
+        const results = await Promise.all(deletePromises);
         
+        // Check for failed deletions
+        const failedDeletions = results.filter(r => !r.ok);
+        if (failedDeletions.length > 0) {
+          const errors = await Promise.all(failedDeletions.map(async r => {
+            try {
+              return await r.json();
+            } catch {
+              return { error: r.statusText };
+            }
+          }));
+          throw new Error(`Failed to delete some bags: ${errors.map(e => e.error || 'Unknown error').join(', ')}`);
+        }
+
         // Refresh the bag list
-        const response = await fetch('/api/bags', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) throw new Error('Failed to refresh bags');
+        const response = await fetch('/api/bags');
         this.bags = await response.json();
         
         // Reset selection
         this.selectedBags.clear();
         this.showDeleteConfirmation = false;
+        this.showDeleteButton = false;
         
         // Show success message
-        this.$toast.success(`${deletePromises.length} bag(s) deleted successfully`);
+        alert(`${results.length} bag(s) deleted successfully`);
+        
       } catch (error) {
         console.error('Error deleting bags:', error);
-        this.$toast.error(error.response?.data?.error || 'Failed to delete bags');
+        alert(error.message || 'Failed to delete bags');
+        
+        // If unauthorized (401), redirect to login
+        if (error.message.includes('401') || error.message.toLowerCase().includes('unauthorized')) {
+          this.$router.push('/login');
+        }
+      } finally {
+        this.isDeleting = false;
       }
     },
     
