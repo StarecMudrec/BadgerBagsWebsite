@@ -3,10 +3,9 @@
     class="bag-card"
     :class="{ 
       'selected': isSelected,
-      'selected-animation': isSelected && !isMobile
+      'selected-animation': isSelected && !isMobile,
+      'raised': isSelected
     }"
-    @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
   >
     <img 
       :src="'/bags_imgs/' + bag.image" 
@@ -40,8 +39,7 @@ export default {
   data() {
     return {
       isSelected: false,
-      isMobile: false,
-      isHovered: false
+      isMobile: false
     };
   },
   mounted() {
@@ -85,15 +83,10 @@ export default {
   height: 100%;
   width: 100%;
   position: relative;
+  transition: all 0.3s ease; /* Changed to 'all' to animate multiple properties */
   box-sizing: border-box;
   border: 4px solid transparent;
-  transform: translateY(0);
-  will-change: transform, box-shadow; /* Optimize for animation */
-  transition: 
-    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-    border-color 0.3s ease;
-  z-index: 1;
+  transform: translateY(0); /* Initial position */
 }
 
 .bag-card.raised {
@@ -102,15 +95,7 @@ export default {
 }
 
 .bag-card.selected {
-  transform: translateY(-15px);
-  border-color: rgba(255, 42, 42, 0.32);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  z-index: 2; /* Ensure selected card appears above others */
-}
-
-.bag-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  border: 4px solid rgba(255, 42, 42, 0.32);
 }
 
 .bag-card::before {
@@ -129,51 +114,38 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: -4px; /* Account for border */
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: -1;
-  filter: blur(8px);
-  opacity: 0;
-  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.bag-card.selected::before {
-  opacity: 1;
+  z-index: 0;
+  filter: blur(4px);
 }
 
 .bag-card.selected-animation {
-  animation: 
-    float 3s ease-in-out infinite,
-    ominous-shake 8s infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(-15px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  animation: ominous-shake 4s infinite;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes ominous-shake {
-  0%, 90%, 100% {
-    transform: translateY(-15px) rotate(0deg);
+  0%, 85%, 100% {
+    transform: translateY(-15px) rotate(0deg); /* Maintain raised position */
+  }
+  88% {
+    transform: translateY(-15px) translateX(-6px) rotate(-3deg); /* Shake left */
+  }
+  90% {
+    transform: translateY(-15px) translateX(8px) rotate(4deg); /* Shake right */
   }
   92% {
-    transform: translateY(-15px) translateX(-3px) rotate(-1.5deg);
+    transform: translateY(-15px) translateX(-4px) rotate(-2deg); /* Shake left */
   }
   94% {
-    transform: translateY(-15px) translateX(4px) rotate(2deg);
+    transform: translateY(-15px) translateX(3px) rotate(1deg); /* Shake right */
   }
   96% {
-    transform: translateY(-15px) translateX(-2px) rotate(-1deg);
-  }
-  98% {
-    transform: translateY(-15px) translateX(1px) rotate(0.5deg);
+    transform: translateY(-15px) translateX(-2px) rotate(-0.5deg); /* Settle */
   }
 }
 
@@ -186,13 +158,6 @@ export default {
   height: 20px;
   cursor: pointer;
   display: none;
-  transition: all 0.3s ease;
-  opacity: 0;
-}
-
-.bag-card:hover .selection-checkbox,
-.bag-card.selected .selection-checkbox {
-  opacity: 1;
 }
 
 @media (min-width: 769px) {
@@ -233,12 +198,9 @@ export default {
   .selection-checkbox {
     display: block;
   }
-  .bag-card.selected {
-    transform: translateY(-8px);
-  }
-  
   .bag-card.selected-animation {
     animation: none;
+    transform: none;
   }
 }
 
