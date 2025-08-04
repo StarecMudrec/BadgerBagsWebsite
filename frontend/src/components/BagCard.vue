@@ -3,7 +3,8 @@
     class="bag-card"
     :class="{ 
       'selected': isSelected,
-      'selected-animation': isSelected && !isMobile
+      'selected-animation': isSelected && !isMobile,
+      'raised': isSelected
     }"
   >
     <img 
@@ -82,13 +83,19 @@ export default {
   height: 100%;
   width: 100%;
   position: relative;
-  transition: transform 0.2s ease, border 0.2s ease;
-  box-sizing: border-box; /* Add this */
-  border: 4px solid transparent; /* Add transparent border initially */
+  transition: all 0.3s ease; /* Changed to 'all' to animate multiple properties */
+  box-sizing: border-box;
+  border: 4px solid transparent;
+  transform: translateY(0); /* Initial position */
+}
+
+.bag-card.raised {
+  transform: translateY(-15px); /* Raise effect */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow when raised */
 }
 
 .bag-card.selected {
-  border: 4px solid rgba(255, 42, 42, 0.32); /* This won't change dimensions now */
+  border: 4px solid rgba(255, 42, 42, 0.32);
 }
 
 .bag-card::before {
@@ -105,7 +112,15 @@ export default {
 }
 
 .bag-card.selected::before {
-  background-color: rgba(255, 42, 42, 0.24); /* Only change the color */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 42, 42, 0.24);
+  z-index: 0;
+  filter: blur(4px);
 }
 
 .bag-card.selected-animation {
