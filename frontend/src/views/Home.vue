@@ -43,11 +43,15 @@
           v-if="showDeleteButton" 
           @click="showDeleteConfirmation = true"
           class="delete-button"
+          :disabled="isDeleting"
         >
-          Delete Selected ({{ selectedBags.size }})
-          <svg class="trash-icon" viewBox="0 0 24 24">
-            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-          </svg>
+          <span v-if="isDeleting">Deleting...</span>
+          <span v-else>
+            Delete Selected ({{ selectedBags.size }})
+            <svg class="trash-icon" viewBox="0 0 24 24">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+            </svg>
+          </span>
         </button>
       </div>
 
@@ -293,25 +297,23 @@ export default {
         const response = await fetch('/api/bags');
         this.bags = await response.json();
         
-        // Reset selection
-        this.selectedBags.clear();
+        // Close the confirmation dialog
         this.showDeleteConfirmation = false;
         
-        // Show success message via bot notification
+        // Clear selection and hide delete button
+        this.selectedBags.clear();
+        this.showDeleteButton = false;
+        
+        // Close the WebApp if in Telegram environment
         if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.showAlert(`${results.length} items deleted successfully`);
-        } else {
-          alert(`${results.length} items deleted successfully`);
+          window.Telegram.WebApp.close();
         }
         
       } catch (error) {
         console.error('Deletion error:', error);
-        
-        // Show error via bot notification
+        // Just close on error too (or you can keep the error handling if preferred)
         if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.showAlert(error.message);
-        } else {
-          alert(error.message);
+          window.Telegram.WebApp.close();
         }
       } finally {
         this.isDeleting = false;
