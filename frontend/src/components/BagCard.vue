@@ -80,7 +80,6 @@ export default {
   box-sizing: border-box;
   border: 4px solid transparent;
   cursor: pointer;
-  overflow: hidden; /* Add this to contain the overlay */
 }
 
 .bag-card.raised {
@@ -108,13 +107,27 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: -4px; /* Adjust to account for border */
-  left: -4px;
-  right: -4px;
-  bottom: -4px; /* Extend to cover price tag */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 40px); /* Adjust height to stop above price tag */
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: 1; /* Increase z-index to cover price */
+  z-index: 1;
   filter: blur(4px);
+  border-radius: 4px; /* Match image border radius */
+}
+
+.bag-card.selected::after {
+  content: '';
+  position: absolute;
+  bottom: 40px; /* Position above price tag */
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to bottom, 
+    rgba(255, 42, 42, 0.24) 0%, 
+    transparent 100%);
+  z-index: 1;
 }
 
 .bag-card.selected-animation {
@@ -162,13 +175,14 @@ export default {
 
 .bag-image {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 40px); /* Reserve space for price */
   aspect-ratio: 1 / 1.56630057630;
   margin-bottom: 10px;
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
   object-fit: cover;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 0;
 }
 
 /* .bag-card:hover .bag-image {
