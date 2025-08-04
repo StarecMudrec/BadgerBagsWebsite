@@ -602,6 +602,45 @@ def add_bag():
         'filename': filename
     }), 202  # Accepted (not completed)
 
+@app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
+def delete_bag(bag_id):
+    # Check authentication
+    is_auth, user_id = is_authenticated(request, session)
+    if not is_auth:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    # Check if user is admin (since only admins should be able to delete)
+    if not session.get('is_admin', False):
+        return jsonify({'error': 'Admin privileges required'}), 403
+
+    # Find the bag to delete
+    bag = Item.query.get(bag_id)
+    if not bag:
+        return jsonify({'error': 'Bag not found'}), 404
+
+    try:
+        # Delete the associated image file if it exists
+        if bag.img:
+            img_path = os.path.join(app.config['UPLOAD_FOLDER'], bag.img)
+            if os.path.exists(img_path):
+                try:
+                    os.remove(img_path)
+                    app.logger.info(f"Deleted image file: {img_path}")
+                except OSError as e:
+                    app.logger.error(f"Error deleting image file: {e}")
+                    # Continue with DB deletion even if image deletion fails
+
+        # Delete from database
+        db.session.delete(bag)
+        db.session.commit()
+        
+        return jsonify({'message': 'Bag deleted successfully'}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error deleting bag: {str(e)}")
+        return jsonify({'error': 'Failed to delete bag'}), 500
+
 @app.route('/api/bags/<int:bag_id>')
 def get_bag_details(bag_id):
     item = Item.query.get(bag_id)

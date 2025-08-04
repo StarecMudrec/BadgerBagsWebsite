@@ -44,7 +44,7 @@
           @click="showDeleteConfirmation = true"
           class="delete-button"
         >
-          Delete Selected
+          Delete Selected ({{ selectedBags.size }})
           <svg class="trash-icon" viewBox="0 0 24 24">
             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
           </svg>
@@ -55,7 +55,7 @@
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
         <div class="confirmation-dialog">
           <h3>Confirm Deletion</h3>
-          <p>Are you sure you want to delete the selected items?</p>
+          <p>Are you sure you want to delete the selected bags? This action cannot be undone.</p>
           <div class="dialog-buttons">
             <button @click="confirmDelete" class="confirm-button">Delete</button>
             <button @click="showDeleteConfirmation = false" class="cancel-button">Cancel</button>
@@ -269,25 +269,24 @@ export default {
     async confirmDelete() {
       try {
         // Delete all selected bags
-        await Promise.all(
-          Array.from(this.selectedBags).map(bagId => 
-            this.$store.dispatch('deleteBag', bagId)
-          )
-        );
+        const deletePromises = Array.from(this.selectedBags).map(bagId => 
+          this.$axios.delete(`/api/bags/${bagId}`)
+        )
+        
+        await Promise.all(deletePromises)
         
         // Refresh the bag list
-        await this.$store.dispatch('fetchBags');
+        await this.$store.dispatch('fetchBags')
         
         // Reset selection
-        this.selectedBags.clear();
-        this.showDeleteButton = false;
-        this.showDeleteConfirmation = false;
+        this.selectedBags.clear()
+        this.showDeleteConfirmation = false
         
-        // Optional: Show success message
-        this.$toast.success('Bags deleted successfully');
+        // Show success message
+        this.$toast.success(`${deletePromises.length} bag(s) deleted successfully`)
       } catch (error) {
-        console.error('Error deleting bags:', error);
-        this.$toast.error('Failed to delete bags');
+        console.error('Error deleting bags:', error)
+        this.$toast.error('Failed to delete bags')
       }
     },
     
@@ -486,14 +485,14 @@ body, html, #app {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 12px 20px;
   background-color: #ff4444;
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
   z-index: 100;
 }
@@ -536,11 +535,13 @@ body, html, #app {
 .confirmation-dialog h3 {
   margin-top: 0;
   color: #333;
+  font-size: 1.2rem;
 }
 
 .confirmation-dialog p {
   margin-bottom: 24px;
   color: #666;
+  line-height: 1.5;
 }
 
 .dialog-buttons {
@@ -561,7 +562,7 @@ body, html, #app {
 }
 
 .confirm-button:hover {
-  background-color: #ff3333;
+  background-color: #e53935;
 }
 
 .cancel-button {
