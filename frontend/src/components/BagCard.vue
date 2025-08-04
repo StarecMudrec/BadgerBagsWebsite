@@ -86,7 +86,9 @@ export default {
 }
 
 .bag-card.selected {
+  transform: translateY(-15px); /* Rise up when selected */
   border: 4px solid rgba(255, 42, 42, 0.32);
+  z-index: 10; /* Ensure it's above other cards */
 }
 
 .bag-card.selected::before {
@@ -102,30 +104,28 @@ export default {
 }
 
 .bag-card.selected-animation {
-  animation: ominous-shake 3s ease-in-out infinite;
-  transform: translateY(0);
-  z-index: 10;
+  animation: ominous-shake 4s infinite;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes ominous-shake {
-  0%, 100% {
-    transform: translateX(0) rotate(0deg);
+  0%, 85%, 100% {
+    transform: translateY(-15px) rotate(0deg); /* Maintain raised position */
   }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-2px) rotate(-0.5deg);
+  88% {
+    transform: translateY(-15px) translateX(-6px) rotate(-3deg); /* Shake left */
   }
-  20%, 40%, 60%, 80% {
-    transform: translateX(2px) rotate(0.5deg);
+  90% {
+    transform: translateY(-15px) translateX(8px) rotate(4deg); /* Shake right */
   }
-  15%, 45%, 75% {
-    transform: translateY(2px);
+  92% {
+    transform: translateY(-15px) translateX(-4px) rotate(-2deg); /* Shake left */
   }
-  25%, 55%, 85% {
-    transform: translateY(-2px);
+  94% {
+    transform: translateY(-15px) translateX(3px) rotate(1deg); /* Shake right */
   }
-  95% {
-    transform: scale(1.02);
-    filter: brightness(1.1);
+  96% {
+    transform: translateY(-15px) translateX(-2px) rotate(-0.5deg); /* Settle */
   }
 }
 
@@ -158,8 +158,12 @@ export default {
   cursor: pointer;
 }
 
-.bag-image:hover:not(.selected) {
+.bag-image:hover {
   transform: scale(1.02);
+}
+
+.bag-card.selected .bag-image:hover {
+  transform: none;
 }
 
 .bag-price {
