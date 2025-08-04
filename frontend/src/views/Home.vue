@@ -269,26 +269,46 @@ export default {
     
     async confirmDelete() {
       try {
-        // Delete all selected bags
+        // Get the token from cookies or localStorage
+        const token = document.cookie.replace(
+          /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, 
+          "$1"
+        ) || localStorage.getItem('token');
+
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        // Delete all selected bags with auth header
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          axios.delete(`/api/bags/${bagId}`) // Use axios directly
-        )
-        
-        await Promise.all(deletePromises)
+          axios.delete(`/api/bags/${bagId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+        );
+
+        await Promise.all(deletePromises);
         
         // Refresh the bag list
-        const response = await fetch('/api/bags');
+        const response = await fetch('/api/bags', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to refresh bags');
         this.bags = await response.json();
         
         // Reset selection
-        this.selectedBags.clear()
-        this.showDeleteConfirmation = false
+        this.selectedBags.clear();
+        this.showDeleteConfirmation = false;
         
-        // Show success message (you might want to use a proper toast library)
-        alert(`${deletePromises.length} bag(s) deleted successfully`)
+        // Show success message
+        this.$toast.success(`${deletePromises.length} bag(s) deleted successfully`);
       } catch (error) {
-        console.error('Error deleting bags:', error)
-        alert('Failed to delete bags')
+        console.error('Error deleting bags:', error);
+        this.$toast.error(error.response?.data?.error || 'Failed to delete bags');
       }
     },
     

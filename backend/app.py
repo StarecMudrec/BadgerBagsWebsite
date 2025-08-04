@@ -604,13 +604,18 @@ def add_bag():
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
-    # Check authentication
-    is_auth, user_id = is_authenticated(request, session)
-    if not is_auth:
-        return jsonify({'error': 'Unauthorized'}), 401
+    ## Check authentication
+    token = request.cookies.get('token') or request.headers.get('Authorization')
+    if not token:
+        return jsonify({'error': 'Missing authentication token'}), 401
 
-    # Check if user is admin (since only admins should be able to delete)
-    if not session.get('is_admin', False):
+    # Verify token
+    auth_token = AuthToken.query.filter_by(token=token).first()
+    if not auth_token:
+        return jsonify({'error': 'Invalid token'}), 401
+
+    # Check if user is admin (optional)
+    if not auth_token.is_admin:
         return jsonify({'error': 'Admin privileges required'}), 403
 
     # Find the bag to delete
