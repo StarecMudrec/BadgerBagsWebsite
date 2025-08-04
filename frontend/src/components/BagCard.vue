@@ -86,9 +86,7 @@ export default {
 }
 
 .bag-card.selected {
-  transform: translateY(-15px); /* Rise up when selected */
   border: 4px solid rgba(255, 42, 42, 0.32);
-  z-index: 10; /* Ensure it's above other cards */
 }
 
 .bag-card.selected::before {
@@ -158,13 +156,13 @@ export default {
   cursor: pointer;
 }
 
-.bag-image:hover {
+/* .bag-image:hover {
   transform: scale(1.02);
 }
 
 .bag-card.selected .bag-image:hover {
   transform: none;
-}
+} */
 
 .bag-price {
   font-weight: bold;
