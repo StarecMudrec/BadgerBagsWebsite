@@ -515,10 +515,10 @@ body, html, #app {
   transform: translateY(0);
 }
 
-/* .bag-catalog >>> .bag-card .bag-image:hover {
+.bag-catalog >>> .bag-card .bag-image:hover {
   transform: translateY(-5px);
   filter: brightness(1.05) contrast(1.05);
-} */
+}
 
 .bag-catalog >>> .bag-card .bag-image:hover::after {
   content: '';
