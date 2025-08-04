@@ -67,6 +67,7 @@
             v-for="bag in sortedBags" 
             :key="'bag-' + bag.id"  
             :bag="bag" 
+            :selection-mode="showDeleteButton"
             class="bag-item"
             :class="{ 
               'selected': selectedBags.has(bag.id),

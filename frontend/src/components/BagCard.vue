@@ -1,7 +1,8 @@
 <template>
   <div 
     class="bag-card"
-    @click="goToDetail"
+    :class="{ 'selected': isSelected }"
+    @click="handleCardClick"
   >
     <img 
       :src="'/bags_imgs/' + bag.image" 
@@ -28,6 +29,10 @@ export default {
       validator: (bag) => {
         return typeof bag.id !== 'undefined' && typeof bag.image !== 'undefined'
       }
+    },
+    selectionMode: { // Add this prop
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -44,6 +49,17 @@ export default {
     window.removeEventListener('resize', this.checkMobile);
   },
   methods: {
+    handleCardClick() {
+      if (this.selectionMode || this.isSelected) {
+        this.toggleSelection();
+      } else {
+        this.goToDetail();
+      }
+    },
+    toggleSelection() {
+      this.isSelected = !this.isSelected;
+      this.$emit('bag-selected', this.bag.id, this.isSelected);
+    },
     checkMobile() {
       this.isMobile = window.innerWidth <= 768;
     },
