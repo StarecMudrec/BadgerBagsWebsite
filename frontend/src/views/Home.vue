@@ -88,11 +88,6 @@
           name="list" 
           tag="div" 
           class="bag-grid"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-          @after-enter="afterEnter"
-          @after-leave="afterLeave"
         >
           <BagCard 
             v-for="bag in sortedBags" 
@@ -321,47 +316,51 @@ export default {
     async confirmDelete() {
       this.isDeleting = true;
       try {
-        const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          fetch(`/api/bags/${bagId}`, {
-            method: 'DELETE',
-            credentials: 'include'
-          })
+        // Create a copy of the current bags for animation
+        const bagsBeforeDeletion = [...this.bags];
+        
+        // Perform deletion
+        await Promise.all(
+          Array.from(this.selectedBags).map(bagId => 
+            fetch(`/api/bags/${bagId}`, {
+              method: 'DELETE',
+              credentials: 'include'
+            })
+          )
         );
-
-        const results = await Promise.all(deletePromises);
         
-        // Check for failed deletions
-        const failedDeletions = results.filter(r => !r.ok);
-        if (failedDeletions.length > 0) {
-          const errors = await Promise.all(failedDeletions.map(async r => {
-            const data = await r.json().catch(() => ({}));
-            return data.error || r.statusText;
-          }));
-          throw new Error(`Failed to delete: ${errors.join(', ')}`);
-        }
-
-        // Refresh the bag list on success
+        // Get fresh data from server
         const response = await fetch('/api/bags');
-        this.bags = await response.json();
+        const newBags = await response.json();
         
-        // Close the confirmation dialog
-        this.showDeleteConfirmation = false;
+        // Animate the transition
+        this.bags = bagsBeforeDeletion; // Reset to pre-deletion state
+        await this.$nextTick(); // Wait for DOM update
         
-        // Clear selection and hide delete button
-        this.selectedBags.clear();
-        this.showDeleteButton = false;
-        
-        // Close the WebApp if in Telegram environment
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.close();
-        }
+        // Use GSAP for smooth transition
+        gsap.to(".bag-item", {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.3,
+          onComplete: () => {
+            this.bags = newBags; // Update to new state
+            this.$nextTick(() => {
+              gsap.fromTo(".bag-item", 
+                { opacity: 0, y: 20 },
+                { 
+                  opacity: 1, 
+                  y: 0,
+                  duration: 0.5,
+                  stagger: 0.05,
+                  ease: "back.out(1.7)"
+                }
+              );
+            });
+          }
+        });
         
       } catch (error) {
         console.error('Deletion error:', error);
-        // Just close on error too (or you can keep the error handling if preferred)
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.close();
-        }
       } finally {
         this.isDeleting = false;
         this.showDeleteConfirmation = false;
@@ -771,6 +770,36 @@ body, html, #app {
 .list-leave-to {
   opacity: 0;
   transform: translateY(30px);
+}
+
+/* Add these styles to your existing CSS */
+.bag-grid {
+  position: relative;
+}
+
+.list-item {
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.list-move {
+  transition: transform 0.5s ease;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.8) translateY(30px);
+}
+
+.list-leave-active {
+  position: absolute;
+  width: calc(100% / var(--columns, 4) - 20px);
+  /* Adjust --columns based on your grid layout */
 }
 
 .bag-grid > * {
