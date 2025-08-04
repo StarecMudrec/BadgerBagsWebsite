@@ -249,15 +249,7 @@ def home():
     is_auth, _ = is_authenticated(request, session)
     return render_template("homepage.html", is_auth=is_auth)
 
-@app.route('/api/check_auth')
-def check_auth():
-    if 'telegram_id' in session:
-        return jsonify({
-            'isAuthenticated': True,
-            'userId': session['telegram_id'],
-            'isAdmin': session.get('is_admin', False)
-        })
-    return jsonify({'isAuthenticated': False})
+
 
 #API ROUTES
 

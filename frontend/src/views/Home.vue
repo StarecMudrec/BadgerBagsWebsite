@@ -275,68 +275,59 @@ export default {
     async confirmDelete() {
       this.isDeleting = true;
       try {
-        // 1. Check authentication status
+        // Check if user is authenticated
         const authCheck = await fetch('/api/check_auth');
-        const authData = await authCheck.json();
+        if (!authCheck.ok) {
+          throw new Error('Please login first');
+        }
         
+        const authData = await authCheck.json();
         if (!authData.isAuthenticated) {
-          // Show Telegram login prompt instead of redirect
-          this.showTelegramLoginPrompt();
+          // Redirect to login or show login modal
+          this.$router.push('/login');
           return;
         }
 
-        // 2. Delete bags with Telegram session
+        // Delete all selected bags
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
           fetch(`/api/bags/${bagId}`, {
             method: 'DELETE',
-            credentials: 'include' // Send cookies
+            credentials: 'include' // Important for cookies
           })
         );
 
         const results = await Promise.all(deletePromises);
         
-        // 3. Check results
+        // Check if any deletions failed
         const failedDeletions = results.filter(r => !r.ok);
         if (failedDeletions.length > 0) {
-          throw new Error('Some deletions failed');
+          const errors = await Promise.all(failedDeletions.map(r => r.json()));
+          throw new Error(errors.map(e => e.error).join(', '));
         }
 
-        // 4. Refresh data
+        // Refresh the bag list
         const response = await fetch('/api/bags');
         this.bags = await response.json();
         
-        // 5. Reset UI
+        // Reset selection
         this.selectedBags.clear();
         this.showDeleteConfirmation = false;
         
-        // 6. Show success
-        this.$toast.success(`${results.length} bag(s) deleted`);
+        // Show success message
+        alert(`${results.length} bag(s) deleted successfully`);
         
       } catch (error) {
-        console.error('Deletion error:', error);
-        this.$toast.error('Deletion failed - please use Telegram login');
+        console.error('Error deleting bags:', error);
+        alert(error.message || 'Failed to delete bags');
+        
+        // If unauthorized, redirect to login
+        if (error.message.includes('Unauthorized') || 
+            error.message.includes('login')) {
+          this.$router.push('/login');
+        }
+      } finally {
+        this.isDeleting = false;
       }
-    },
-
-    showTelegramLoginPrompt() {
-      // Create a modal or notification prompting user to:
-      // 1. Open their Telegram bot
-      // 2. Use /getlink command
-      // 3. Click the generated login link
-      
-      this.$toast.warning(`
-        <div>
-          <p>Please authenticate via Telegram:</p>
-          <ol>
-            <li>Open the admin Telegram bot</li>
-            <li>Use the /getlink command</li>
-            <li>Click the generated login link</li>
-          </ol>
-        </div>
-      `, {
-        timeout: 10000,
-        closeOnClick: false
-      });
     },
     
     animateSelection(bagId, isSelected) {
