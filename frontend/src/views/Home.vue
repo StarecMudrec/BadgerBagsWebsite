@@ -56,8 +56,8 @@
       <!-- Delete Confirmation Dialog -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
         <div class="confirmation-dialog">
-          <h3>Confirm Deletion</h3>
-          <p>Are you sure you want to delete the selected bags? This action cannot be undone.</p>
+          <h3>Подтвердите удаление</h3>
+          <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
           <div class="dialog-buttons">
             <button @click="confirmDelete" class="confirm-button" title="Delete">
               <i class="bi bi-trash"></i>
@@ -547,7 +547,7 @@ body, html, #app {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -558,7 +558,7 @@ body, html, #app {
 .confirmation-dialog {
   background-color: #f4ebe2;
   border-radius: 12px;
-  padding: 30px;
+  padding: 22px;
   max-width: 400px;
   width: 90%;
   text-align: center;
@@ -569,14 +569,14 @@ body, html, #app {
 .confirmation-dialog h3 {
   margin-top: 0;
   color: #423125;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 15px;
   font-size: 1.5rem;
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
 }
 
 .confirmation-dialog p {
-  margin-bottom: 30px;
+  margin-bottom: 22px;
   color: #423125;
   line-height: 1.5;
   font-size: 1.1rem;
@@ -619,7 +619,7 @@ body, html, #app {
 }
 
 /* Add these icon classes if not already present */
-.bi-trash {
+/* .bi-trash {
   display: inline-block;
   width: 1em;
   height: 1em;
@@ -627,7 +627,7 @@ body, html, #app {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z'/%3E%3Cpath fill-rule='evenodd' d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
-}
+} */
 
 .loading-container {
   position: absolute;
