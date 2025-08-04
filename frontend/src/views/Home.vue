@@ -270,11 +270,10 @@ export default {
     async confirmDelete() {
       this.isDeleting = true;
       try {
-        // Delete all selected bags
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
           fetch(`/api/bags/${bagId}`, {
             method: 'DELETE',
-            credentials: 'include' // Important for cookies/session
+            credentials: 'include'
           })
         );
 
@@ -284,34 +283,35 @@ export default {
         const failedDeletions = results.filter(r => !r.ok);
         if (failedDeletions.length > 0) {
           const errors = await Promise.all(failedDeletions.map(async r => {
-            try {
-              return await r.json();
-            } catch {
-              return { error: r.statusText };
-            }
+            const data = await r.json().catch(() => ({}));
+            return data.error || r.statusText;
           }));
-          throw new Error(`Failed to delete some bags: ${errors.map(e => e.error || 'Unknown error').join(', ')}`);
+          throw new Error(`Failed to delete: ${errors.join(', ')}`);
         }
 
-        // Refresh the bag list
+        // Refresh the bag list on success
         const response = await fetch('/api/bags');
         this.bags = await response.json();
         
         // Reset selection
         this.selectedBags.clear();
         this.showDeleteConfirmation = false;
-        this.showDeleteButton = false;
         
-        // Show success message
-        alert(`${results.length} bag(s) deleted successfully`);
+        // Show success message via bot notification
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.showAlert(`${results.length} items deleted successfully`);
+        } else {
+          alert(`${results.length} items deleted successfully`);
+        }
         
       } catch (error) {
-        console.error('Error deleting bags:', error);
-        alert(error.message || 'Failed to delete bags');
+        console.error('Deletion error:', error);
         
-        // If unauthorized (401), redirect to login
-        if (error.message.includes('401') || error.message.toLowerCase().includes('unauthorized')) {
-          this.$router.push('/login');
+        // Show error via bot notification
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.showAlert(error.message);
+        } else {
+          alert(error.message);
         }
       } finally {
         this.isDeleting = false;

@@ -604,25 +604,22 @@ def add_bag():
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
-    # Check authentication
-    is_auth, user_id = is_authenticated(request, session)
-    if not is_auth:
-        return jsonify({'error': 'Unauthorized'}), 401
+    # Check Telegram session authentication
+    if 'telegram_id' not in session:
+        return jsonify({'error': 'Telegram authentication required'}), 401
     
-    # Check if user is admin (if needed)
-    if not session.get('is_admin'):
+    # Additional admin check if needed
+    if not session.get('is_admin', False):
         return jsonify({'error': 'Admin privileges required'}), 403
     
-    # Find the bag
     bag = Item.query.get(bag_id)
     if not bag:
         return jsonify({'error': 'Bag not found'}), 404
     
     try:
-        # Delete the bag
         db.session.delete(bag)
         db.session.commit()
-        return jsonify({'message': 'Bag deleted successfully'}), 200
+        return jsonify({'message': 'Deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
