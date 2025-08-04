@@ -181,12 +181,6 @@ export default {
   font-size: 24px;
   font-family: 'Aclonica', sans-serif;
   pointer-events: none;
-  position: relative; /* Add this */
-  z-index: 2; /* Ensure price stays above overlay */
-  margin-top: 10px; /* Maintain spacing */
-  background: rgba(240, 233, 225, 0.7); /* Slight background for readability */
-  padding: 2px 8px;
-  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
