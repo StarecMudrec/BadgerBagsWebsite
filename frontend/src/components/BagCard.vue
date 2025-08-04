@@ -101,23 +101,30 @@ export default {
 }
 
 .bag-card.selected-animation {
-  animation: float-shake 2s ease-in-out infinite;
-  transform: translateY(-15px);
+  animation: ominous-shake 3s ease-in-out infinite;
+  transform: translateY(0);
   z-index: 10;
 }
 
-@keyframes float-shake {
+@keyframes ominous-shake {
   0%, 100% {
-    transform: translateY(-20px) rotate(-2deg);
+    transform: translateX(0) rotate(0deg);
   }
-  25% {
-    transform: translateY(-25px) rotate(2deg);
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px) rotate(-0.5deg);
   }
-  50% {
-    transform: translateY(-20px) rotate(0deg);
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px) rotate(0.5deg);
   }
-  75% {
-    transform: translateY(-25px) rotate(-2deg);
+  15%, 45%, 75% {
+    transform: translateY(2px);
+  }
+  25%, 55%, 85% {
+    transform: translateY(-2px);
+  }
+  95% {
+    transform: scale(1.02);
+    filter: brightness(1.1);
   }
 }
 
@@ -150,7 +157,7 @@ export default {
   cursor: pointer;
 }
 
-.bag-image:hover {
+.bag-image:hover:not(.selected) {
   transform: scale(1.02);
 }
 
