@@ -80,6 +80,7 @@ export default {
   box-sizing: border-box;
   border: 4px solid transparent;
   cursor: pointer;
+  overflow: hidden; /* Add this to contain the overlay */
 }
 
 .bag-card.raised {
@@ -107,12 +108,12 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: -4px; /* Adjust to account for border */
+  left: -4px;
+  right: -4px;
+  bottom: -4px; /* Extend to cover price tag */
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: 0;
+  z-index: 1; /* Increase z-index to cover price */
   filter: blur(4px);
 }
 
@@ -180,6 +181,12 @@ export default {
   font-size: 24px;
   font-family: 'Aclonica', sans-serif;
   pointer-events: none;
+  position: relative; /* Add this */
+  z-index: 2; /* Ensure price stays above overlay */
+  margin-top: 10px; /* Maintain spacing */
+  background: rgba(240, 233, 225, 0.7); /* Slight background for readability */
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
