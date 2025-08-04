@@ -54,17 +54,25 @@
       </div>
 
       <!-- Delete Confirmation Dialog -->
+      <!-- Update the confirmation dialog template in Home.vue -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
-        <div class="confirmation-dialog">
-          <h3>Подтвердите удаление</h3>
-          <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
-          <div class="dialog-buttons">
-            <button @click="confirmDelete" class="confirm-button" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-            <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
-              <i class="bi bi-x-lg"></i>
-            </button>
+        <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
+          <div v-if="!isDeleting">
+            <h3>Подтвердите удаление</h3>
+            <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
+            <div class="dialog-buttons">
+              <button @click="confirmDelete" class="confirm-button" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+              <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div v-else class="deleting-state">
+            <div class="deleting-spinner"></div>
+            <div class="deleting-text">Deleting...</div>
           </div>
         </div>
       </div>
@@ -616,6 +624,41 @@ body, html, #app {
 
 .confirm-button i, .cancel-button i {
   color: rgba(255, 255, 255, 0.9);
+}
+
+/* Add these styles to the existing confirmation dialog styles */
+.confirmation-dialog.processing {
+  background-color: rgba(244, 235, 226, 0.85);
+  backdrop-filter: blur(2px);
+}
+
+.deleting-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.deleting-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(66, 49, 37, 0.2);
+  border-top-color: #423125;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.deleting-text {
+  color: #423125;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Add these icon classes if not already present */
