@@ -41,11 +41,26 @@
         <!-- Add delete button -->
         <button 
           v-if="showDeleteButton" 
-          @click="deleteSelectedBags"
+          @click="showDeleteConfirmation = true"
           class="delete-button"
         >
           Delete Selected
+          <svg class="trash-icon" viewBox="0 0 24 24">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
         </button>
+      </div>
+      
+      <!-- Delete Confirmation Dialog -->
+      <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
+        <div class="confirmation-dialog">
+          <h3>Confirm Deletion</h3>
+          <p>Are you sure you want to delete the selected items?</p>
+          <div class="dialog-buttons">
+            <button @click="confirmDelete" class="confirm-button">Delete</button>
+            <button @click="showDeleteConfirmation = false" class="cancel-button">Cancel</button>
+          </div>
+        </div>
       </div>
 
       <div v-if="loading">
