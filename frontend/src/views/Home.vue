@@ -266,14 +266,29 @@ export default {
       this.showDeleteButton = this.selectedBags.size > 0;
     },
     
-    confirmDelete() {
-      // Implement your delete logic here
-      this.selectedSeasons.forEach(uuid => {
-        this.handleSeasonDeleted(uuid);
-      });
-      this.selectedSeasons.clear();
-      this.showDeleteButton = false;
-      this.showDeleteConfirmation = false;
+    async confirmDelete() {
+      try {
+        // Delete all selected bags
+        await Promise.all(
+          Array.from(this.selectedBags).map(bagId => 
+            this.$store.dispatch('deleteBag', bagId)
+          )
+        );
+        
+        // Refresh the bag list
+        await this.$store.dispatch('fetchBags');
+        
+        // Reset selection
+        this.selectedBags.clear();
+        this.showDeleteButton = false;
+        this.showDeleteConfirmation = false;
+        
+        // Optional: Show success message
+        this.$toast.success('Bags deleted successfully');
+      } catch (error) {
+        console.error('Error deleting bags:', error);
+        this.$toast.error('Failed to delete bags');
+      }
     },
     
     animateSelection(bagId, isSelected) {
