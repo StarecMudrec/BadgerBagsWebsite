@@ -107,23 +107,13 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Cover entire card */
+  top: -4px; /* Adjust to account for border */
+  left: -4px;
+  right: -4px;
+  bottom: -4px; /* Extend to cover price tag */
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: 1;
+  z-index: 1; /* Increase z-index to cover price */
   filter: blur(4px);
-  /* Create 'cutout' for price tag */
-  clip-path: polygon(
-    0 0, 
-    100% 0, 
-    100% calc(100% - 40px), 
-    calc(100% - 40px) calc(100% - 40px),
-    calc(100% - 80px) 100%,
-    40px 100%,
-    0 calc(100% - 40px)
-  );
 }
 
 .bag-card.selected-animation {
