@@ -80,6 +80,7 @@ export default {
   box-sizing: border-box;
   border: 4px solid transparent;
   cursor: pointer;
+  aspect-ratio: 1 / 1.7; /* Adjusted ratio to make space for price */
 }
 
 .bag-card.raised {
@@ -107,13 +108,14 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: -4px; /* Adjust to account for border */
+  top: -4px;
   left: -4px;
   right: -4px;
-  bottom: -4px; /* Extend to cover price tag */
+  bottom: -4px;
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: 1; /* Increase z-index to cover price */
+  z-index: 1;
   filter: blur(4px);
+  border-radius: 8px; /* Match card's rounded corners */
 }
 
 .bag-card.selected-animation {
@@ -161,8 +163,8 @@ export default {
 
 .bag-image {
   width: 100%;
-  height: 100%;
-  aspect-ratio: 1 / 1.56630057630;
+  height: auto; /* Changed from 100% to auto */
+  aspect-ratio: 1 / 1.56630057630; /* Maintain original image ratio */
   margin-bottom: 10px;
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
