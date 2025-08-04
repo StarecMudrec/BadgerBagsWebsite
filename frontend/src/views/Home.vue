@@ -534,11 +534,7 @@ body, html, #app {
   /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); */
 }
 
-.trash-icon {
-  width: 18px;
-  height: 18px;
-  fill: white;
-}
+
 
 /* Confirmation Dialog Styles */
 .confirmation-dialog-overlay {
@@ -547,68 +543,86 @@ body, html, #app {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
 .confirmation-dialog {
-  background-color: white;
-  padding: 24px;
+  background-color: #f4ebe2;
   border-radius: 12px;
+  padding: 30px;
   max-width: 400px;
   width: 90%;
+  text-align: center;
+  border: 1px solid #d0cbc4;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .confirmation-dialog h3 {
   margin-top: 0;
-  color: #333;
-  font-size: 1.2rem;
+  color: #423125;
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
 }
 
 .confirmation-dialog p {
-  margin-bottom: 24px;
-  color: #666;
+  margin-bottom: 30px;
+  color: #423125;
   line-height: 1.5;
+  font-size: 1.1rem;
 }
 
 .dialog-buttons {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  gap: 20px;
 }
 
-.confirm-button {
-  padding: 8px 16px;
-  background-color: #ff4444;
-  color: white;
+.confirm-button, .cancel-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
-  border-radius: 6px;
-  font-weight: 500;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  backdrop-filter: blur(5px);
 }
 
 .confirm-button:hover {
-  background-color: #e53935;
-}
-
-.cancel-button {
-  padding: 8px 16px;
-  background-color: #f0f0f0;
-  color: #333;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  background-color: rgba(210, 43, 43, 0.8);
+  transform: scale(1.1);
 }
 
 .cancel-button:hover {
-  background-color: #e0e0e0;
+  background-color: rgba(66, 49, 37, 0.8);
+  transform: scale(1.1);
+}
+
+.confirm-button i, .cancel-button i {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Add these icon classes if not already present */
+.bi-trash {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E%3Cpath d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z'/%3E%3Cpath fill-rule='evenodd' d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .loading-container {
