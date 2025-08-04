@@ -86,7 +86,7 @@ export default {
 }
 
 .bag-card.selected {
-  transform: translateY(-15px); /* Rise up when selected */
+  transform: translateY(-5px); /* Rise up when selected */
   border: 4px solid rgba(255, 42, 42, 0.32);
   z-index: 10; /* Ensure it's above other cards */
 }
@@ -104,28 +104,25 @@ export default {
 }
 
 .bag-card.selected-animation {
-  animation: ominous-shake 4s infinite;
+  animation: subtle-shake 5s infinite;
   animation-timing-function: ease-in-out;
 }
 
-@keyframes ominous-shake {
-  0%, 85%, 100% {
-    transform: translateY(-15px) rotate(0deg); /* Maintain raised position */
-  }
-  88% {
-    transform: translateY(-15px) translateX(-6px) rotate(-3deg); /* Shake left */
-  }
-  90% {
-    transform: translateY(-15px) translateX(8px) rotate(4deg); /* Shake right */
+@keyframes subtle-shake {
+  0%, 90%, 100% {
+    transform: translateY(-5px) rotate(0deg); /* Maintain raised position */
   }
   92% {
-    transform: translateY(-15px) translateX(-4px) rotate(-2deg); /* Shake left */
+    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg); /* Gentle shake left */
   }
   94% {
-    transform: translateY(-15px) translateX(3px) rotate(1deg); /* Shake right */
+    transform: translateY(-5px) translateX(4px) rotate(2deg); /* Gentle shake right */
   }
   96% {
-    transform: translateY(-15px) translateX(-2px) rotate(-0.5deg); /* Settle */
+    transform: translateY(-5px) translateX(-2px) rotate(-1deg); /* Rebound left */
+  }
+  98% {
+    transform: translateY(-5px) translateX(1px) rotate(0.5deg); /* Settle */
   }
 }
 
@@ -159,7 +156,9 @@ export default {
 }
 
 .bag-image:hover {
-  transform: scale(1.02);
+  transform: scale(1.02) translateY(-5px); /* Match selected rise height */
+  transition: transform 0.3s ease;
+  filter: brightness(1.05) contrast(1.05);
 }
 
 .bag-card.selected .bag-image:hover {
