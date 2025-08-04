@@ -91,6 +91,8 @@
           @before-enter="beforeEnter"
           @enter="enter"
           @leave="leave"
+          @after-enter="afterEnter"
+          @after-leave="afterLeave"
         >
           <BagCard 
             v-for="bag in sortedBags" 
@@ -205,14 +207,49 @@ export default {
     },
     
     leave(el, done) {
+      // First shrink and fade out the deleted card
       gsap.to(el, {
+        scale: 0.8,
         opacity: 0,
-        y: -30,
         duration: 0.3,
         ease: "power2.in",
-        onComplete: done
+        onComplete: () => {
+          // After card disappears, animate remaining cards
+          this.$nextTick(() => {
+            this.animateRemainingCards().then(done);
+          });
+        }
       });
     },
+    
+    afterEnter(el) {
+      el.style.transform = '';
+    },
+    
+    afterLeave() {
+      // Cleanup if needed
+    },
+    
+    async animateRemainingCards() {
+      await this.$nextTick();
+      const cards = document.querySelectorAll('.bag-item');
+      
+      cards.forEach((card, index) => {
+        gsap.to(card, {
+          x: 0,
+          y: 0,
+          duration: 0.5,
+          delay: index * 0.05,
+          ease: "back.out(1.7)"
+        });
+      });
+      
+      // Wait for animations to complete
+      return new Promise(resolve => {
+        setTimeout(resolve, 500 + (cards.length * 50));
+      });
+    },
+
     toggleSortDropdown() {
       this.showSortDropdown = !this.showSortDropdown;
     },
