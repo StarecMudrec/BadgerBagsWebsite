@@ -37,6 +37,15 @@
             <div class="sort-option">Сначала новые</div>
           </div> 
         </transition>
+        
+        <!-- Add delete button -->
+        <button 
+          v-if="showDeleteButton" 
+          @click="deleteSelectedBags"
+          class="delete-button"
+        >
+          Delete Selected
+        </button>
       </div>
 
       <div v-if="loading">
@@ -119,6 +128,8 @@ export default {
       showSortDropdown: false,
       loading: true,
       sortMethod: 'default',
+      selectedBags: new Set(), // Track selected bags
+      showDeleteButton: false, // Control delete button visibility
     };
   },
   computed: {
@@ -190,14 +201,35 @@ export default {
     afterEnter(el) {
       el.style.transform = '';
     },
+    handleBagSelected(bagId, isSelected) {
+      if (isSelected) {
+        this.selectedBags.add(bagId);
+      } else {
+        this.selectedBags.delete(bagId);
+      }
+      this.showDeleteButton = this.selectedBags.size > 0;
+    },
+    
+    async deleteSelectedBags() {
+      try {
+        // For testing, we'll just remove them from the local state
+        // In a real app, you'd call an API endpoint here
+        this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
+        this.selectedBags.clear();
+        this.showDeleteButton = false;
+        
+        // Optional: Show success message
+        console.log('Bags deleted successfully');
+      } catch (error) {
+        console.error('Error deleting bags:', error);
+      }
+    },
   },
 
   async created() {
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
-      // Remove this line that was overriding IDs with array indices:
-      // this.bags = this.bags.map((bag, index) => ({ ...bag, id: bag.id || index }));
       console.log('Bags data:', this.bags);
     } finally {
       this.loading = false;
@@ -352,6 +384,21 @@ body, html, #app {
 
 .sort-option:last-child {
   border-bottom: none;
+}
+/* Add this to your existing styles */
+.delete-button {
+  margin-left: 20px;
+  padding: 5px 15px;
+  background-color: #ff5555;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+  background-color: #ff3333;
 }
 
 .loading-container {
