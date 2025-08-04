@@ -82,13 +82,15 @@ export default {
   height: 100%;
   width: 100%;
   position: relative;
-  transition: transform 0.2s ease, border 0.2s ease;
+  transition: transform 0.3s ease;
 }
 
 .bag-card.selected {
-  transform: translateY(-5px); /* Rise up when selected */
+  transform: translateY(-5px); /* Base rise transform */
   border: 4px solid rgba(255, 42, 42, 0.32);
-  z-index: 10; /* Ensure it's above other cards */
+  z-index: 10;
+  animation: subtle-shake 5s infinite; /* Only handles the shake */
+  animation-timing-function: ease-in-out;
 }
 
 .bag-card.selected::before {
@@ -110,19 +112,19 @@ export default {
 
 @keyframes subtle-shake {
   0%, 90%, 100% {
-    transform: translateY(-5px) rotate(0deg); /* Maintain raised position */
+    transform: translateY(-5px) rotate(0deg); /* Maintain base rise */
   }
   92% {
-    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg); /* Gentle shake left */
+    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg); 
   }
   94% {
-    transform: translateY(-5px) translateX(4px) rotate(2deg); /* Gentle shake right */
+    transform: translateY(-5px) translateX(4px) rotate(2deg);
   }
   96% {
-    transform: translateY(-5px) translateX(-2px) rotate(-1deg); /* Rebound left */
+    transform: translateY(-5px) translateX(-2px) rotate(-1deg);
   }
   98% {
-    transform: translateY(-5px) translateX(1px) rotate(0.5deg); /* Settle */
+    transform: translateY(-5px) translateX(1px) rotate(0.5deg);
   }
 }
 
@@ -156,13 +158,16 @@ export default {
 }
 
 .bag-image:hover {
-  transform: scale(1.02) translateY(-5px); /* Match selected rise height */
+  transform: scale(1.02) translateY(-5px);
   transition: transform 0.3s ease;
-  filter: brightness(1.05) contrast(1.05);
 }
 
 .bag-card.selected .bag-image:hover {
   transform: none;
+}
+
+.bag-card.selected {
+  transition: transform 0.3s ease, border 0.3s ease;
 }
 
 .bag-price {
