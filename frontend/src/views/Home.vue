@@ -68,7 +68,10 @@
             :key="'bag-' + bag.id"  
             :bag="bag" 
             class="bag-item"
-            :class="{ 'selected': selectedBags.has(bag.id) }"
+            :class="{ 
+              'selected': selectedBags.has(bag.id),
+              'no-hover': selectedBags.has(bag.id)
+            }"
             data-test="bag-card"
             @bag-selected="handleBagSelected"
           />
@@ -531,6 +534,15 @@ body, html, #app {
   transform: translateY(-15px);
   z-index: 10;
   position: relative;
+}
+
+/* Add this new rule to disable hover on selected cards */
+.bag-item.no-hover:hover {
+  transform: translateY(-15px) !important; /* Maintain raised position */
+}
+
+.bag-item:not(.selected):hover {
+  transform: translateY(-5px); /* Only apply hover effect to non-selected cards */
 }
 
 .bag-item >>> .bag-card {
