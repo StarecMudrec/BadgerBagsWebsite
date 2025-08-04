@@ -510,25 +510,27 @@ body, html, #app {
 
 .delete-button {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 42px;
+  right: 42px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
-  background-color: #ff4444;
-  color: white;
+  padding: 8px 12px;
+  /* color: #ff4444; */
+  background: none;
+  color: #ff2626;
   border: none;
   border-radius: 8px;
   font-weight: 500;
+  font-size: 42px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 4px 3px rgb(0 0 0 / 67%);
   transition: all 0.2s ease;
   z-index: 100;
 }
 
 .delete-button:hover {
-  background-color: #ff3333;
+  background-color: #ff808057;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
