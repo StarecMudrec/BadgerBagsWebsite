@@ -68,7 +68,9 @@
             :key="'bag-' + bag.id"  
             :bag="bag" 
             class="bag-item"
+            :class="{ 'selected': selectedBags.has(bag.id) }"
             data-test="bag-card"
+            @bag-selected="handleBagSelected"
           />
           <div style="margin: 20px; margin-bottom: 0; margin-right: 0; display: flex; flex-direction: column; align-items: center;">
             <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
@@ -144,6 +146,37 @@ export default {
   },
 
   methods: {
+    // Add these animation methods for selected state
+    beforeEnter(el) {
+      gsap.set(el, {
+        opacity: 0,
+        y: 30
+      });
+    },
+    
+    enter(el, done) {
+      const delay = el.dataset.index * 0.1;
+      const isSelected = this.selectedBags.has(el.__vnode.key.replace('bag-', ''));
+      
+      gsap.to(el, {
+        opacity: 1,
+        y: isSelected ? -15 : 0,
+        duration: 0.5,
+        delay: delay,
+        ease: "back.out(1.7)",
+        onComplete: done
+      });
+    },
+    
+    leave(el, done) {
+      gsap.to(el, {
+        opacity: 0,
+        y: -30,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: done
+      });
+    },
     toggleSortDropdown() {
       this.showSortDropdown = !this.showSortDropdown;
     },
@@ -204,10 +237,24 @@ export default {
     handleBagSelected(bagId, isSelected) {
       if (isSelected) {
         this.selectedBags.add(bagId);
+        this.animateSelection(bagId, true);
       } else {
         this.selectedBags.delete(bagId);
+        this.animateSelection(bagId, false);
       }
       this.showDeleteButton = this.selectedBags.size > 0;
+    },
+    
+    animateSelection(bagId, isSelected) {
+      const element = document.querySelector(`[data-test="bag-card"][key="bag-${bagId}"]`);
+      if (element) {
+        gsap.to(element, {
+          y: isSelected ? -15 : 0,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+          boxShadow: isSelected ? '0 10px 20px rgba(0,0,0,0.2)' : 'none'
+        });
+      }
     },
     
     async deleteSelectedBags() {
@@ -446,6 +493,20 @@ body, html, #app {
   padding: 20px;
   position: relative;
   /* Remove align-items: stretch */
+  perspective: 1000px; /* Adds depth for smoother 3D effects */
+}
+
+/* Enhance the transition effects */
+.list-enter-active,
+.list-leave-active,
+.list-move {
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 .bag-grid > * {
@@ -463,6 +524,13 @@ body, html, #app {
   flex-direction: column;
   /* Add aspect ratio to maintain consistent sizing */
   aspect-ratio: 1 / 1.56630057630; /* This matches your add-item-button ratio */
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bag-item.selected {
+  transform: translateY(-15px);
+  z-index: 10;
+  position: relative;
 }
 
 .bag-item >>> .bag-card {

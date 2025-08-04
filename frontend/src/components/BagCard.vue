@@ -1,18 +1,12 @@
 <template>
   <div 
     class="bag-card"
-    :class="{ 
-      'selected': isSelected,
-      'selected-animation': isSelected && !isMobile,
-      'raised': isSelected
-    }"
+    @click="goToDetail"
   >
     <img 
       :src="'/bags_imgs/' + bag.image" 
       alt="Bag Image" 
       class="bag-image"
-      @click="goToDetail"
-      :class="{ 'selected': isSelected }"
     />
     <div class="bag-price">{{ bag.price }}₽</div>
     <input
@@ -75,7 +69,7 @@ export default {
 <style scoped>
 .bag-card {
   padding: 10px;
-  margin: 10px;
+  margin: 0;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -83,10 +77,9 @@ export default {
   height: 100%;
   width: 100%;
   position: relative;
-  transition: all 0.3s ease; /* Changed to 'all' to animate multiple properties */
   box-sizing: border-box;
   border: 4px solid transparent;
-  transform: translateY(0); /* Initial position */
+  cursor: pointer;
 }
 
 .bag-card.raised {
@@ -174,17 +167,12 @@ export default {
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
   object-fit: cover;
-  overflow: hidden;
-  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* .bag-image:hover {
-  transform: scale(1.02);
+.bag-card:hover .bag-image {
+  transform: translateY(-5px);
 }
-
-.bag-card.selected .bag-image:hover {
-  transform: none;
-} */
 
 .bag-price {
   font-weight: bold;
