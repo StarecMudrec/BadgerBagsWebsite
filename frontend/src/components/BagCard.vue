@@ -5,13 +5,14 @@
       'selected': isSelected,
       'selected-animation': isSelected && !isMobile
     }"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
   >
     <img 
       :src="'/bags_imgs/' + bag.image" 
       alt="Bag Image" 
       class="bag-image"
       @click="goToDetail"
-      :class="{ 'selected': isSelected }"
     />
     <div class="bag-price">{{ bag.price }}₽</div>
     <input
@@ -38,7 +39,8 @@ export default {
   data() {
     return {
       isSelected: false,
-      isMobile: false
+      isMobile: false,
+      isHovered: false
     };
   },
   mounted() {
@@ -86,23 +88,30 @@ export default {
 }
 
 .bag-card.selected {
-  transform: translateY(-5px); /* Base rise transform */
   border: 4px solid rgba(255, 42, 42, 0.32);
   z-index: 10;
-  animation: subtle-shake 5s infinite; /* Only handles the shake */
-  animation-timing-function: ease-in-out;
 }
 
-.bag-card.selected::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 42, 42, 0.24);
-  z-index: 0;
-  filter: blur(4px);
+.bag-card.selected, 
+.bag-card:hover {
+  transform: translateY(-5px);
+}
+
+.bag-image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1.56630057630;
+  margin-bottom: 10px;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+  object-fit: cover;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.bag-card.selected .bag-image {
+  transform: none; /* Disable individual image transform when card is selected */
 }
 
 .bag-card.selected-animation {
@@ -112,10 +121,10 @@ export default {
 
 @keyframes subtle-shake {
   0%, 90%, 100% {
-    transform: translateY(-5px) rotate(0deg); /* Maintain base rise */
+    transform: translateY(-5px) rotate(0deg);
   }
   92% {
-    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg); 
+    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg);
   }
   94% {
     transform: translateY(-5px) translateX(4px) rotate(2deg);
@@ -126,6 +135,14 @@ export default {
   98% {
     transform: translateY(-5px) translateX(1px) rotate(0.5deg);
   }
+}
+
+.bag-price {
+  font-weight: bold;
+  color: #423125;
+  font-size: 24px;
+  font-family: 'Aclonica', sans-serif;
+  pointer-events: none;
 }
 
 .selection-checkbox {
@@ -145,46 +162,12 @@ export default {
   }
 }
 
-.bag-image {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1 / 1.56630057630;
-  margin-bottom: 10px;
-  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
-  border-radius: 4px;
-  object-fit: cover;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.bag-image:hover {
-  transform: scale(1.02) translateY(-5px);
-  transition: transform 0.3s ease;
-}
-
-.bag-card.selected .bag-image:hover {
-  transform: none;
-}
-
-.bag-card.selected {
-  transition: transform 0.3s ease, border 0.3s ease;
-}
-
-.bag-price {
-  font-weight: bold;
-  color: #423125;
-  font-size: 24px;
-  font-family: 'Aclonica', sans-serif;
-  pointer-events: none;
-}
-
 @media (max-width: 768px) {
   .selection-checkbox {
     display: block;
   }
   .bag-card.selected-animation {
     animation: none;
-    transform: none;
   }
 }
 
