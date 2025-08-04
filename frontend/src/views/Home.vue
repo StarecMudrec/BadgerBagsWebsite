@@ -532,37 +532,6 @@ body, html, #app {
   border-radius: inherit;
 }
 
-.bag-item {
-  transition: transform 0.3s ease;
-}
-
-.bag-item:hover {
-  transform: translateY(-5px);
-}
-
-.bag-item.selected {
-  transform: translateY(-5px);
-  animation: subtle-shake 5s infinite;
-}
-
-@keyframes subtle-shake {
-  0%, 90%, 100% {
-    transform: translateY(-5px) rotate(0deg);
-  }
-  92% {
-    transform: translateY(-5px) translateX(-3px) rotate(-1.5deg);
-  }
-  94% {
-    transform: translateY(-5px) translateX(4px) rotate(2deg);
-  }
-  96% {
-    transform: translateY(-5px) translateX(-2px) rotate(-1deg);
-  }
-  98% {
-    transform: translateY(-5px) translateX(1px) rotate(0.5deg);
-  }
-}
-
 .add-item-button {
   display: flex;
   flex-direction: column;
