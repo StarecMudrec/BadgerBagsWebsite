@@ -270,23 +270,24 @@ export default {
       try {
         // Delete all selected bags
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          this.$axios.delete(`/api/bags/${bagId}`)
+          axios.delete(`/api/bags/${bagId}`) // Use axios directly
         )
         
         await Promise.all(deletePromises)
         
         // Refresh the bag list
-        await this.$store.dispatch('fetchBags')
+        const response = await fetch('/api/bags');
+        this.bags = await response.json();
         
         // Reset selection
         this.selectedBags.clear()
         this.showDeleteConfirmation = false
         
-        // Show success message
-        this.$toast.success(`${deletePromises.length} bag(s) deleted successfully`)
+        // Show success message (you might want to use a proper toast library)
+        alert(`${deletePromises.length} bag(s) deleted successfully`)
       } catch (error) {
         console.error('Error deleting bags:', error)
-        this.$toast.error('Failed to delete bags')
+        alert('Failed to delete bags')
       }
     },
     
