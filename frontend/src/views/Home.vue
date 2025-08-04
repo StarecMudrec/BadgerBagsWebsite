@@ -35,13 +35,6 @@
             <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
             <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
             <div class="sort-option">Сначала новые</div>
-            <div 
-              class="sort-option delete-option" 
-              v-if="isUserAllowed && selectedBags.size > 0"
-              @click="deleteSelectedBags"
-            >
-              Delete Selected ({{ selectedBags.size }})
-            </div>
           </div> 
         </transition>
       </div>
@@ -126,8 +119,6 @@ export default {
       showSortDropdown: false,
       loading: true,
       sortMethod: 'default',
-      selectedBags: new Set(), // Add this line for tracking selected bags
-      isUserAllowed: false // Add this line for admin status
     };
   },
   computed: {
@@ -199,37 +190,14 @@ export default {
     afterEnter(el) {
       el.style.transform = '';
     },
-    handleBagSelected(bagId, isSelected) {
-      if (isSelected) {
-        this.selectedBags.add(bagId);
-      } else {
-        this.selectedBags.delete(bagId);
-      }
-    },
-    
-    async deleteSelectedBags() {
-      if (this.selectedBags.size === 0) return;
-      
-      try {
-        const { deleteBags } = await import('@/api'); // Adjust this import based on your API
-        await deleteBags(Array.from(this.selectedBags));
-        this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
-        this.selectedBags.clear();
-      } catch (error) {
-        console.error('Error deleting bags:', error);
-        alert('Failed to delete selected bags.');
-      }
-    },
-    
-    updateUserAllowedStatus(isAllowed) {
-      this.isUserAllowed = isAllowed;
-    }
   },
 
   async created() {
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
+      // Remove this line that was overriding IDs with array indices:
+      // this.bags = this.bags.map((bag, index) => ({ ...bag, id: bag.id || index }));
       console.log('Bags data:', this.bags);
     } finally {
       this.loading = false;
@@ -384,15 +352,6 @@ body, html, #app {
 
 .sort-option:last-child {
   border-bottom: none;
-}
-
-.delete-option {
-  color: #ff5555;
-  font-weight: bold;
-}
-
-.delete-option:hover {
-  background-color: rgba(255, 85, 85, 0.1);
 }
 
 .loading-container {

@@ -4,17 +4,9 @@
       :src="'/bags_imgs/' + bag.image" 
       alt="Bag Image" 
       class="bag-image"
-      @click="handleCardClick"
+      @click="goToDetail"
     />
     <div class="bag-price">{{ bag.price }}₽</div>
-    <input
-      type="checkbox"
-      class="selection-checkbox"
-      :checked="isSelected"
-      @change="handleCheckboxChange"
-      @click.stop
-      v-if="allowSelection"
-    >
   </div>
 </template>
 
@@ -27,38 +19,9 @@ export default {
       validator: (bag) => {
         return typeof bag.id !== 'undefined' && typeof bag.image !== 'undefined'
       }
-    },
-    allowSelection: {
-      type: Boolean,
-      default: false
     }
   },
-  data() {
-    return {
-      isSelected: false,
-      isMobile: false
-    };
-  },
-  mounted() {
-    this.checkMobile();
-    window.addEventListener('resize', this.checkMobile);
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.checkMobile);
-  },
   methods: {
-    checkMobile() {
-      this.isMobile = window.innerWidth <= 768;
-    },
-    handleCardClick(event) {
-      if (this.isSelected) {
-        return;
-      }
-      if (event.target.classList.contains('selection-checkbox')) {
-        return;
-      }
-      this.goToDetail();
-    },
     goToDetail() {
       if (!this.bag?.id) {
         console.error('Bag ID is missing', this.bag);
@@ -68,10 +31,6 @@ export default {
         name: 'BagDetail', 
         params: { id: this.bag.id.toString() }
       });
-    },
-    handleCheckboxChange(event) {
-      this.isSelected = event.target.checked;
-      this.$emit('bag-selected', this.bag.id, this.isSelected);
     }
   }
 };
@@ -79,14 +38,17 @@ export default {
 
 <style scoped>
 .bag-card {
+  /* border: 1px solid #ccc; */
   padding: 10px;
   margin: 10px;
   text-align: center;
+  /* background-color: #fff; */
+  /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); */
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  height: 100%; /* Add this */
+  width: 100%; /* Add this */
 }
 
 .bag-image {
@@ -111,55 +73,5 @@ export default {
   font-size: 24px;
   font-family: 'Aclonica', sans-serif;
   pointer-events: none; /* Prevent any pointer events on price */
-}
-
-.selection-checkbox {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 1;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  display: none;
-}
-
-@media (min-width: 769px) {
-  .selection-checkbox {
-    display: block;
-  }
-}
-
-.bag-card.selected {
-  border: 4px solid rgba(255, 42, 42, 0.32);
-}
-
-.bag-card.selected::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 42, 42, 0.24);
-  z-index: 0;
-  filter: blur(4px);
-}
-
-.bag-card.selected .bag-image {
-  filter: blur(4px) opacity(0.5);
-}
-
-@media (max-width: 768px) {
-  .selection-checkbox {
-    display: block;
-  }
-}
-
-@media (max-width: 480px) {
-  .selection-checkbox {
-    width: 30px;
-    height: 30px;
-  }
 }
 </style>
