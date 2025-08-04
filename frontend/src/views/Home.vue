@@ -526,7 +526,7 @@ body, html, #app {
   display: flex;
   flex-direction: column;
   /* Add aspect ratio to maintain consistent sizing */
-  aspect-ratio: 1 / 1.56630057630; /* This matches your add-item-button ratio */
+  /* aspect-ratio: 1 / 1.56630057630;  */
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -560,7 +560,7 @@ body, html, #app {
 
 .bag-item >>> .bag-image {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   object-fit: cover;
 }
 

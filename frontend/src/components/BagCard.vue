@@ -80,7 +80,7 @@ export default {
   box-sizing: border-box;
   border: 4px solid transparent;
   cursor: pointer;
-  aspect-ratio: 1 / 1.7; /* Adjusted ratio to make space for price */
+  aspect-ratio: 1 / 1.67; /* Adjusted ratio to make space for price */
 }
 
 .bag-card.raised {
