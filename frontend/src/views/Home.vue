@@ -280,20 +280,19 @@ export default {
     },
     
     enter(el, done) {
-      console.log('Animating element:', el, 'with key:', el.__vnode.key);
       gsap.to(el, {
         opacity: 1,
         y: 0,
         duration: 0.5,
-        ease: "power2.out",
+        ease: "back.out(1.7)",
         onComplete: done
       });
     },
     
     leave(el, done) {
       gsap.to(el, {
+        scale: 0.8,
         opacity: 0,
-        y: -30,
         duration: 0.3,
         ease: "power2.in",
         onComplete: done
@@ -316,9 +315,6 @@ export default {
     async confirmDelete() {
       this.isDeleting = true;
       try {
-        // Create a copy of the current bags for animation
-        const bagsBeforeDeletion = [...this.bags];
-        
         // Perform deletion
         await Promise.all(
           Array.from(this.selectedBags).map(bagId => 
@@ -326,35 +322,44 @@ export default {
               method: 'DELETE',
               credentials: 'include'
             })
-          )
-        );
+        ));
         
-        // Get fresh data from server
-        const response = await fetch('/api/bags');
-        const newBags = await response.json();
+        // Store current positions before deletion
+        const cards = document.querySelectorAll('.bag-item');
+        const positions = Array.from(cards).map(card => {
+          const rect = card.getBoundingClientRect();
+          return { x: rect.left, y: rect.top };
+        });
         
-        // Animate the transition
-        this.bags = bagsBeforeDeletion; // Reset to pre-deletion state
-        await this.$nextTick(); // Wait for DOM update
+        // Remove deleted items from local state
+        this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
         
-        // Use GSAP for smooth transition
-        gsap.to(".bag-item", {
-          opacity: 0,
-          scale: 0.9,
-          duration: 0.3,
-          onComplete: () => {
-            this.bags = newBags; // Update to new state
-            this.$nextTick(() => {
-              gsap.fromTo(".bag-item", 
-                { opacity: 0, y: 20 },
-                { 
-                  opacity: 1, 
-                  y: 0,
-                  duration: 0.5,
-                  stagger: 0.05,
-                  ease: "back.out(1.7)"
-                }
-              );
+        // Wait for Vue to update the DOM
+        await this.$nextTick();
+        
+        // Animate remaining cards to their new positions
+        const newCards = document.querySelectorAll('.bag-item');
+        newCards.forEach((card, index) => {
+          const newRect = card.getBoundingClientRect();
+          const oldPos = positions[index];
+          
+          if (oldPos) {
+            const dx = oldPos.x - newRect.left;
+            const dy = oldPos.y - newRect.top;
+            
+            // Set initial position
+            gsap.set(card, {
+              x: dx,
+              y: dy
+            });
+            
+            // Animate to final position
+            gsap.to(card, {
+              x: 0,
+              y: 0,
+              duration: 0.5,
+              delay: index * 0.05,
+              ease: "back.out(1.7)"
             });
           }
         });
@@ -772,15 +777,7 @@ body, html, #app {
   transform: translateY(30px);
 }
 
-/* Add these styles to your existing CSS */
-.bag-grid {
-  position: relative;
-}
-
-.list-item {
-  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
+/* Add these styles */
 .list-move {
   transition: transform 0.5s ease;
 }
@@ -790,20 +787,20 @@ body, html, #app {
   transition: all 0.5s;
 }
 
-.list-enter-from,
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
 .list-leave-to {
   opacity: 0;
-  transform: scale(0.8) translateY(30px);
+  transform: scale(0.8);
 }
 
 .list-leave-active {
   position: absolute;
   width: calc(100% / var(--columns, 4) - 20px);
   /* Adjust --columns based on your grid layout */
-}
-
-.bag-grid > * {
-  /* height: 100%; */
 }
 
 .bag-item, .add-item-button {
