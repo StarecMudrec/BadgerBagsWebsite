@@ -127,7 +127,7 @@ export default {
       loading: true,
       sortMethod: 'default',
       selectedBags: new Set(), // Add this line for tracking selected bags
-      isUserAllowed: true // Add this line for admin status
+      isUserAllowed: false // Add this line for admin status
     };
   },
   computed: {
