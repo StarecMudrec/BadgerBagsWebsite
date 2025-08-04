@@ -50,7 +50,7 @@
           </svg>
         </button>
       </div>
-      
+
       <!-- Delete Confirmation Dialog -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
         <div class="confirmation-dialog">
@@ -151,6 +151,8 @@ export default {
       sortMethod: 'default',
       selectedBags: new Set(), // Track selected bags
       showDeleteButton: false, // Control delete button visibility
+      showDeleteConfirmation: false,
+      selectedSeasons: new Set() // Track selected seasons
     };
   },
   computed: {
@@ -262,6 +264,16 @@ export default {
         this.animateSelection(bagId, false);
       }
       this.showDeleteButton = this.selectedBags.size > 0;
+    },
+    
+    confirmDelete() {
+      // Implement your delete logic here
+      this.selectedSeasons.forEach(uuid => {
+        this.handleSeasonDeleted(uuid);
+      });
+      this.selectedSeasons.clear();
+      this.showDeleteButton = false;
+      this.showDeleteConfirmation = false;
     },
     
     animateSelection(bagId, isSelected) {
@@ -451,20 +463,105 @@ body, html, #app {
 .sort-option:last-child {
   border-bottom: none;
 }
-/* Add this to your existing styles */
+
 .delete-button {
-  margin-left: 20px;
-  padding: 5px 15px;
-  background-color: #ff5555;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #ff4444;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  z-index: 100;
 }
 
 .delete-button:hover {
   background-color: #ff3333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.trash-icon {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+/* Confirmation Dialog Styles */
+.confirmation-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirmation-dialog {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.confirmation-dialog h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.confirmation-dialog p {
+  margin-bottom: 24px;
+  color: #666;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-button {
+  padding: 8px 16px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-button:hover {
+  background-color: #ff3333;
+}
+
+.cancel-button {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
 }
 
 .loading-container {
