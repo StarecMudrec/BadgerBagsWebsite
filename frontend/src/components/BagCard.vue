@@ -83,22 +83,29 @@ export default {
   width: 100%;
   position: relative;
   transition: transform 0.2s ease, border 0.2s ease;
+  box-sizing: border-box; /* Add this */
+  border: 4px solid transparent; /* Add transparent border initially */
 }
 
 .bag-card.selected {
-  border: 4px solid rgba(255, 42, 42, 0.32);
+  border: 4px solid rgba(255, 42, 42, 0.32); /* This won't change dimensions now */
 }
 
-.bag-card.selected::before {
+.bag-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 42, 42, 0.24);
+  background-color: transparent; /* Start transparent */
   z-index: 0;
   filter: blur(4px);
+  transition: background-color 0.2s ease; /* Add transition */
+}
+
+.bag-card.selected::before {
+  background-color: rgba(255, 42, 42, 0.24); /* Only change the color */
 }
 
 .bag-card.selected-animation {
