@@ -539,10 +539,12 @@ body, html, #app {
 /* Add this new rule to disable hover on selected cards */
 .bag-item.no-hover:hover {
   transform: translateY(-15px) !important; /* Maintain raised position */
+  filter: brightness(1.05) contrast(1.05);
 }
 
 .bag-item:not(.selected):hover {
   transform: translateY(-5px); /* Only apply hover effect to non-selected cards */
+  filter: brightness(1.05) contrast(1.05);
 }
 
 .bag-item >>> .bag-card {
@@ -595,10 +597,10 @@ body, html, #app {
   transform: translateY(0);
 }
 
-.bag-catalog >>> .bag-card .bag-image:hover {
+/* .bag-catalog >>> .bag-card .bag-image:hover {
   transform: translateY(-5px);
   filter: brightness(1.05) contrast(1.05);
-}
+} */
 
 .bag-catalog >>> .bag-card .bag-image:hover::after {
   content: '';
