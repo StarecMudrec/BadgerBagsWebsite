@@ -43,15 +43,11 @@
           v-if="showDeleteButton" 
           @click="showDeleteConfirmation = true"
           class="delete-button"
-          :disabled="isDeleting"
         >
-          <span v-if="isDeleting">Deleting...</span>
-          <span v-else>
-            Delete Selected ({{ selectedBags.size }})
-            <svg class="trash-icon" viewBox="0 0 24 24">
-              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-            </svg>
-          </span>
+          Delete Selected ({{ selectedBags.size }})
+          <svg class="trash-icon" viewBox="0 0 24 24">
+            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+          </svg>
         </button>
       </div>
 
@@ -157,8 +153,7 @@ export default {
       selectedBags: new Set(), // Track selected bags
       showDeleteButton: false, // Control delete button visibility
       showDeleteConfirmation: false,
-      selectedSeasons: new Set(), // Track selected seasons
-      isDeleting: false,
+      selectedSeasons: new Set() // Track selected seasons
     };
   },
   computed: {
@@ -273,40 +268,36 @@ export default {
     },
     
     async confirmDelete() {
-      this.isDeleting = true;
       try {
-        // Check if user is authenticated
-        const authCheck = await fetch('/api/check_auth');
-        if (!authCheck.ok) {
-          throw new Error('Please login first');
-        }
-        
-        const authData = await authCheck.json();
-        if (!authData.isAuthenticated) {
-          // Redirect to login or show login modal
-          this.$router.push('/login');
-          return;
+        // Get the token from cookies or localStorage
+        const token = document.cookie.replace(
+          /(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, 
+          "$1"
+        ) || localStorage.getItem('token');
+
+        if (!token) {
+          throw new Error('No authentication token found');
         }
 
-        // Delete all selected bags
+        // Delete all selected bags with auth header
         const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          fetch(`/api/bags/${bagId}`, {
-            method: 'DELETE',
-            credentials: 'include' // Important for cookies
+          axios.delete(`/api/bags/${bagId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
           })
         );
 
-        const results = await Promise.all(deletePromises);
+        await Promise.all(deletePromises);
         
-        // Check if any deletions failed
-        const failedDeletions = results.filter(r => !r.ok);
-        if (failedDeletions.length > 0) {
-          const errors = await Promise.all(failedDeletions.map(r => r.json()));
-          throw new Error(errors.map(e => e.error).join(', '));
-        }
-
         // Refresh the bag list
-        const response = await fetch('/api/bags');
+        const response = await fetch('/api/bags', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to refresh bags');
         this.bags = await response.json();
         
         // Reset selection
@@ -314,19 +305,10 @@ export default {
         this.showDeleteConfirmation = false;
         
         // Show success message
-        alert(`${results.length} bag(s) deleted successfully`);
-        
+        this.$toast.success(`${deletePromises.length} bag(s) deleted successfully`);
       } catch (error) {
         console.error('Error deleting bags:', error);
-        alert(error.message || 'Failed to delete bags');
-        
-        // If unauthorized, redirect to login
-        if (error.message.includes('Unauthorized') || 
-            error.message.includes('login')) {
-          this.$router.push('/login');
-        }
-      } finally {
-        this.isDeleting = false;
+        this.$toast.error(error.response?.data?.error || 'Failed to delete bags');
       }
     },
     

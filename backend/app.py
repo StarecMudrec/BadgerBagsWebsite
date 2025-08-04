@@ -604,28 +604,47 @@ def add_bag():
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
-    # Check session authentication first
-    if 'telegram_id' not in session:
-        return jsonify({'error': 'Session expired'}), 401
-    
-    # Alternatively check token authentication
+    ## Check authentication
     token = request.cookies.get('token') or request.headers.get('Authorization')
-    if not token and 'telegram_id' not in session:
-        return jsonify({'error': 'Authentication required'}), 401
-    
-    # Find the bag
+    if not token:
+        return jsonify({'error': 'Missing authentication token'}), 401
+
+    # Verify token
+    auth_token = AuthToken.query.filter_by(token=token).first()
+    if not auth_token:
+        return jsonify({'error': 'Invalid token'}), 401
+
+    # Check if user is admin (optional)
+    if not auth_token.is_admin:
+        return jsonify({'error': 'Admin privileges required'}), 403
+
+    # Find the bag to delete
     bag = Item.query.get(bag_id)
     if not bag:
         return jsonify({'error': 'Bag not found'}), 404
-    
+
     try:
-        # Delete the bag
+        # Delete the associated image file if it exists
+        if bag.img:
+            img_path = os.path.join(app.config['UPLOAD_FOLDER'], bag.img)
+            if os.path.exists(img_path):
+                try:
+                    os.remove(img_path)
+                    app.logger.info(f"Deleted image file: {img_path}")
+                except OSError as e:
+                    app.logger.error(f"Error deleting image file: {e}")
+                    # Continue with DB deletion even if image deletion fails
+
+        # Delete from database
         db.session.delete(bag)
         db.session.commit()
+        
         return jsonify({'message': 'Bag deleted successfully'}), 200
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        app.logger.error(f"Error deleting bag: {str(e)}")
+        return jsonify({'error': 'Failed to delete bag'}), 500
 
 @app.route('/api/bags/<int:bag_id>')
 def get_bag_details(bag_id):
