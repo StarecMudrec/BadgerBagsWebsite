@@ -531,7 +531,7 @@ body, html, #app {
   color: #ff3b3b;
   transform: translateY(-2px);
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); */
 }
 
 .trash-icon {
