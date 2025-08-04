@@ -59,8 +59,12 @@
           <h3>Confirm Deletion</h3>
           <p>Are you sure you want to delete the selected bags? This action cannot be undone.</p>
           <div class="dialog-buttons">
-            <button @click="confirmDelete" class="confirm-button">Delete</button>
-            <button @click="showDeleteConfirmation = false" class="cancel-button">Cancel</button>
+            <button @click="confirmDelete" class="confirm-button" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
+              <i class="bi bi-x-lg"></i>
+            </button>
           </div>
         </div>
       </div>
