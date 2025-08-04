@@ -364,6 +364,9 @@ export default {
         }
       } finally {
         this.isDeleting = false;
+        this.showDeleteConfirmation = false;
+        this.selectedBags.clear();
+        this.showDeleteButton = false;
       }
     },
     
