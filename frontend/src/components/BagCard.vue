@@ -3,10 +3,9 @@
     class="bag-card"
     :class="{ 
       'selected': isSelected,
-      'selected-animation': isSelected && !isMobile
+      'selected-animation': isSelected && !isMobile,
+      'raised': isSelected
     }"
-    @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
   >
     <img 
       :src="'/bags_imgs/' + bag.image" 
@@ -40,8 +39,7 @@ export default {
   data() {
     return {
       isSelected: false,
-      isMobile: false,
-      isHovered: false
+      isMobile: false
     };
   },
   mounted() {
@@ -85,15 +83,10 @@ export default {
   height: 100%;
   width: 100%;
   position: relative;
+  transition: all 0.3s ease; /* Changed to 'all' to animate multiple properties */
   box-sizing: border-box;
   border: 4px solid transparent;
-  transform: translateY(0) scale(1);
-  transition: 
-    transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 0.3s ease,
-    box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform;
-  z-index: 1;
+  transform: translateY(0); /* Initial position */
 }
 
 .bag-card.raised {
@@ -102,9 +95,7 @@ export default {
 }
 
 .bag-card.selected {
-  border-color: rgba(255, 42, 42, 0.32);
-  transform: translateY(-15px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  border: 4px solid rgba(255, 42, 42, 0.32);
 }
 
 .bag-card::before {
@@ -123,55 +114,39 @@ export default {
 .bag-card.selected::before {
   content: '';
   position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: rgba(255, 42, 42, 0.24);
-  z-index: -1;
-  filter: blur(6px);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.bag-card.selected::before {
-  opacity: 1;
+  z-index: 0;
+  filter: blur(4px);
 }
 
 .bag-card.selected-animation {
-  animation: float-shake 6s infinite ease-in-out;
+  animation: ominous-shake 4s infinite;
+  animation-timing-function: ease-in-out;
 }
 
-@keyframes float-shake {
-  0%, 100% {
-    transform: translateY(-15px) scale(1.02) rotate(0deg);
+@keyframes ominous-shake {
+  0%, 85%, 100% {
+    transform: translateY(-15px) rotate(0deg); /* Maintain raised position */
   }
-  50% {
-    transform: translateY(-18px) scale(1.02) rotate(0.5deg);
+  88% {
+    transform: translateY(-15px) translateX(-6px) rotate(-3deg); /* Shake left */
   }
-  10%, 30%, 70%, 90% {
-    transform: translateY(-15px) scale(1.02) rotate(0deg);
+  90% {
+    transform: translateY(-15px) translateX(8px) rotate(4deg); /* Shake right */
   }
-  20% {
-    transform: translateY(-15px) scale(1.02) translateX(-3px) rotate(-1deg);
+  92% {
+    transform: translateY(-15px) translateX(-4px) rotate(-2deg); /* Shake left */
   }
-  40% {
-    transform: translateY(-15px) scale(1.02) translateX(2px) rotate(0.8deg);
+  94% {
+    transform: translateY(-15px) translateX(3px) rotate(1deg); /* Shake right */
   }
-  60% {
-    transform: translateY(-15px) scale(1.02) translateX(-1px) rotate(-0.5deg);
+  96% {
+    transform: translateY(-15px) translateX(-2px) rotate(-0.5deg); /* Settle */
   }
-  80% {
-    transform: translateY(-15px) scale(1.02) translateX(1px) rotate(0.3deg);
-  }
-}
-
-.bag-card:not(.selected):hover {
-  transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: 
-    transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.3s ease;
 }
 
 .selection-checkbox {
@@ -220,21 +195,12 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .bag-card.selected {
-    transform: translateY(-8px) scale(1.01);
+  .selection-checkbox {
+    display: block;
   }
-  
   .bag-card.selected-animation {
     animation: none;
-  }
-  
-  @keyframes float-shake {
-    0%, 100% {
-      transform: translateY(-8px) scale(1.01);
-    }
-    50% {
-      transform: translateY(-10px) scale(1.01);
-    }
+    transform: none;
   }
 }
 
