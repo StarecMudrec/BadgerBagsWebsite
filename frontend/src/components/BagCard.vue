@@ -11,6 +11,7 @@
       alt="Bag Image" 
       class="bag-image"
       @click="goToDetail"
+      :class="{ 'selected': isSelected }"
     />
     <div class="bag-price">{{ bag.price }}₽</div>
     <input
