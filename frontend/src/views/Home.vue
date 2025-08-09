@@ -45,7 +45,7 @@
           </div>
           
           <!-- Loading state -->
-          <div v-else class="deleting-state">
+          <div class="deleting-state" v-if="!isDeleting">
             <div class="deleting-spinner"></div>
             <div class="deleting-text">Удаляем...</div>
           </div>
