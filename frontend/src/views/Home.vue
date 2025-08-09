@@ -29,27 +29,29 @@
       <!-- Delete Confirmation Dialog -->
       <!-- Update the confirmation dialog template in Home.vue -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
-        <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
-          <div v-if="!isDeleting">
-            <!-- Normal confirmation content -->
-            <h3>Подтвердите удаление</h3>
-            <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
-            <div class="dialog-buttons">
-              <button @click="confirmDelete" class="confirm-button" title="Delete">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
-                <i class="bi bi-x-lg"></i>
-              </button>
+        <transition name="scale">
+          <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
+            <div v-if="!isDeleting">
+              <!-- Normal confirmation content -->
+              <h3>Подтвердите удаление</h3>
+              <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
+              <div class="dialog-buttons">
+                <button @click="confirmDelete" class="confirm-button" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Loading state -->
+            <div v-else class="deleting-state">
+              <div class="deleting-spinner"></div>
+              <div class="deleting-text">Удаляем...</div>
             </div>
           </div>
-          
-          <!-- Loading state -->
-          <div v-else class="deleting-state">
-            <div class="deleting-spinner"></div>
-            <div class="deleting-text">Удаляем...</div>
-          </div>
-        </div>
+        </transition>
       </div>
 
       <div v-if="loading">
@@ -405,6 +407,28 @@ export default {
     padding: 0 !important;
   }
 
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  /* Scale transition for the dialog */
+  .scale-enter-active,
+  .scale-leave-active {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .scale-enter-from,
+  .scale-leave-to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
   .page-container {
     position: relative;
     min-height: 100vh;
@@ -606,7 +630,9 @@ export default {
     width: 90%;
     text-align: center;
     border: 1px solid #d0cbc4;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); 
+    transition: all 0.3s ease;
+    transform-origin: center;
   }
 
   .confirmation-dialog h3 {
@@ -667,6 +693,7 @@ export default {
     /* backdrop-filter: blur(2px); */
     border: none;
     box-shadow: none;
+    transition: all 0.3s ease, background-color 0.3s ease;
   }
 
   .deleting-state {
@@ -675,6 +702,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    transition: all 0.3s ease;
   }
 
   .deleting-spinner {
