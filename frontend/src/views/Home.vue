@@ -79,6 +79,7 @@
             v-if="showDeleteButton" 
             @click="showDeleteConfirmation = true"
             class="delete-button"
+            :disabled="isDeleting"
           >
             <span>
               <!-- {{ selectedBags.size }}  -->
@@ -167,7 +168,7 @@ export default {
       showDeleteButton: false, // Control delete button visibility
       showDeleteConfirmation: false,
       selectedSeasons: new Set(), // Track selected seasons
-      isDeleting: true, // Add this line
+      isDeleting: false, // Add this line
     };
   },
   computed: {
