@@ -660,7 +660,9 @@ export default {
   /* Add these styles to the existing confirmation dialog styles */
   .confirmation-dialog.processing {
     background-color: rgba(244, 235, 226, 0);
-    backdrop-filter: blur(2px);
+    /* backdrop-filter: blur(2px); */
+    border: none;
+    box-shadow: none;
   }
 
   .deleting-state {
@@ -675,16 +677,17 @@ export default {
     width: 50px;
     height: 50px;
     border: 4px solid rgba(66, 49, 37, 0.2);
-    border-top-color: #423125;
+    border-top-color: #f3eee8;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
   }
 
   .deleting-text {
-    color: #423125;
+    color: #f3eee8;
     font-size: 1.2rem;
-    font-weight: 500;
+    font-weight: 700;
+    letter-spacing: 1px;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
   }
 
