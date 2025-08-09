@@ -363,8 +363,10 @@ export default {
     resetDialog() {
       this.showDeleteConfirmation = false;
       this.isDeleting = false;
-      this.selectedBags.clear();
-      this.showDeleteButton = false;
+      if (this.closeAfterLoading) {
+        this.selectedBags.clear();
+        this.showDeleteButton = false;
+      }
       this.closeAfterLoading = false;
       this.showDialogContent = false;
     },
