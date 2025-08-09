@@ -918,7 +918,8 @@ body, html, #app {
   width: 100%;
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1 / 1.56630057630;
+  height: 100%;
+  /* aspect-ratio: 1 / 1.56630057630; */
   /* margin-bottom: 10px; */
 }
 
