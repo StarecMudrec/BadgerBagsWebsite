@@ -756,7 +756,7 @@ body, html, #app {
 
 .bag-catalog {
   width: 100%;
-  padding: 20px;
+  padding: 40px;
 }
 
 .bag-grid {
@@ -764,7 +764,7 @@ body, html, #app {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   width: 100%;
-  padding: 20px;
+  /* padding: 20px; */
   position: relative;
   /* Remove align-items: stretch */
   perspective: 1000px; /* Adds depth for smoother 3D effects */
