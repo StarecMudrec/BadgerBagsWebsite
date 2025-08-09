@@ -489,41 +489,41 @@ body, html, #app {
 
 .sort-container {
   position: relative;
-  margin-bottom: -20px;
-  padding-top: 32px;
+  margin-bottom: 10px;
+  /* padding-top: 32px; */
 }
 
 .sort-icon {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 30px;
-  height: 30px;
-  margin-left: 52px;
+  width: 22px;
+  height: 22px;
+  margin-left: 7px;
   cursor: pointer;
   padding: 3px 0;
 }
 
 .sort-icon-line {
   display: block;
-  height: 3px;
+  height: 2px;
   background-color: #423125;
   transition: all 0.3s ease;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 .sort-icon-line:nth-child(1) {
-  width: 100%;
+  width: 90%;
   border-radius: 2px;
 }
 
 .sort-icon-line:nth-child(2) {
-  width: 65%;
+  width: 60%;
   border-radius: 2px;
 }
 
 .sort-icon-line:nth-child(3) {
-  width: 35%;
+  width: 30%;
   border-radius: 2px;
 }
 
@@ -760,7 +760,7 @@ body, html, #app {
   padding: 25px;
   border-radius: 8px;
   border: 0.5px solid #f8f3ed;
-  max-width: 1200px;
+  max-width: 1300px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 30px;
