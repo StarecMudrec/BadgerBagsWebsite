@@ -711,7 +711,7 @@ export default {
     /* backdrop-filter: blur(2px); */
     border: none;
     box-shadow: none;
-    transition: all 0.3s ease, background-color 0.3s ease;
+    transition: all 0.3s ease, background-color 0.1s ease;
   }
 
   .deleting-state {
