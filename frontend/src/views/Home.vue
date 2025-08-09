@@ -347,10 +347,7 @@ export default {
         );
         this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
         this.closeAfterLoading = true;
-        this.showDialogContent = false;
-        // Clear selections only after successful deletion
-        this.selectedBags.clear();
-        this.showDeleteButton = false;
+        this.showDialogContent = false; // Start closing animation
       } catch (error) {
         console.error('Deletion error:', error);
         this.isDeleting = false;
@@ -366,19 +363,15 @@ export default {
     resetDialog() {
       this.showDeleteConfirmation = false;
       this.isDeleting = false;
-      this.closeAfterLoading = false;
-      this.showDialogContent = false;
-    },
-    
-    closeDialogAndReset() {
       this.selectedBags.clear();
       this.showDeleteButton = false;
-      this.cancelDelete(); // Start the close animation
+      this.closeAfterLoading = false;
+      this.showDialogContent = false;
     },
   
     cancelDelete() {
       // Add a separate method for cancel to handle animation
-      this.showDialogContent  = false;
+      this.showDeleteConfirmation = false;
     },
     
     animateSelection(bagId, isSelected) {
