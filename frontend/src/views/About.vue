@@ -132,6 +132,12 @@ export default {
   position: relative;
   text-decoration: none;
   padding: 8px 15px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .navbar-button:hover {

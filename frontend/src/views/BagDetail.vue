@@ -293,23 +293,29 @@ export default {
 }
 
 .buy-button {
-    display: inline-block;
-    padding: 9px 17px;
-    padding-top: 5px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #333333;
-    text-decoration: none;
-    font-family: 'Noto Serif TC', 'Noto Serif', serif;
-    font-size: 1.5rem;    
-    font-weight: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+  display: inline-block;
+  padding: 9px 17px;
+  padding-top: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333333;
+  text-decoration: none;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
+  font-size: 1.5rem;    
+  font-weight: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .buy-button:hover {
