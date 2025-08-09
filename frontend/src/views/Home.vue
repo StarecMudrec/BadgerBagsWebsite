@@ -396,7 +396,7 @@ export default {
 };
 </script>
 
-  <style scoped>
+<style scoped>
   @import url('https://fonts.googleapis.com/css2?family=BIZ+UDPMincho&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,500;1,400&display=swap');
 
@@ -560,7 +560,7 @@ export default {
     padding: 8px 12px;
     /* color: #ff4444; */
     background: none;
-    color: #ff2626;
+    color: #ff4444;
     border: none;
     border-radius: 8px;
     font-weight: 500;
@@ -572,7 +572,7 @@ export default {
   }
 
   .delete-button:hover {
-    color: #ff3b3b;
+    color: rgb(255, 76, 76);
     transform: translateY(-2px);
     transform: scale(1.02);
     /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); */
