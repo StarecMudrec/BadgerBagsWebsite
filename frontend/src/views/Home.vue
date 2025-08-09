@@ -102,7 +102,7 @@
             data-test="bag-card"
             @bag-selected="handleBagSelected"
           />
-          <div style="margin: 15px 15px 15px 15px; display: flex; flex-direction: column; align-items: center;">
+          <div style=" display: flex; flex-direction: column; align-items: center;">
             <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
               <div class="add-item-inner">
                 <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -97,6 +97,7 @@ export default {
   border: 4px solid transparent;
   cursor: pointer;
   aspect-ratio: 1 / 1.67; /* Adjusted ratio to make space for price */
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
 }
 
 .bag-card.raised {
@@ -182,7 +183,6 @@ export default {
   height: auto; /* Changed from 100% to auto */
   aspect-ratio: 1 / 1.56630057630; /* Maintain original image ratio */
   margin-bottom: 10px;
-  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
   object-fit: cover;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
