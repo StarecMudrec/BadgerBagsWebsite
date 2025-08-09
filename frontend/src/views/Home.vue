@@ -169,7 +169,7 @@ export default {
       showDeleteButton: false, // Control delete button visibility
       showDeleteConfirmation: false,
       selectedSeasons: new Set(), // Track selected seasons
-      isDeleting: false, // Add this line
+      isDeleting: true, // Add this line
     };
   },
   computed: {
