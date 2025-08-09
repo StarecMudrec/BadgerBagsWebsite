@@ -351,10 +351,12 @@ export default {
         // Optional: Show error message to user
       } finally {
         // Reset states
-        this.isDeleting = false;
-        this.showDeleteConfirmation = false;
-        this.selectedBags.clear();
-        this.showDeleteButton = false;
+        setTimeout(() => {
+          this.showDeleteConfirmation = false;
+          this.isDeleting = false;
+          this.selectedBags.clear();
+          this.showDeleteButton = false;
+        }, 300);
       }
     },
     
