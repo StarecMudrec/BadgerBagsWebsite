@@ -108,7 +108,7 @@ export default {
 .bag-card.selected {
   border: 4px solid rgba(255, 42, 42, 0.32);
   border-radius: 7px;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(7px);
 }
 
 .bag-card::before {
@@ -120,7 +120,7 @@ export default {
   bottom: 0;
   background-color: transparent; /* Start transparent */
   z-index: 0;
-  filter: blur(4px);
+  /* filter: blur(4px); */
   transition: background-color 0.2s ease; /* Add transition */
 }
 
@@ -133,9 +133,9 @@ export default {
   bottom: -4px;
   background-color: rgba(255, 42, 42, 0.24);
   z-index: 1;
-  filter: blur(4px);
+  /* filter: blur(4px); */
   border-radius: 8px; /* Match card's rounded corners */
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(7px);
 }
 
 .bag-card.selected-animation {
