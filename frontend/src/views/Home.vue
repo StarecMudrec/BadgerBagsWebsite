@@ -1123,7 +1123,7 @@ export default {
     fill: #333333;
   }
 
-  @media (min-width: 1550px) {
+  @media (max-width: 1550px) {
     .bag-catalog {
       margin-left: 50px;
       margin-right: 50px;
