@@ -535,8 +535,8 @@ body, html, #app {
   position: absolute;
   top: 100%;
   margin-top: 10px;
-  left: 40px;
-  background-color: #cdc5bccf;
+  left: 10px;
+  background-color: #d3cdc5bf;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
   min-width: 100px;
@@ -562,7 +562,7 @@ body, html, #app {
 }
 
 .sort-option:hover {
-  background-color: #dbd5cf;
+  background-color: #d3cdc5;
 }
 
 .sort-option:last-child {
@@ -763,6 +763,7 @@ body, html, #app {
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 30px;
   background-color: #f3eee8;
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
 }
@@ -830,6 +831,7 @@ body, html, #app {
   /* Add aspect ratio to maintain consistent sizing */
   aspect-ratio: 1 / 1.78; 
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 4px;
 }
 
 .bag-item.selected {
