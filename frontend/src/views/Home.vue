@@ -747,7 +747,7 @@ export default {
     padding: 25px;
     border-radius: 8px;
     border: 0.5px solid #f8f3ed;
-    max-width: 1300px;
+    max-width: 1450px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 30px;
