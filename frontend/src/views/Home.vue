@@ -84,6 +84,7 @@
         </div>
       </div>
       <div v-else class="bag-catalog">
+        <div data-v-bb697dae="" class="season-header"><h2 data-v-bb697dae="" class="season-title"><span data-v-bb697dae="">Season 1</span><!--v-if--><!-- Кнопка удаления сезона --><!--v-if--></h2><div data-v-bb697dae="" class="sort-controls"><div data-v-bb697dae="" class="sort-icon"><span data-v-bb697dae="" class="sort-icon-line"></span><span data-v-bb697dae="" class="sort-icon-line"></span><span data-v-bb697dae="" class="sort-icon-line"></span></div><!--v-if--></div><!--v-if--><!--v-if--></div>
         <transition-group 
           name="list" 
           tag="div" 
