@@ -110,7 +110,7 @@
                 </svg>
               </div>
             </div>
-            <div data-v-db91d383="" class="bag-price unselectable" style="color: rgb(0, 0, 0, 0);">.</div>
+            <!-- <div data-v-db91d383="" class="bag-price unselectable" style="color: rgb(0, 0, 0, 0);">.</div> -->
           </div>
         </transition-group>
       </div>
@@ -919,7 +919,7 @@ body, html, #app {
   position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1.56630057630;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 
 .add-item-button:hover {
