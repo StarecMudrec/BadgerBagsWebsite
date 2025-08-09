@@ -47,7 +47,7 @@
           <!-- Loading state -->
           <div v-else class="deleting-state">
             <div class="deleting-spinner"></div>
-            <div class="deleting-text">Deleting...</div>
+            <div class="deleting-text">Удаляем...</div>
           </div>
         </div>
       </div>
@@ -661,7 +661,7 @@ export default {
 
   /* Add these styles to the existing confirmation dialog styles */
   .confirmation-dialog.processing {
-    background-color: rgba(244, 235, 226, 0.85);
+    background-color: rgba(244, 235, 226, 0);
     backdrop-filter: blur(2px);
   }
 
