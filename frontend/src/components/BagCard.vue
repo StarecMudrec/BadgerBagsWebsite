@@ -94,7 +94,7 @@ export default {
   width: 100%;
   position: relative;
   box-sizing: border-box;
-  border: 4px solid transparent;
+  /* border: 4px solid transparent; */
   cursor: pointer;
   aspect-ratio: 1 / 1.67; /* Adjusted ratio to make space for price */
   box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
