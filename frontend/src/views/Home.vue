@@ -97,7 +97,6 @@
           @leave="leave"
           @after-enter="afterEnter"
           @after-leave="afterLeave"
-          @move="onMove"
           move-class="list-move"
         >
           <BagCard 
@@ -197,14 +196,6 @@ export default {
   },
 
   methods: {
-    onMove(e) {
-      // This ensures smooth movement during reordering
-      e.style.transform = '';
-      gsap.fromTo(e,
-        { opacity: 0.5, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }
-      );
-    },
     // Add these animation methods for selected state
     beforeEnter(el) {
       gsap.set(el, {
@@ -247,12 +238,7 @@ export default {
         opacity: 0,
         duration: 0.3,
         ease: "power2.in",
-        onComplete: () => {
-          // After card disappears, trigger remaining cards to animate
-          this.$nextTick(() => {
-            this.animateRemainingCards().then(done);
-          });
-        }
+        onComplete: done
       });
     },
     
@@ -268,20 +254,17 @@ export default {
       await this.$nextTick();
       const cards = document.querySelectorAll('.bag-item');
       
-      // Animate each remaining card to its new position
       cards.forEach((card, index) => {
-        gsap.fromTo(card,
-          { y: -10, opacity: 0.8 },
-          { 
-            y: 0, 
-            opacity: 1,
-            duration: 0.5,
-            delay: index * 0.05,
-            ease: "back.out(1.7)"
-          }
-        );
+        gsap.to(card, {
+          x: 0,
+          y: 0,
+          duration: 0.5,
+          delay: index * 0.05,
+          ease: "back.out(1.7)"
+        });
       });
       
+      // Wait for animations to complete
       return new Promise(resolve => {
         setTimeout(resolve, 500 + (cards.length * 50));
       });
