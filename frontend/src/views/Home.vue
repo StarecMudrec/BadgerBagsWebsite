@@ -81,8 +81,7 @@
             class="delete-button"
             :disabled="isDeleting"
           >
-            <span v-if="isDeleting">Deleting...</span>
-            <span v-else>
+            <span>
               <!-- {{ selectedBags.size }}  -->
               <i class="bi bi-trash"></i>
             </span>
