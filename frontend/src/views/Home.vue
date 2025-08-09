@@ -761,6 +761,7 @@ export default {
     grid-template-columns: repeat(auto-fill, minmax(174px, 1fr));
     grid-auto-rows: 1fr; /* Ensures all rows are equal height */
     gap: 20px;
+    column-gap: 50px;
     width: 100%;
     /* padding: 20px; */
     position: relative;
