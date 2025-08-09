@@ -182,7 +182,7 @@ export default {
   width: 100%;
   height: auto; /* Changed from 100% to auto */
   aspect-ratio: 1 / 1.56630057630; /* Maintain original image ratio */
-  /* margin-bottom: 10px; */
+  margin-bottom: 10px;
   border-radius: 4px;
   object-fit: cover;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
