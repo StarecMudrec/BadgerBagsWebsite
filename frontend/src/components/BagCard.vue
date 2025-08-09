@@ -204,7 +204,7 @@ export default {
 .bag-price {
   font-weight: bold;
   color: #423125;
-  font-size: clamp(16px, 1.67vw, 32px);
+  font-size: 24px;
   font-family: 'Aclonica', sans-serif;
   pointer-events: none;
 }
