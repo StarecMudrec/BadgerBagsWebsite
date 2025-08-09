@@ -436,7 +436,7 @@ export default {
   }
 
   .background-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -453,7 +453,7 @@ export default {
     left: 0;
     width: 100%;
     height: 4px;
-    background-color: white;
+    /* background-color: white; */
     margin: 0;
     border: none;
   }
@@ -465,7 +465,7 @@ export default {
     left: 0;
     top: 4px;
     flex: 1;
-    background: linear-gradient(to bottom, #f0e9e1 0%, #e7e2dc 100%);
+    background: linear-gradient(to bottom, #f0e9e100 0%, #e7e2dc 100%);
   }
 
   .sort-container {
