@@ -755,8 +755,15 @@ body, html, #app {
 }
 
 .bag-catalog {
-  width: 100%;
-  padding: 40px;
+  /* width: 100%; */
+  padding: 25px;
+  border-radius: 8px;
+  border: 0.5px solid #f8f3ed;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f3eee8;
+  box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
 }
 
 .bag-grid {
