@@ -535,7 +535,7 @@ body, html, #app {
   position: absolute;
   top: 100%;
   margin-top: 10px;
-  left: 10px;
+  left: 5px;
   background-color: #d3cdc5bf;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 10;
