@@ -472,7 +472,7 @@ export default {
     position: relative;
     margin-bottom: 20px;
     /* padding-top: 32px; */
-    border-bottom: 1px solid #ffffff6b;
+    border-bottom: 1px solid #ffffffdb;
     padding-bottom: 10px;
 
   }
@@ -491,7 +491,7 @@ export default {
   .sort-icon-line {
     display: block;
     height: 2px;
-    background-color: #423125a3;
+    background-color: #423125db;
     transition: all 0.3s ease;
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
   }
