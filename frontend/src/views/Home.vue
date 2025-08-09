@@ -97,6 +97,7 @@
           @leave="leave"
           @after-enter="afterEnter"
           @after-leave="afterLeave"
+          move-class="list-move"
         >
           <BagCard 
             v-for="bag in sortedBags" 
@@ -216,18 +217,28 @@ export default {
     },
     
     leave(el, done) {
-      // First shrink and fade out the deleted card
+      // Get the element's position before deletion
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.parentNode.getBoundingClientRect();
+      const relativeTop = rect.top - parentRect.top;
+      const relativeLeft = rect.left - parentRect.left;
+
+      // Set initial position
+      gsap.set(el, {
+        position: 'absolute',
+        top: relativeTop,
+        left: relativeLeft,
+        width: rect.width,
+        height: rect.height
+      });
+
+      // Animate out
       gsap.to(el, {
         scale: 0.8,
         opacity: 0,
         duration: 0.3,
         ease: "power2.in",
-        onComplete: () => {
-          // After card disappears, animate remaining cards
-          this.$nextTick(() => {
-            this.animateRemainingCards().then(done);
-          });
-        }
+        onComplete: done
       });
     },
     
@@ -818,6 +829,7 @@ export default {
     perspective: 1000px; /* Adds depth for smoother 3D effects */ 
     padding-left: 30px;
     padding-right: 30px;
+    will-change: transform; /* Add this */
   }
 
   /* Enhance the transition effects */
@@ -836,6 +848,12 @@ export default {
   /* Add these styles */
   .list-move {
     transition: transform 0.5s ease;
+    will-change: transform;
+  }
+
+  .list-move.list-move-active {
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translate3d(0, 0, 0) !important;
   }
 
   .list-enter-active,
@@ -866,12 +884,14 @@ export default {
   }
 
   .bag-item {
-    display: flex;
+    display: flex;  
     flex-direction: column;
     /* Add aspect ratio to maintain consistent sizing */
     aspect-ratio: 1 / 1.78; 
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-radius: 4px;
+    will-change: transform; /* Add this */
+    backface-visibility: hidden; /* Helps with rendering */
   }
 
   .bag-item.selected {
