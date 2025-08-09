@@ -28,31 +28,30 @@
 
       <!-- Delete Confirmation Dialog -->
       <!-- Update the confirmation dialog template in Home.vue -->
-      <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
-        <transition name="scale">
-          <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
-            <div v-if="!isDeleting">
-              <!-- Normal confirmation content -->
-              <h3>Подтвердите удаление</h3>
-              <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
-              <div class="dialog-buttons">
-                <button @click="confirmDelete" class="confirm-button" title="Delete">
-                  <i class="bi bi-trash"></i>
-                </button>
-                <button @click="showDeleteConfirmation = false" class="cancel-button" title="Cancel">
-                  <i class="bi bi-x-lg"></i>
-                </button>
+      <transition name="fade" @after-leave="resetDialog">
+        <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
+          <transition name="scale" @after-leave="handleDialogClose">
+            <div v-if="showDialogContent" class="confirmation-dialog" :class="{ 'processing': isDeleting }">
+              <div v-if="!isDeleting">
+                <h3>Подтвердите удаление</h3>
+                <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
+                <div class="dialog-buttons">
+                  <button @click="confirmDelete" class="confirm-button" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  <button @click="cancelDelete" class="cancel-button" title="Cancel">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+              <div v-else class="deleting-state">
+                <div class="deleting-spinner"></div>
+                <div class="deleting-text">Deleting...</div>
               </div>
             </div>
-            
-            <!-- Loading state -->
-            <div v-else class="deleting-state">
-              <div class="deleting-spinner"></div>
-              <div class="deleting-text">Удаляем...</div>
-            </div>
-          </div>
-        </transition>
-      </div>
+          </transition>
+        </div>
+      </transition>
 
       <div v-if="loading">
         <div class="loading-container">
@@ -79,7 +78,7 @@
           <!-- Add delete button -->
           <button 
             v-if="showDeleteButton" 
-            @click="showDeleteConfirmation = true"
+            @click="openConfirmation"
             class="delete-button"
             :disabled="isDeleting"
           >
@@ -171,6 +170,8 @@ export default {
       showDeleteConfirmation: false,
       selectedSeasons: new Set(), // Track selected seasons
       isDeleting: false, // Add this line
+      showDialogContent: false,
+      closeAfterLoading: false
     };
   },
   computed: {
@@ -331,33 +332,46 @@ export default {
       this.showDeleteButton = this.selectedBags.size > 0;
     },
     
+    openConfirmation() {
+      this.showDeleteConfirmation = true;
+      this.showDialogContent = true;
+    },
+    
     async confirmDelete() {
       try {
-        this.isDeleting = true; // Show loading state
-        
-        // Create array of delete promises
-        const deletePromises = Array.from(this.selectedBags).map(bagId => 
-          axios.delete(`/api/bags/${bagId}`, { withCredentials: true })
+        this.isDeleting = true;
+        await Promise.all(
+          Array.from(this.selectedBags).map(bagId => 
+            axios.delete(`/api/bags/${bagId}`, { withCredentials: true })
+          )
         );
-        
-        // Wait for all deletions to complete
-        await Promise.all(deletePromises);
-        
-        // Update local state
         this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
-        
+        this.closeAfterLoading = true;
+        this.showDialogContent = false; // Start closing animation
       } catch (error) {
         console.error('Deletion error:', error);
-        // Optional: Show error message to user
-      } finally {
-        // Reset states
-        setTimeout(() => {
-          this.showDeleteConfirmation = false;
-          this.isDeleting = false;
-          this.selectedBags.clear();
-          this.showDeleteButton = false;
-        }, 300);
+        this.isDeleting = false;
       }
+    },
+    
+    handleDialogClose() {
+      if (this.closeAfterLoading) {
+        this.resetDialog();
+      }
+    },
+    
+    resetDialog() {
+      this.showDeleteConfirmation = false;
+      this.isDeleting = false;
+      this.selectedBags.clear();
+      this.showDeleteButton = false;
+      this.closeAfterLoading = false;
+      this.showDialogContent = false;
+    },
+  
+    cancelDelete() {
+      // Add a separate method for cancel to handle animation
+      this.showDeleteConfirmation = false;
     },
     
     animateSelection(bagId, isSelected) {
@@ -413,22 +427,22 @@ export default {
   .fade-leave-active {
     transition: opacity 0.3s ease;
   }
-
   .fade-enter-from,
   .fade-leave-to {
     opacity: 0;
   }
 
-  /* Scale transition for the dialog */
-  .scale-enter-active,
-  .scale-leave-active {
+  /* Dialog scale transition */
+  .scale-enter-active {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-
+  .scale-leave-active {
+    transition: all 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  }
   .scale-enter-from,
   .scale-leave-to {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 
   .page-container {
