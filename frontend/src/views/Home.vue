@@ -24,34 +24,7 @@
     
     <!-- Основной контент -->
     <div id="content-section" class="content">
-      <div class="sort-container">
-        <div class="sort-icon" @click.stop="toggleSortDropdown">
-          <span class="sort-icon-line"></span>
-          <span class="sort-icon-line"></span>
-          <span class="sort-icon-line"></span>
-        </div>
-        <transition name="sort-dropdown">
-          <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
-            <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
-            <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
-            <div class="sort-option">Сначала новые</div>
-          </div> 
-        </transition>
-        
-        <!-- Add delete button -->
-        <button 
-          v-if="showDeleteButton" 
-          @click="showDeleteConfirmation = true"
-          class="delete-button"
-          :disabled="isDeleting"
-        >
-          <span v-if="isDeleting">Deleting...</span>
-          <span v-else>
-            <!-- {{ selectedBags.size }}  -->
-            <i class="bi bi-trash"></i>
-          </span>
-        </button>
-      </div>
+      
 
       <!-- Delete Confirmation Dialog -->
       <!-- Update the confirmation dialog template in Home.vue -->
@@ -84,7 +57,34 @@
         </div>
       </div>
       <div v-else class="bag-catalog">
-        <div data-v-bb697dae="" class="season-header"><h2 data-v-bb697dae="" class="season-title"><span data-v-bb697dae="">Season 1</span><!--v-if--><!-- Кнопка удаления сезона --><!--v-if--></h2><div data-v-bb697dae="" class="sort-controls"><div data-v-bb697dae="" class="sort-icon"><span data-v-bb697dae="" class="sort-icon-line"></span><span data-v-bb697dae="" class="sort-icon-line"></span><span data-v-bb697dae="" class="sort-icon-line"></span></div><!--v-if--></div><!--v-if--><!--v-if--></div>
+        <div class="sort-container">
+          <div class="sort-icon" @click.stop="toggleSortDropdown">
+            <span class="sort-icon-line"></span>
+            <span class="sort-icon-line"></span>
+            <span class="sort-icon-line"></span>
+          </div>
+          <transition name="sort-dropdown">
+            <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
+              <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
+              <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
+              <div class="sort-option">Сначала новые</div>
+            </div> 
+          </transition>
+          
+          <!-- Add delete button -->
+          <button 
+            v-if="showDeleteButton" 
+            @click="showDeleteConfirmation = true"
+            class="delete-button"
+            :disabled="isDeleting"
+          >
+            <span v-if="isDeleting">Deleting...</span>
+            <span v-else>
+              <!-- {{ selectedBags.size }}  -->
+              <i class="bi bi-trash"></i>
+            </span>
+          </button>
+        </div>
         <transition-group 
           name="list" 
           tag="div" 
