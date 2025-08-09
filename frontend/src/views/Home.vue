@@ -791,7 +791,9 @@ body, html, #app {
   /* padding: 20px; */
   position: relative;
   /* Remove align-items: stretch */
-  perspective: 1000px; /* Adds depth for smoother 3D effects */
+  perspective: 1000px; /* Adds depth for smoother 3D effects */ 
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 /* Enhance the transition effects */
