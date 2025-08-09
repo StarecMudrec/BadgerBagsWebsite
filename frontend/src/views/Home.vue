@@ -552,6 +552,12 @@ body, html, #app {
   transition: background-color 0.2s ease;
   font-weight: 500;
   font-size: 1.15rem;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .sort-option:hover {
