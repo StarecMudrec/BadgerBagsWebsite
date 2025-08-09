@@ -135,6 +135,7 @@ export default {
   z-index: 1;
   filter: blur(4px);
   border-radius: 8px; /* Match card's rounded corners */
+  backdrop-filter: blur(1px);
 }
 
 .bag-card.selected-animation {
