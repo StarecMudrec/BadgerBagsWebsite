@@ -30,7 +30,7 @@
       <!-- Update the confirmation dialog template in Home.vue -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
         <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
-          <div v-if="!isDeleting">
+          <div v-if="isDeleting">
             <!-- Normal confirmation content -->
             <h3>Подтвердите удаление</h3>
             <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
