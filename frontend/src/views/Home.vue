@@ -79,7 +79,6 @@
             v-if="showDeleteButton" 
             @click="showDeleteConfirmation = true"
             class="delete-button"
-            :disabled="isDeleting"
           >
             <span>
               <!-- {{ selectedBags.size }}  -->
