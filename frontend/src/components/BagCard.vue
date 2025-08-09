@@ -108,6 +108,7 @@ export default {
 .bag-card.selected {
   border: 4px solid rgba(255, 42, 42, 0.32);
   border-radius: 7px;
+  backdrop-filter: blur(1px);
 }
 
 .bag-card::before {
