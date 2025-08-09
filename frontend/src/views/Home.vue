@@ -748,6 +748,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-top: 30px;
+    margin-bottom: 30px;
     background-color: #f3eee8;
     box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.24);
   }
