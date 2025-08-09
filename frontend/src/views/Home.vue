@@ -30,7 +30,8 @@
       <!-- Update the confirmation dialog template in Home.vue -->
       <div v-if="showDeleteConfirmation" class="confirmation-dialog-overlay">
         <div class="confirmation-dialog" :class="{ 'processing': isDeleting }">
-          <div v-if="!isDeleting">
+          <template v-if="!isDeleting">
+            <!-- Normal confirmation content -->
             <h3>Подтвердите удаление</h3>
             <p>Вы уверены, что хотите удалить выбранные товары? Это действие невозможно отменить.</p>
             <div class="dialog-buttons">
@@ -41,8 +42,9 @@
                 <i class="bi bi-x-lg"></i>
               </button>
             </div>
-          </div>
+          </template>
           
+          <!-- Loading state -->
           <div v-else class="deleting-state">
             <div class="deleting-spinner"></div>
             <div class="deleting-text">Deleting...</div>
@@ -329,24 +331,25 @@ export default {
     },
     
     async confirmDelete() {
-      this.isDeleting = true;
-      
       try {
-        // Perform deletion
-        await Promise.all(
-          Array.from(this.selectedBags).map(bagId => 
-            fetch(`/api/bags/${bagId}`, {
-              method: 'DELETE',
-              credentials: 'include'
-            })
-        ));
+        this.isDeleting = true; // Show loading state
         
-        // Remove deleted items from local state
+        // Create array of delete promises
+        const deletePromises = Array.from(this.selectedBags).map(bagId => 
+          axios.delete(`/api/bags/${bagId}`, { withCredentials: true })
+        );
+        
+        // Wait for all deletions to complete
+        await Promise.all(deletePromises);
+        
+        // Update local state
         this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
         
       } catch (error) {
         console.error('Deletion error:', error);
+        // Optional: Show error message to user
       } finally {
+        // Reset states
         this.isDeleting = false;
         this.showDeleteConfirmation = false;
         this.selectedBags.clear();
