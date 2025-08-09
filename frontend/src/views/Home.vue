@@ -92,11 +92,6 @@
           name="list" 
           tag="div" 
           class="bag-grid"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @leave="leave"
-          @after-enter="afterEnter"
-          @after-leave="afterLeave"
         >
           <BagCard 
             v-for="bag in sortedBags" 
@@ -204,10 +199,12 @@ export default {
     },
     
     enter(el, done) {
-      const delay = el.dataset.index * 0.05;
+      const delay = el.dataset.index * 0.1;
+      const isSelected = this.selectedBags.has(el.__vnode.key.replace('bag-', ''));
+      
       gsap.to(el, {
         opacity: 1,
-        y: 0,
+        y: isSelected ? -15 : 0,
         duration: 0.5,
         delay: delay,
         ease: "back.out(1.7)",
