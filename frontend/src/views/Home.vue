@@ -470,8 +470,11 @@ export default {
 
   .sort-container {
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     /* padding-top: 32px; */
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 10px;
+
   }
 
   .sort-icon {
