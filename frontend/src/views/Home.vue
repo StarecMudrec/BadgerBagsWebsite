@@ -67,7 +67,8 @@
             <div class="sort-dropdown" v-if="showSortDropdown" v-click-outside="closeSortDropdown">
               <div class="sort-option" @click="sortByPriceAscending">Сначала дешевле</div>
               <div class="sort-option" @click="sortByPriceDescending">Сначала дороже</div>
-              <div class="sort-option">Сначала новые</div>
+              <div class="sort-option" @click="sortByNewest">Сначала новые</div>
+              <div class="sort-option" @click="sortByOldest">Сначала старые</div>
             </div> 
           </transition>
           
@@ -174,6 +175,10 @@ export default {
         return [...this.bags].sort((a, b) => a.price - b.price);
       } else if (this.sortMethod === 'price-desc') {
         return [...this.bags].sort((a, b) => b.price - a.price);
+      } else if (this.sortMethod === 'newest') {
+        return [...this.bags].sort((a, b) => b.id - a.id); // Newest first (highest ID)
+      } else if (this.sortMethod === 'oldest') {
+        return [...this.bags].sort((a, b) => a.id - b.id); // Oldest first (lowest ID)
       }
       return this.bags;
     }
@@ -258,6 +263,15 @@ export default {
     },
     sortByPriceDescending() {
       this.sortMethod = 'price-desc';
+      this.showSortDropdown = false;
+    },
+    sortByNewest() {
+      this.sortMethod = 'newest';
+      this.showSortDropdown = false;
+    },
+    
+    sortByOldest() {
+      this.sortMethod = 'oldest';
       this.showSortDropdown = false;
     },
     navigateToAddItem() {
