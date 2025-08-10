@@ -246,7 +246,7 @@ export default {
 
 .text-section {
   width: 60%;
-  padding: 40px 10% 40px 12%;
+  padding: 40px  40px ;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -256,6 +256,8 @@ export default {
 .text-content {
   width: 100%;
   max-width: 700px;
+  min-width: 370px;
+  align-self: center;
 }
 
 .section-title {
