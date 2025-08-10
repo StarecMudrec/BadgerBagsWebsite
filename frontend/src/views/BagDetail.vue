@@ -186,6 +186,7 @@ export default {
 /* Rest of your existing styles remain the same */
 .image-section {
   width: 40%;
+  min-width: 765px;
   height: 100vh;
   position: relative;
   background-color: #f4ebe2;
