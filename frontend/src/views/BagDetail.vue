@@ -254,7 +254,7 @@ export default {
 }
 
 .text-content {
-  width: 100%;
+  width: 80%;
   max-width: 700px;
   min-width: 370px;
   align-self: center;
