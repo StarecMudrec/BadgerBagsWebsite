@@ -60,26 +60,49 @@
           <input type="number" id="price" v-model.number="item.price" required>
         </div>
         
-        <div class="form-group file-upload-group" :class="{ 'has-error': fileError }">
-          <label for="image" class="file-upload-label">
-            <span class="file-upload-text">
-              {{ item.image ? item.image.name : 'Загрузите фото...' }}
-            </span>
-            <span class="file-upload-button">Загрузить</span>
-            <input 
-              type="file" 
-              id="image" 
-              @change="handleFileUpload" 
-              accept="image/*"
-              class="file-upload-input"
-            >
-          </label>
-          <span v-if="fileError" class="error-message">Пожалуйста, загрузите фото</span>
+        <div class="form-group">
+          <label>Фотографии (до 10):</label>
+          <div class="image-upload-container">
+            <div class="file-upload-group" :class="{ 'has-error': fileError }">
+              <label for="images" class="file-upload-label">
+                <span class="file-upload-text">
+                  {{ item.images.length > 0 ? `Выбрано ${item.images.length} фото` : 'Загрузите фото...' }}
+                </span>
+                <span class="file-upload-button">Загрузить</span>
+                <input 
+                  type="file" 
+                  id="images" 
+                  @change="handleFileUpload" 
+                  accept="image/*"
+                  class="file-upload-input"
+                  multiple
+                >
+              </label>
+              <span v-if="fileError" class="error-message">Пожалуйста, загрузите хотя бы одно фото</span>
+            </div>
+            
+            <div class="image-preview-container">
+              <draggable 
+                v-model="item.images" 
+                group="images" 
+                @end="updateImageOrder"
+                class="image-preview-list"
+              >
+                <div v-for="(image, index) in item.images" :key="index" class="image-preview-item">
+                  <img :src="image.preview" class="preview-image" />
+                  <button @click="removeImage(index)" class="remove-image-button">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <span class="image-position">{{ index + 1 }}</span>
+                </div>
+              </draggable>
+            </div>
+          </div>
         </div>
         
         <button 
           type="submit" 
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || item.images.length === 0"
           class="submit-button"
         >
           <span v-if="!isSubmitting">Добавить</span>
@@ -96,11 +119,13 @@
 import axios from 'axios';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+import draggable from 'vuedraggable';
 
 export default {
   name: 'AddItem',
   components: {
-    VueCropper
+    VueCropper,
+    draggable
   },
   data() {
     return {
@@ -108,7 +133,7 @@ export default {
         name: '',
         description: '',
         price: null,
-        image: null
+        images: []
       },
       showErrorModal: false,
       errorMessage: '',
@@ -122,7 +147,8 @@ export default {
       containerHeight: 'auto',
       dragMode: 'move', // Changed to 'move' to allow image movement
       fileError: false,
-      isSubmitting: false,  // Add this
+      isSubmitting: false,
+      currentImageIndex: 0
     }
   },
   computed: {
@@ -135,32 +161,46 @@ export default {
   methods: {
     handleFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
-      const file = event.target.files[0];
-      this.fileError = false; // Reset error state
+      const MAX_IMAGES = 10;
+      const files = event.target.files;
+      this.fileError = false;
 
-      // Check file size
-      if (file.size > MAX_FILE_SIZE) {
-        this.errorMessage = 'Image size must be less than 5MB.';
+      if (files.length + this.item.images.length > MAX_IMAGES) {
+        this.errorMessage = `Вы можете загрузить не более ${MAX_IMAGES} изображений`;
         this.showErrorModal = true;
-        event.target.value = ''; // Clear the file input
+        event.target.value = '';
         return;
       }
-      
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          this.imageToCrop = e.target.result;
-          this.showCropModal = true;
-          await this.$nextTick();
-          if (this.$refs.cropper) {
-            this.$refs.cropper.replace(e.target.result);
-            await this.initializeCropper();
-          }
-        };
-        reader.readAsDataURL(file);
-      } else {
-        this.fileError = true;
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        if (file.size > MAX_FILE_SIZE) {
+          this.errorMessage = 'Размер изображения должен быть меньше 5MB.';
+          this.showErrorModal = true;
+          continue;
+        }
+        
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.item.images.push({
+              file: file,
+              preview: e.target.result,
+              cropped: null
+            });
+          };
+          reader.readAsDataURL(file);
+        }
       }
+      
+      event.target.value = '';
+    },
+    removeImage(index) {
+      this.item.images.splice(index, 1);
+    },
+    updateImageOrder() {
+      // The order is automatically updated by draggable
     },
     async initializeCropper() {
       try {
@@ -251,15 +291,16 @@ export default {
     cancelCrop() {
       this.showCropModal = false;
       this.imageToCrop = '';
-      document.getElementById('image').value = '';
     },
     applyCrop() {
-      this.$refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
-        const fileName = 'cropped_' + Date.now() + '.png'; // Unique filename
-        this.item.image = new File([blob], fileName, { type: 'image/png' });
+      this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
+        const fileName = 'cropped_' + Date.now() + '.png';
+        const croppedFile = new File([blob], fileName, { type: 'image/png' });
         
-        // Preview the cropped image
-        this.croppedPreview = URL.createObjectURL(blob);
+        // Update the current image with cropped version
+        this.item.images[this.currentImageIndex].cropped = croppedFile;
+        this.item.images[this.currentImageIndex].preview = URL.createObjectURL(blob);
+        
         this.showCropModal = false;
       }, 'image/png');
     },
@@ -268,23 +309,25 @@ export default {
       this.errorMessage = '';
     },
     async submitForm() {
-      if (this.isSubmitting) return;  // Prevent duplicates
+      if (this.isSubmitting) return;
       
-      this.isSubmitting = true;
-      // Manual validation for file input
-      if (!this.item.image) {
-        this.errorMessage = 'Please select an image file.';
-        this.showErrorModal = true;
+      if (this.item.images.length === 0) {
+        this.fileError = true;
         return;
       }
 
-      // Rest of your existing submit logic
+      this.isSubmitting = true;
+      
       try {
         const formData = new FormData();
         formData.append('name', this.item.name);
         formData.append('description', this.item.description);
         formData.append('price', this.item.price);
-        formData.append('img', this.item.image);
+        
+        // Append all images
+        this.item.images.forEach((image, index) => {
+          formData.append('images[]', image.cropped || image.file);
+        });
 
         const response = await axios.post('/api/bags', formData, {
           headers: {
@@ -294,14 +337,14 @@ export default {
         
         this.$router.push('/');
       } catch (error) {
-        this.errorMessage = 'Error adding bag: ' + 
+        this.errorMessage = 'Ошибка при добавлении товара: ' + 
           (error.response?.data?.error || error.message);
         this.showErrorModal = true;
         console.error('Error details:', error.response);
       } finally {
-        this.isSubmitting = false;  // Re-enable button
+        this.isSubmitting = false;
       }
-    },
+    },  
     resetForm() {
       this.item = {
         name: '',
@@ -319,6 +362,89 @@ export default {
 </script>
 
 <style scoped>                        
+.image-upload-container {
+  margin-top: 10px;
+}
+
+.image-preview-container {
+  margin-top: 15px;
+}
+
+.image-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image-preview-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.image-preview-item:hover {
+  transform: scale(1.05);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.image-position {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+}
+
+/* Make sure drag handles are visible */
+.image-preview-item {
+  cursor: move;
+  cursor: grab;
+}
+
+.image-preview-item:active {
+  cursor: grabbing;
+}
+
+/* Add some visual feedback for dragging */
+.sortable-chosen {
+  opacity: 0.8;
+}
+
+.sortable-ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+
 .add-item-page {
   position: relative;
   min-height: 100vh;
