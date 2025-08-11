@@ -25,14 +25,15 @@
         </div>
 
         <div class="image-container">
-          <img
-            v-for="(image, index) in images"
-            :key="index"
-            :src="image"
-            :alt="bag.name"
-            class="bag-image"
-            :class="{ 'active': index === currentImageIndex }"
-          />
+          <div class="image-track" :style="{ transform: `translateY(${imageTrackOffset}px)` }">
+            <img
+              v-for="(image, index) in images"
+              :key="index"
+              :src="image"
+              :alt="bag.name"
+              class="bag-image"
+            />
+          </div>
         </div>
 
         <div class="arrow-nav right" @click="nextImage" :class="{ 'disabled': images.length <= 1 }">
@@ -94,13 +95,21 @@ export default {
       bag: {},
       images: [], // Array of image URLs
       currentImageIndex: 0,
-      loading: true
+      loading: true,
+      imageTrackOffset: 0,
+      imageHeight: 0
     }
   },
-  computed: {
-    // currentImage() {
-    //   return this.images.length > 0 ? this.images[this.currentImageIndex] : '/placeholder.jpg';
-    // }
+  watch: {
+    currentImageIndex() {
+      this.scrollToImage();
+    },
+    images() {
+      this.$nextTick(() => {
+        this.calculateImageHeight();
+        this.scrollToImage();
+      });
+    }
   },
   methods: {
     async fetchBagDetails() {
@@ -144,6 +153,20 @@ export default {
     },
     setCurrentImageIndex(index) {
       this.currentImageIndex = index;
+    },
+    calculateImageHeight() {
+      const imageElement = document.querySelector('.bag-image');
+      if (imageElement) {
+        this.imageHeight = imageElement.clientHeight;
+      }
+    },
+    scrollToImage() {
+      //Use $nextTick to ensure DOM is updated
+      this.$nextTick(() => {
+        this.calculateImageHeight();
+        this.imageTrackOffset = -this.currentImageIndex * this.imageHeight;
+      });
+
     }
   },
   mounted() {
@@ -229,13 +252,17 @@ export default {
   .image-container {
     width: 100%;
     height: 100%;
-    position: relative; /* Required for absolute positioning of images */
+    overflow: hidden; /* Crucial for the scrolling effect */
+  }
+
+  .image-track {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure the track takes up the full height */
+    transition: transform 0.3s ease-out; /* Smooth scrolling transition */
   }
 
   .bag-image {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -248,12 +275,7 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out; /* Transition for the fade effect */
-  }
-
-  .bag-image.active {
-    opacity: 1; /* Make the active image visible */
+    flex-shrink: 0; /* Prevent images from shrinking */
   }
 
   .arrow-nav {
@@ -382,7 +404,7 @@ export default {
     color: #333333;
     text-decoration: none;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
-    font-size: 1.5rem;    
+    font-size: 1.5rem;
     font-weight: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
@@ -429,7 +451,7 @@ export default {
     transition: all 0.3s ease;
     fill: #333333;
     vertical-align: middle;
-    margin-left: 7px;   
+    margin-left: 7px;
   }
 
   @media (max-width: 768px) {
@@ -437,7 +459,7 @@ export default {
       flex-direction: column;
       height: auto;
     }
-    
+
     .image-section {
       width: 100%;
       height: auto;
@@ -448,7 +470,7 @@ export default {
       justify-content: center;
       border-bottom: 2px solid #ffffff;
     }
-    
+
     .bag-image {
       width: 100%;
       height: auto;
