@@ -482,6 +482,14 @@ export default {
     flex-direction: column;
   }
 
+  .price-container input.edit-input {
+    font-family: 'Aclonica', sans-serif;
+    font-size: 2.5rem;
+    padding: 0;
+    width: auto;
+    max-width: 200px;
+  }
+
   textarea.edit-input {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
