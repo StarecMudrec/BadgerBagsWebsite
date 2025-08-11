@@ -604,11 +604,13 @@ export default {
   .confirm-button:hover i {
     color: #51cf66;
     transform: scale(1.17);
+    transition: all 0.3s ease;
   }
   
   .cancel-button:hover i {
     color: #ff6b6b;
     transform: scale(1.17);
+    transition: all 0.3s ease;
   }
 
   @media (max-width: 768px) {
