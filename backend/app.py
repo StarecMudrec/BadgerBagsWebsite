@@ -269,10 +269,14 @@ def get_bags():
     items = Item.query.all()
     bags_data = []
     for item in items:
+        # Get the first image as the preview image
+        preview_image = item.images[0].filename if item.images else None
+        
         bags_data.append({
-            'id': item.id,  # Ensure this is included
-            'image': item.img,
-            'price': item.price
+            'id': item.id,
+            'image': preview_image,  # Use the first image as preview
+            'price': item.price,
+            'name': item.name  # Include name if needed
         })
     return jsonify(bags_data), 200
 
