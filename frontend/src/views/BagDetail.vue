@@ -160,7 +160,7 @@
         <div class="file-upload-group">
           <label for="new-images" class="file-upload-label">
             <span class="file-upload-text">
-              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото` : 'Загрузите фото...' }}
+              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото (осталось ${remainingImageSlots})` : `Загрузите фото (осталось ${remainingImageSlots})` }}
             </span>
             <span class="file-upload-button">Загрузить</span>
             <input 
@@ -170,6 +170,7 @@
               accept="image/*"
               class="file-upload-input"
               multiple
+              :disabled="remainingImageSlots <= 0"
             >
           </label>
         </div>
@@ -416,22 +417,29 @@ export default {
     },
     handleNewFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-      const MAX_IMAGES = 10;
+      const MAX_TOTAL_IMAGES = 10;
       const files = event.target.files;
       
       if (!files || files.length === 0) return;
 
-      // Calculate how many new images we can still add
-      const existingCount = this.newImages.filter(img => !img.isNew).length;
-      const remainingSlots = MAX_IMAGES - existingCount;
+      // Calculate how many new images we can add without exceeding the limit
+      const currentTotal = this.newImages.length;
+      const availableSlots = MAX_TOTAL_IMAGES - currentTotal;
       
-      if (files.length > remainingSlots) {
-        alert(`Вы можете добавить максимум ${remainingSlots} изображений (всего не более ${MAX_IMAGES})`);
+      if (availableSlots <= 0) {
+        alert(`Максимальное количество изображений: ${MAX_TOTAL_IMAGES}`);
         event.target.value = '';
         return;
       }
 
-      Array.from(files).forEach((file) => {
+      // Take only as many files as we have available slots
+      const filesToProcess = Array.from(files).slice(0, availableSlots);
+      
+      if (files.length > availableSlots) {
+        alert(`Вы можете добавить только ${availableSlots} изображений (всего не более ${MAX_TOTAL_IMAGES})`);
+      }
+
+      filesToProcess.forEach((file) => {
         if (file.size > MAX_FILE_SIZE) {
           alert('Размер изображения должен быть меньше 5MB');
           return;
@@ -513,11 +521,25 @@ export default {
   },
   mounted() {
     this.fetchBagDetails();
+  },
+  computed: {
+    remainingImageSlots() {
+      const MAX_TOTAL_IMAGES = 10;
+      return MAX_TOTAL_IMAGES - this.newImages.length;
+    }
   }
 }
 </script>
 
 <style scoped>
+  .file-upload-input:disabled + .file-upload-label {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .file-upload-input:disabled + .file-upload-label .file-upload-button {
+    background-color: #cccccc;
+  }
   .existing-image-tag {
     position: absolute;
     bottom: 3px;
