@@ -184,11 +184,12 @@ export default {
         
         this.$nextTick(() => {
           if (this.$refs.cropper) {
-            // Initialize with proper dimensions
+            // First set the container dimensions
             const container = this.$refs.cropper.$el;
             container.style.width = '700px';
             container.style.height = '500px';
             
+            // Then initialize the cropper
             this.$refs.cropper.replace(this.imageToCrop);
             this.$refs.cropper.reset();
             this.$refs.cropper.setAspectRatio(1/1.25751633987);
@@ -196,9 +197,9 @@ export default {
           }
         });
       } catch (error) {
-        console.error('Error opening crop modal:', error);
+        console.error('Error in crop modal:', error);
         this.showErrorModal = true;
-        this.errorMessage = error.message;
+        this.errorMessage = 'Failed to initialize image cropper.';
         this.showCropModal = false;
       }
     },
@@ -297,26 +298,25 @@ export default {
         // Set initial zoom to fit image nicely
         this.$refs.cropper.zoomTo(0.5);
         
-        // Get the cropper instance
-        const cropper = this.$refs.cropper.cropper;
+        // Get the underlying cropper.js instance
+        const cropperInstance = this.$refs.cropper.cropper;
         
-        // Add zoom event listener using the cropper instance
-        if (cropper) {
-          cropper.on('zoom', (event) => {
-            const canvasData = cropper.getCanvasData();
-            const containerData = cropper.getContainerData();
+        if (cropperInstance) {
+          // Add zoom event listener the correct way
+          cropperInstance.on('zoom', (event) => {
+            const canvasData = cropperInstance.getCanvasData();
+            const containerData = cropperInstance.getContainerData();
             
             // Prevent zooming in too far
             if (canvasData.width < containerData.width || 
                 canvasData.height < containerData.height) {
-              cropper.zoomTo(1.0); // Reset to 100% if too small
+              cropperInstance.zoomTo(1.0);
             }
           });
         }
       } catch (error) {
-        console.error('Cropper ready error:', error);
-        this.showErrorModal = true;
-        this.errorMessage = 'Failed to initialize image cropper.';
+        console.error('Cropper ready handler:', error);
+        // Don't show error modal since functionality still works
       }
     },
 
