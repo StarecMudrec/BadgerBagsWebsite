@@ -585,13 +585,18 @@ export default {
     backdrop-filter: blur(5px);
   }
 
-  .edit-buttons:hover button {
+  .confirm-button:hover {
     background-color: rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
   }
   
   .confirm-button:hover i {
     color: #51cf66;
+  }
+
+  .cancel-button:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
   }
   
   .cancel-button:hover i {
