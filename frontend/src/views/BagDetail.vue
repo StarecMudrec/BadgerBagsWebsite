@@ -463,7 +463,8 @@ export default {
 
   .price-container {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    flex-direction: column;
   }
 
   .price {
@@ -574,8 +575,8 @@ export default {
   }
 
   .edit-buttons button {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: none;
     background-color: rgba(0, 0, 0, 0);
