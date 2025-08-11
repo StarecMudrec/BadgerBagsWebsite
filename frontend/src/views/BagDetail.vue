@@ -72,8 +72,8 @@
           <div class="editable-field" v-else>
             <textarea v-model="descriptionInput" class="edit-input"></textarea>
             <div class="edit-buttons">
-              <button @click="saveDescription">Сохранить</button>
-              <button @click="cancelEditDescription">Отменить</button>
+              <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check"></i></button>
+              <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times"></i></button>
             </div>
           </div>
 
@@ -85,8 +85,8 @@
             <div class="price-container" v-else>
               <input type="number" v-model.number="priceInput" class="edit-input" />
               <div class="edit-buttons">
-                <button @click="savePrice">Сохранить</button>
-                <button @click="cancelEditPrice">Отменить</button>
+                <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check"></i></button>
+                <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times"></i></button>
               </div>
             </div>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
@@ -561,6 +561,7 @@ export default {
     margin-right: 8px;
     width: 100%;
     box-sizing: border-box; /* Ensures padding doesn't affect width */
+    background-color: #ffffff80;
   }
 
   .edit-buttons {
@@ -569,12 +570,32 @@ export default {
   }
 
   .edit-buttons button {
-    padding: 5px 10px;
-    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     border: none;
-    border-radius: 4px;
-    background-color: #ddd;
-    /* Adjust styling as needed */
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    backdrop-filter: blur(5px);
+  }
+
+  .edit-buttons:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+  
+  .confirm-button:hover i {
+    color: #51cf66;
+  }
+  
+  .cancel-button:hover i {
+    color: #ff6b6b;
   }
 
   @media (max-width: 768px) {
