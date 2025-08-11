@@ -259,7 +259,7 @@ export default {
   .image-track {
     display: flex;
     flex-direction: row; /* Change to row for horizontal scrolling */
-    width: max-content; /* Ensure the track is wide enough to hold all images */
+    /* width: max-content; Ensure the track is wide enough to hold all images */
     height: 100%; /* Ensure the track takes up the full height */
     transition: transform 0.3s ease-out; /* Smooth scrolling transition */
   }
