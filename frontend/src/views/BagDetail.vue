@@ -64,15 +64,30 @@
       <div class="text-section">
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
-          <div class="editable-field">
+
+          <div class="editable-field" v-if="!editingDescription">
             <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
             <span class="edit-icon" @click="editDescription">✏️</span>
           </div>
+          <div class="editable-field" v-else>
+            <textarea v-model="descriptionInput" class="edit-input"></textarea>
+            <div class="edit-buttons">
+              <button @click="saveDescription">Сохранить</button>
+              <button @click="cancelEditDescription">Отменить</button>
+            </div>
+          </div>
 
           <div class="price-section">
-            <div class="price-container">
+            <div class="price-container" v-if="!editingPrice">
               <div class="price">{{ bag.price }}₽</div>
               <span class="edit-icon" @click="editPrice">✏️</span>
+            </div>
+            <div class="price-container" v-else>
+              <input type="number" v-model.number="priceInput" class="edit-input" />
+              <div class="edit-buttons">
+                <button @click="savePrice">Сохранить</button>
+                <button @click="cancelEditPrice">Отменить</button>
+              </div>
             </div>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
               <span class="button-text">КУПИТЬ</span>
@@ -122,18 +137,18 @@ export default {
         this.scrollToImage();
       });
     },
-      'bag.description': {
-          handler(newVal) {
-              this.descriptionInput = newVal;
-          },
-          immediate: true
+    'bag.description': {
+      handler(newVal) {
+        this.descriptionInput = newVal;
       },
-      'bag.price': {
-          handler(newVal) {
-              this.priceInput = newVal;
-          },
-          immediate: true
-      }
+      immediate: true
+    },
+    'bag.price': {
+      handler(newVal) {
+        this.priceInput = newVal;
+      },
+      immediate: true
+    }
   },
   methods: {
     async fetchBagDetails() {
@@ -209,19 +224,20 @@ export default {
       this.editingDescription = false;
     },
     savePrice() {
-        // Here, you would make an API call to update the price on the server.
-        this.bag.price = this.priceInput;
-        this.editingPrice = false;
+      // Here, you would make an API call to update the price on the server.
+      this.bag.price = this.priceInput;
+      this.editingPrice = false;
     },
     cancelEditDescription() {
-        this.editingDescription = false;
-        this.descriptionInput = this.bag.description; // Revert to the original value
+      this.editingDescription = false;
+      this.descriptionInput = this.bag.description; // Revert to the original value
     },
     cancelEditPrice() {
-        this.editingPrice = false;
-        this.priceInput = this.bag.price; // Revert to the original value
+      this.editingPrice = false;
+      this.priceInput = this.bag.price; // Revert to the original value
     }
-  },
+  }
+  ,
   mounted() {
     this.fetchBagDetails();
   }
@@ -305,15 +321,19 @@ export default {
   .image-container {
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Crucial for the scrolling effect */
+    overflow: hidden;
+    /* Crucial for the scrolling effect */
   }
 
   .image-track {
     display: flex;
-    flex-direction: row; /* Change to row for horizontal scrolling */
+    flex-direction: row;
+    /* Change to row for horizontal scrolling */
     /* width: max-content; Ensure the track is wide enough to hold all images */
-    height: 100%; /* Ensure the track takes up the full height */
-    transition: transform 0.27s ease-out; /* Smooth scrolling transition */
+    height: 100%;
+    /* Ensure the track takes up the full height */
+    transition: transform 0.27s ease-out;
+    /* Smooth scrolling transition */
   }
 
   .bag-image {
@@ -329,7 +349,8 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    flex-shrink: 0; /* Prevent images from shrinking */
+    flex-shrink: 0;
+    /* Prevent images from shrinking */
   }
 
   .arrow-nav {
@@ -440,7 +461,7 @@ export default {
     margin-top: 40px;
   }
 
-  .price-container{
+  .price-container {
     display: flex;
     align-items: center;
   }
@@ -518,7 +539,8 @@ export default {
     cursor: pointer;
     margin-left: 8px;
     font-size: 1.2em;
-    color: #777; /* Adjust color as needed */
+    color: #777;
+    /* Adjust color as needed */
     transition: color 0.2s;
   }
 
@@ -526,11 +548,34 @@ export default {
     color: #333;
   }
 
-  .editable-field{
+  .editable-field {
     display: flex;
     align-items: center;
   }
 
+  .edit-input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+  }
+
+  .edit-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
+  .edit-buttons button {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #ddd;
+    /* Adjust styling as needed */
+  }
 
   @media (max-width: 768px) {
     .bag-detail-page {
