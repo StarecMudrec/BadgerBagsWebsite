@@ -176,7 +176,7 @@
         
         <div class="image-preview-container">
           <div class="image-preview-list">
-            <div v-for="(image, index) in newImages" :key="index" class="image-preview-item">
+            <div class="image-preview-item" v-for="(image, index) in newImages" :key="image.id || index">
               <img 
                 :src="image.preview" 
                 class="preview-image" 
@@ -185,6 +185,7 @@
               <button @click="removeNewImage(index)" class="remove-image-button">
                 <i class="fas fa-times"></i>
               </button>
+              <div v-if="!image.isNew" class="existing-image-tag">Existing</div>
             </div>
           </div>
         </div>
@@ -407,7 +408,11 @@ export default {
     // New images methods
     openAddImagesModal() {
       this.showAddImagesModal = true;
-      this.newImages = [];
+      // Initialize with existing images marked as not new
+      this.newImages = this.images.map(img => ({
+        ...img,
+        isNew: false
+      }));
     },
     handleNewFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -416,8 +421,12 @@ export default {
       
       if (!files || files.length === 0) return;
 
-      if (files.length + this.images.length + this.newImages.length > MAX_IMAGES) {
-        alert(`Максимальное количество изображений: ${MAX_IMAGES}`);
+      // Calculate how many new images we can still add
+      const existingCount = this.newImages.filter(img => !img.isNew).length;
+      const remainingSlots = MAX_IMAGES - existingCount;
+      
+      if (files.length > remainingSlots) {
+        alert(`Вы можете добавить максимум ${remainingSlots} изображений (всего не более ${MAX_IMAGES})`);
         event.target.value = '';
         return;
       }
@@ -460,6 +469,9 @@ export default {
       });
     },
     removeNewImage(index) {
+      if (!this.newImages[index].isNew && !confirm('Удалить это изображение?')) {
+        return;
+      }
       this.newImages.splice(index, 1);
     },
     cancelAddImages() {
@@ -468,13 +480,23 @@ export default {
     },
     async saveNewImages() {
       try {
-        // Add new images to the main images array
-        this.images = [...this.images, ...this.newImages];
+        // Filter out removed existing images
+        const existingImageIds = this.images.map(img => img.id);
+        const keptExistingImages = this.newImages.filter(img => !img.isNew && existingImageIds.includes(img.id));
+        
+        // Get new images
+        const addedImages = this.newImages.filter(img => img.isNew);
+        
+        // Combine kept existing images with new images
+        this.images = [...keptExistingImages, ...addedImages];
+        
         this.showAddImagesModal = false;
         this.newImages = [];
         
-        // Here you would typically make an API call to save the new images
-        // await this.saveImagesToServer();
+        // Here you would typically make an API call to:
+        // 1. Delete removed images from server
+        // 2. Upload new images
+        // 3. Update image order if needed
       } catch (error) {
         console.error('Error saving new images:', error);
       }
@@ -496,6 +518,16 @@ export default {
 </script>
 
 <style scoped>
+  .existing-image-tag {
+    position: absolute;
+    bottom: 3px;
+    left: 3px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+  }
   /* Add these new styles for image editing */
   .image-wrapper {
     position: relative;
