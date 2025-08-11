@@ -65,40 +65,44 @@
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
 
-          <div class="editable-field" v-if="!editingDescription">
-            <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
-            <span class="edit-icon" @click="editDescription">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </span>
-          </div>
-          <div class="editable-field" v-else>
-            <textarea v-model="descriptionInput" class="edit-input"></textarea>
-            <div class="edit-buttons">
-              <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
-              <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
-            </div>
-          </div>
-
-          <div class="price-section">
-            <div class="price-container" v-if="!editingPrice">
-              <div class="price">{{ bag.price }}₽</div>
-              <span class="edit-icon" @click="editPrice">
+          <transition name="fade-slide" mode="out-in">
+            <div class="editable-field" v-if="!editingDescription" key="description-view">
+              <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
+              <span class="edit-icon" @click="editDescription">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
               </span>
             </div>
-            <div class="price-container" v-else>
-              <input type="number" v-model.number="priceInput" class="edit-input" />
+            <div class="editable-field" v-else key="description-edit">
+              <textarea v-model="descriptionInput" class="edit-input"></textarea>
               <div class="edit-buttons">
-                <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
-                <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
+                <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+                <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
               </div>
             </div>
+          </transition>
+
+          <div class="price-section">
+            <transition name="fade-slide" mode="out-in">
+              <div class="price-container" v-if="!editingPrice" key="price-view">
+                <div class="price">{{ bag.price }}₽</div>
+                <span class="edit-icon" @click="editPrice">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </span>
+              </div>
+              <div class="price-container" v-else key="price-edit">
+                <input type="number" v-model.number="priceInput" class="edit-input" />
+                <div class="edit-buttons">
+                  <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+                  <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
+                </div>
+              </div>
+            </transition>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
               <span class="button-text">КУПИТЬ</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
@@ -478,6 +482,31 @@ export default {
     flex-direction: column;
   }
 
+  .price-container input.edit-input {
+    font-family: 'Aclonica', sans-serif;
+    font-size: 2.5rem;
+    color: #333333;
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: auto;
+    max-width: 200px;
+  }
+
+  textarea.edit-input {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    line-height: 1.3;
+    color: #423125;
+    min-height: 120px;
+    resize: vertical;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+  }
+
   .price {
     font-family: 'Aclonica', sans-serif;
     font-size: 2.5rem;
@@ -619,6 +648,21 @@ export default {
     transform: translateY(10px);
   }
 
+  /* Transition styles */
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  .fade-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   
   .confirm-button:hover i {
     color: #51cf66;
