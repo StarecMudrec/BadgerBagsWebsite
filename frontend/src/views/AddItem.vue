@@ -111,7 +111,7 @@
           </div>
           <div class="crop-instructions">
             <p>Вы можете обрезать изображения, нажав на их миниатюру выше</p>
-            <p>You can crop images by clicking on their thumbnails above</p>
+            <!-- <p>You can crop images by clicking on their thumbnails above</p> -->
           </div>
         </div>
         
