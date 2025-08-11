@@ -128,9 +128,6 @@
             <div class="spinner"></div>
           </div>
         </button>
-        <div v-if="submissionError" class="submission-error">
-          {{ submissionError }}
-        </div>
       </form>
       
       <router-link to="/" class="back-link">← На главную</router-link>
@@ -171,8 +168,7 @@ export default {
       dragMode: 'move', // Changed to 'move' to allow image movement
       fileError: false,
       isSubmitting: false,
-      currentImageIndex: 0,
-      submissionError: ''
+      currentImageIndex: 0
     }
   },
   computed: {
@@ -396,7 +392,6 @@ export default {
         return;
       }
 
-      this.submissionError = '';
       this.isSubmitting = true;
       
       try {
@@ -446,7 +441,6 @@ export default {
           errorMsg = error.message;
         }
         
-        this.submissionError = errorMsg;
         this.errorMessage = errorMsg;
         this.showErrorModal = true;
         console.error('Error details:', error);
@@ -471,16 +465,6 @@ export default {
 </script>
 
 <style scoped>           
-  .submission-error {
-    color: #ff4444;
-    text-align: center;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    padding: 5px;
-    background-color: rgba(255, 68, 68, 0.1);
-    border-radius: 4px;
-    border-left: 3px solid #ff4444;
-  }
   .spinner {
     width: 30px;
     height: 30px;
