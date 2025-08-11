@@ -485,6 +485,7 @@ export default {
   .price-container input.edit-input {
     font-family: 'Aclonica', sans-serif;
     font-size: 2.5rem;
+    color: #423125;
     padding: 0;
     width: auto;
     max-width: 200px;
