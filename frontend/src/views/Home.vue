@@ -503,7 +503,7 @@ export default {
   .content {
     position: relative;
     width: 100%;
-    min-height: calc(100vh - 67px);
+    min-height: 52vh;
     left: 0;
     top: 4px;
     flex: 1;
