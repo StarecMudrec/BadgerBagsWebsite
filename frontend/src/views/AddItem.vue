@@ -120,13 +120,13 @@
           :disabled="isSubmitting || item.images.length === 0"
           class="submit-button"
         >
-          <div class="spinner-container">
-            <div class="spinner"></div>
-          </div>
-          <!-- <span v-if="!isSubmitting">Добавить</span>
-          <div v-else class="spinner-container">
+          <!-- <div class="spinner-container">
             <div class="spinner"></div>
           </div> -->
+          <span v-if="!isSubmitting">Добавить</span>
+          <div v-else class="spinner-container">
+            <div class="spinner"></div>
+          </div>
         </button>
       </form>
       
@@ -472,6 +472,7 @@ export default {
     border-top-color: white;
     border-radius: 50%;
     animation: spin 1s ease-in-out infinite; /* Changed from linear to ease-in-out */
+    margin: 0 auto;
   }
 
   @keyframes spin {
