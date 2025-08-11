@@ -296,43 +296,56 @@ def serve_bag_image(filename):
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
     try:
+        # Check if files were uploaded
         if 'images[]' not in request.files:
-            return jsonify({'error': 'No files uploaded', 'status': 'error'}), 400
+            return jsonify({'status': 'error', 'error': 'No files uploaded'}), 400
         
         files = request.files.getlist('images[]')
         if not files or files[0].filename == '':
-            return jsonify({'error': 'Empty files uploaded', 'status': 'error'}), 400
+            return jsonify({'status': 'error', 'error': 'No files selected'}), 400
 
-        # Validate other form data
-        if not request.form.get('name') or not request.form.get('description') or not request.form.get('price'):
-            return jsonify({'error': 'Missing required fields', 'status': 'error'}), 400
+        # Validate form data
+        name = request.form.get('name')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        
+        if not all([name, description, price]):
+            return jsonify({'status': 'error', 'error': 'Missing required fields'}), 400
+
+        # Create upload directory if it doesn't exist
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
         # Create the item
         new_item = Item(
-            name=request.form.get('name'),
-            description=request.form.get('description'),
-            price=request.form.get('price')
+            name=name,
+            description=description,
+            price=price
         )
         db.session.add(new_item)
-        db.session.commit()
+        db.session.flush()  # Get the ID before commit
 
         # Process images
         saved_filenames = []
         for i, file in enumerate(files):
             if file and allowed_file(file.filename):
-                file_ext = os.path.splitext(file.filename)[1].lower()
-                filename = f"{uuid.uuid4()}{file_ext}"
+                # Secure the filename
+                original_ext = os.path.splitext(file.filename)[1].lower()
+                filename = f"{uuid.uuid4()}{original_ext}"
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 
-                file.save(filepath)
-                
-                new_image = ItemImage(
-                    item_id=new_item.id,
-                    filename=filename,
-                    position=i
-                )
-                db.session.add(new_image)
-                saved_filenames.append(filename)
+                try:
+                    file.save(filepath)
+                    
+                    new_image = ItemImage(
+                        item_id=new_item.id,
+                        filename=filename,
+                        position=i
+                    )
+                    db.session.add(new_image)
+                    saved_filenames.append(filename)
+                except Exception as e:
+                    app.logger.error(f"Error saving file {filename}: {str(e)}")
+                    continue
 
         db.session.commit()
 
@@ -344,10 +357,10 @@ def add_bag():
 
     except Exception as e:
         db.session.rollback()
-        app.logger.error(f"Error adding bag: {str(e)}")
+        app.logger.error(f"Error in add_bag: {str(e)}")
         return jsonify({
             'status': 'error',
-            'error': str(e)
+            'error': 'Internal server error'
         }), 500
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])

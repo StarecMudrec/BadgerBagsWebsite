@@ -90,7 +90,11 @@
               >
                 <template #item="{ element, index }">
                   <div class="image-preview-item">
-                    <img :src="element.preview" class="preview-image" />
+                    <img 
+                      :src="element.preview" 
+                      class="preview-image" 
+                      @click="openCropModal(index)"
+                    />
                     <button @click="removeImage(index)" class="remove-image-button">
                       <i class="fas fa-times"></i>
                     </button>
@@ -161,6 +165,18 @@ export default {
     }
   },
   methods: {
+    openCropModal(index) {
+      this.currentImageIndex = index;
+      this.imageToCrop = this.item.images[index].preview;
+      this.showCropModal = true;
+      this.$nextTick(() => {
+        if (this.$refs.cropper) {
+          this.$refs.cropper.replace(this.imageToCrop);
+          this.$refs.cropper.reset();
+          this.$refs.cropper.setAspectRatio(1/1.25751633987);
+        }
+      });
+    },
     handleFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
       const MAX_IMAGES = 10;
@@ -336,31 +352,38 @@ export default {
             'Content-Type': 'multipart/form-data'
           },
           transformRequest: (data, headers) => {
-            // Remove Content-Type header to let browser set it with boundary
             delete headers['Content-Type'];
             return data;
-          }
+          },
+          timeout: 30000 // 30 seconds timeout
         });
         
-        if (response.data.status === 'success') {
+        if (response.data?.status === 'success') {
           this.$router.push('/');
         } else {
-          throw new Error(response.data.message || 'Unknown error occurred');
+          throw new Error(response.data?.message || 'Invalid server response');
         }
       } catch (error) {
-        let errorMessage = 'Ошибка при добавлении товара';
-        if (error.response) {
-          // Handle HTML response from server
-          if (error.response.headers['content-type'].includes('text/html')) {
-            errorMessage += ': Server error occurred';
+        let errorMsg = 'Ошибка при добавлении товара';
+        
+        if (error.code === 'ECONNABORTED') {
+          errorMsg = 'Превышено время ожидания сервера';
+        } else if (error.response) {
+          if (typeof error.response.data === 'string' && 
+              error.response.data.startsWith('<!DOCTYPE html>')) {
+            errorMsg = 'Сервер вернул HTML вместо JSON';
           } else {
-            errorMessage += ': ' + (error.response.data?.error || error.message);
+            errorMsg = error.response.data?.error || 
+                      error.response.statusText || 
+                      `HTTP ${error.response.status}`;
           }
+        } else if (error.request) {
+          errorMsg = 'Сервер не ответил';
         } else {
-          errorMessage += ': ' + error.message;
+          errorMsg = error.message;
         }
         
-        this.errorMessage = errorMessage;
+        this.errorMessage = errorMsg;
         this.showErrorModal = true;
         console.error('Error details:', error);
       } finally {
