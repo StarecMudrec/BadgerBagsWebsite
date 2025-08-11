@@ -27,6 +27,10 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
+            :min-container-width="200"
+            :min-container-height="200"
+            :min-canvas-width="200"
+            :min-canvas-height="200"
             guides
             background-class="cropper-background"
             @ready="onCropperReady"
@@ -204,28 +208,29 @@ export default {
         if (file && file.type.startsWith('image/')) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            const newImage = {
-              file: file,
-              preview: e.target.result,
-              cropped: null
-            };
-            this.item.images.push(newImage);
-            
-            // Open cropper for the first image immediately
-            if (index === 0) {
-              this.currentImageIndex = this.item.images.length - 1;
-              this.imageToCrop = e.target.result;
-              this.showCropModal = true;
+            try {
+              // Validate the image data
+              if (!e.target.result.startsWith('data:image/')) {
+                throw new Error('Invalid image format');
+              }
               
-              // Initialize cropper in next tick
-              this.$nextTick(() => {
-                if (this.$refs.cropper) {
-                  this.$refs.cropper.replace(e.target.result);
-                  this.$refs.cropper.reset();
-                  this.$refs.cropper.setAspectRatio(1/1.25751633987);
-                }
-              });
+              const newImage = {
+                file: file,
+                preview: e.target.result,
+                cropped: null
+              };
+              this.item.images.push(newImage);
+              
+              // ... rest of your code
+            } catch (error) {
+              console.error('Error processing image:', error);
+              this.showErrorModal = true;
+              this.errorMessage = 'Failed to process image. Please try another one.';
             }
+          };
+          reader.onerror = () => {
+            this.showErrorModal = true;
+            this.errorMessage = 'Failed to read image file.';
           };
           reader.readAsDataURL(file);
         }
@@ -268,16 +273,10 @@ export default {
       }
     },
     onCropperReady() {
-      // Set initial zoom boundaries
-      this.$refs.cropper.setZoomRange({
-        min: 0.1,  // Minimum zoom level (10%)
-        max: 2.0   // Maximum zoom level (200%)
-      });
-      
       // Set initial zoom to fit image nicely
       this.$refs.cropper.zoomTo(0.5);
       
-      // Prevent zooming beyond boundaries
+      // Prevent zooming beyond boundaries using the event
       this.$refs.cropper.on('zoom', (event) => {
         const canvasData = this.$refs.cropper.getCanvasData();
         const containerData = this.$refs.cropper.getContainerData();
