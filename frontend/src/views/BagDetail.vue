@@ -26,13 +26,16 @@
 
         <div class="image-container">
           <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
-            <img
-              v-for="(image, index) in images"
-              :key="index"
-              :src="image"
-              :alt="bag.name"
-              class="bag-image"
-            />
+            <div v-for="(image, index) in images" :key="index" class="image-wrapper">
+              <img
+                :src="image.preview || image.url"
+                :alt="bag.name"
+                class="bag-image"
+              />
+              <button class="edit-image-button" @click="openCropModal(index)">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -113,12 +116,102 @@
         </div>
       </div>
     </template>
+
+    <!-- Crop Modal -->
+    <div v-if="showCropModal" class="crop-modal-overlay">
+      <div class="crop-modal-content">
+        <div class="fixed-crop-container">
+          <vue-cropper
+            ref="cropper"
+            :src="imageToCrop"
+            :aspect-ratio="1/1.25751633987"
+            :view-mode="1"
+            :auto-crop-area="0.8"
+            :zoomable="true"
+            :movable="true"
+            :scalable="true"
+            :zoom-on-touch="true"
+            :zoom-on-wheel="true"
+            :drag-mode="'move'"
+            :min-container-width="200"
+            :min-container-height="200"
+            :min-canvas-width="200"
+            :min-canvas-height="200"
+            guides
+            background-class="cropper-background"
+            @ready="onCropperReady"
+          ></vue-cropper>
+        </div>
+        <div class="crop-controls">
+          <button @click="cancelCrop" class="crop-button cancel">
+            <i class="fas fa-times"></i>
+          </button>
+          <button @click="applyCrop" class="crop-button confirm">
+            <i class="fas fa-check"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Images Modal -->
+    <div v-if="showAddImagesModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="error-title">Добавить изображения</h3>
+        <div class="file-upload-group">
+          <label for="new-images" class="file-upload-label">
+            <span class="file-upload-text">
+              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото` : 'Загрузите фото...' }}
+            </span>
+            <span class="file-upload-button">Загрузить</span>
+            <input 
+              type="file" 
+              id="new-images" 
+              @change="handleNewFileUpload" 
+              accept="image/*"
+              class="file-upload-input"
+              multiple
+            >
+          </label>
+        </div>
+        
+        <div class="image-preview-container">
+          <div class="image-preview-list">
+            <div v-for="(image, index) in newImages" :key="index" class="image-preview-item">
+              <img 
+                :src="image.preview" 
+                class="preview-image" 
+                @click="openCropModalForNewImage(index)"
+              />
+              <button @click="removeNewImage(index)" class="remove-image-button">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-buttons">
+          <button @click="saveNewImages" class="modal-button confirm">Сохранить</button>
+          <button @click="cancelAddImages" class="modal-button cancel">Отмена</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Images Button -->
+    <button v-if="!loading" class="edit-images-button" @click="openAddImagesModal">
+      <i class="fas fa-plus"></i> Редактировать изображения
+    </button>
   </div>
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
+
 export default {
   name: 'BagDetail',
+  components: {
+    VueCropper
+  },
   props: {
     id: {
       type: [String, Number],
@@ -128,17 +221,25 @@ export default {
   data() {
     return {
       bag: {},
-      images: [], // Array of image URLs
+      images: [], // Array of image objects with preview and file data
       currentImageIndex: 0,
       loading: true,
       imageTrackOffset: 0,
       imageWidth: 0,
-      //Editing states
+      // Editing states
       editingDescription: false,
       editingPrice: false,
       // For Editing
       descriptionInput: '',
-      priceInput: ''
+      priceInput: '',
+      // Image editing
+      showCropModal: false,
+      imageToCrop: '',
+      currentEditingIndex: 0,
+      // New images
+      showAddImagesModal: false,
+      newImages: [],
+      isEditingNewImage: false
     }
   },
   watch: {
@@ -177,8 +278,13 @@ export default {
 
         const data = await response.json();
         this.bag = data;
-        // Store all image URLs in the images array
-        this.images = data.images.map(img => img.url);
+        // Convert existing images to our format
+        this.images = data.images.map(img => ({
+          url: img.url,
+          preview: img.url,
+          id: img.id, // Keep the original ID for existing images
+          isNew: false
+        }));
       } catch (error) {
         console.error('Error fetching bag details:', error);
         if (error.message.includes('not found')) {
@@ -215,43 +321,174 @@ export default {
       }
     },
     scrollToImage() {
-      //Use $nextTick to ensure DOM is updated
       this.$nextTick(() => {
         this.calculateImageWidth();
         this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
       });
-
     },
     //Edit Functions
     editDescription() {
       this.editingDescription = true;
-      this.descriptionInput = this.bag.description || ''; // Initialize input with existing description
+      this.descriptionInput = this.bag.description || '';
     },
     editPrice() {
       this.editingPrice = true;
-      this.priceInput = this.bag.price || ''; // Initialize input with existing price
+      this.priceInput = this.bag.price || '';
     },
-    saveDescription() {
-      // Here, you would make an API call to update the description on the server.
-      // For now, we'll just update the local `bag` data.
-      this.bag.description = this.descriptionInput;
-      this.editingDescription = false;
+    async saveDescription() {
+      try {
+        // Here you would make an API call to update the description
+        this.bag.description = this.descriptionInput;
+        this.editingDescription = false;
+      } catch (error) {
+        console.error('Error saving description:', error);
+      }
     },
-    savePrice() {
-      // Here, you would make an API call to update the price on the server.
-      this.bag.price = this.priceInput;
-      this.editingPrice = false;
+    async savePrice() {
+      try {
+        // Here you would make an API call to update the price
+        this.bag.price = this.priceInput;
+        this.editingPrice = false;
+      } catch (error) {
+        console.error('Error saving price:', error);
+      }
     },
     cancelEditDescription() {
       this.editingDescription = false;
-      this.descriptionInput = this.bag.description; // Revert to the original value
+      this.descriptionInput = this.bag.description;
     },
     cancelEditPrice() {
       this.editingPrice = false;
-      this.priceInput = this.bag.price; // Revert to the original value
+      this.priceInput = this.bag.price;
+    },
+    // Image editing methods
+    openCropModal(index) {
+      this.currentEditingIndex = index;
+      this.imageToCrop = this.images[index].preview;
+      this.isEditingNewImage = false;
+      this.showCropModal = true;
+      
+      this.$nextTick(() => {
+        if (this.$refs.cropper) {
+          this.$refs.cropper.replace(this.imageToCrop);
+          this.$refs.cropper.reset();
+          this.$refs.cropper.setAspectRatio(1/1.25751633987);
+          this.$refs.cropper.setDragMode('move');
+        }
+      });
+    },
+    onCropperReady() {
+      if (this.$refs.cropper) {
+        this.$refs.cropper.zoomTo(0.5);
+      }
+    },
+    cancelCrop() {
+      this.showCropModal = false;
+      this.imageToCrop = '';
+    },
+    applyCrop() {
+      this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
+        const fileName = 'cropped_' + Date.now() + '.png';
+        const croppedFile = new File([blob], fileName, { type: 'image/png' });
+        
+        if (this.isEditingNewImage) {
+          // Update new image
+          this.newImages[this.currentEditingIndex].preview = URL.createObjectURL(blob);
+          this.newImages[this.currentEditingIndex].cropped = croppedFile;
+        } else {
+          // Update existing image
+          this.images[this.currentEditingIndex].preview = URL.createObjectURL(blob);
+          this.images[this.currentEditingIndex].cropped = croppedFile;
+        }
+        
+        this.showCropModal = false;
+      }, 'image/png');
+    },
+    // New images methods
+    openAddImagesModal() {
+      this.showAddImagesModal = true;
+      this.newImages = [];
+    },
+    handleNewFileUpload(event) {
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+      const MAX_IMAGES = 10;
+      const files = event.target.files;
+      
+      if (!files || files.length === 0) return;
+
+      if (files.length + this.images.length + this.newImages.length > MAX_IMAGES) {
+        alert(`Максимальное количество изображений: ${MAX_IMAGES}`);
+        event.target.value = '';
+        return;
+      }
+
+      Array.from(files).forEach((file) => {
+        if (file.size > MAX_FILE_SIZE) {
+          alert('Размер изображения должен быть меньше 5MB');
+          return;
+        }
+        
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.newImages.push({
+              file: file,
+              preview: e.target.result,
+              cropped: null,
+              isNew: true
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      event.target.value = '';
+    },
+    openCropModalForNewImage(index) {
+      this.currentEditingIndex = index;
+      this.imageToCrop = this.newImages[index].preview;
+      this.isEditingNewImage = true;
+      this.showCropModal = true;
+      
+      this.$nextTick(() => {
+        if (this.$refs.cropper) {
+          this.$refs.cropper.replace(this.imageToCrop);
+          this.$refs.cropper.reset();
+          this.$refs.cropper.setAspectRatio(1/1.25751633987);
+          this.$refs.cropper.setDragMode('move');
+        }
+      });
+    },
+    removeNewImage(index) {
+      this.newImages.splice(index, 1);
+    },
+    cancelAddImages() {
+      this.showAddImagesModal = false;
+      this.newImages = [];
+    },
+    async saveNewImages() {
+      try {
+        // Add new images to the main images array
+        this.images = [...this.images, ...this.newImages];
+        this.showAddImagesModal = false;
+        this.newImages = [];
+        
+        // Here you would typically make an API call to save the new images
+        // await this.saveImagesToServer();
+      } catch (error) {
+        console.error('Error saving new images:', error);
+      }
+    },
+    removeImage(index) {
+      if (confirm('Удалить это изображение?')) {
+        this.images.splice(index, 1);
+        if (this.currentImageIndex >= this.images.length) {
+          this.currentImageIndex = Math.max(0, this.images.length - 1);
+        }
+        // Here you would typically make an API call to delete the image from server
+      }
     }
-  }
-  ,
+  },
   mounted() {
     this.fetchBagDetails();
   }
@@ -259,6 +496,328 @@ export default {
 </script>
 
 <style scoped>
+  /* Add these new styles for image editing */
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+  }
+
+  .edit-image-button {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .edit-image-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+
+  .edit-image-button i {
+    font-size: 16px;
+  }
+
+  .edit-images-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #423125;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Noto Serif TC', 'Noto Serif', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .edit-images-button:hover {
+    background-color: #2a1f18;
+    transform: translateY(-2px);
+  }
+
+  /* Crop Modal Styles (same as in AddItem.vue) */
+  .crop-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+  }
+
+  .crop-modal-content {
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .fixed-crop-container {
+    width: 700px;
+    height: 500px;
+    margin: 0 auto;
+    position: relative;
+    background-color: #f4ebe2;
+  }
+
+  .cropper-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .crop-controls {
+    display: flex;
+    justify-content: space-between;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    padding-top: 15px;
+    z-index: 10;
+  }
+
+  .crop-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    backdrop-filter: blur(5px);
+  }
+
+  .crop-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+  }
+
+  .crop-button i {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .crop-button.cancel:hover i {
+    color: #ff6b6b;
+  }
+
+  .crop-button.confirm:hover i {
+    color: #51cf66;
+  }
+
+  /* Add Images Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background-color: #f4ebe2;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    border: 1px solid #d0cbc4;
+  }
+
+  .error-title {
+    color: #423125;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .modal-button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .modal-button.confirm {
+    background-color: #423125;
+    color: white;
+  }
+
+  .modal-button.confirm:hover {
+    background-color: #2a1f18;
+  }
+
+  .modal-button.cancel {
+    background-color: #d0cbc4;
+    color: #423125;
+  }
+
+  .modal-button.cancel:hover {
+    background-color: #c5beb6;
+  }
+
+  /* Image preview styles (same as in AddItem.vue) */
+  .image-preview-container {
+    margin-top: 15px;
+  }
+
+  .image-preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    border: dotted;
+    border-color: rgb(208 203 196);
+    border-radius: 10px;
+    padding: 5px;
+    justify-content: center;
+  }
+
+  .image-preview-item {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+
+  .image-preview-item:hover {
+    transform: scale(1.05);
+  }
+
+  .preview-image {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s;
+  }
+
+  .preview-image:hover {
+    transform: scale(1.05);
+  }
+
+  .remove-image-button {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 17px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+  }
+
+  /* File upload styles (same as in AddItem.vue) */
+  .file-upload-group {
+    margin-bottom: 20px;
+  }
+
+  .file-upload-label {
+    display: flex;
+    cursor: pointer;
+  }
+
+  .file-upload-text {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #d0cbc4;
+    border-radius: 8px 0 0 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #423125;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-upload-button {
+    padding: 12px 15px;
+    background-color: #d0cbc4;
+    color: #423125;
+    border: 1px solid #d0cbc4;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .file-upload-button:hover {
+    background-color: #c5beb6;
+  }
+
+  .file-upload-input {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .fixed-crop-container {
+      width: 90vw;
+      height: 90vw;
+      max-width: 400px;
+      max-height: 400px;
+    }
+
+    .edit-images-button {
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+    }
+  }
+
+  /* Keep all existing styles from the original file */
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
   .bag-detail-page {
@@ -277,7 +836,6 @@ export default {
   /* Loading overlay styles */
   .loading-overlay {
     position: absolute;
-    /* Changed from fixed to absolute */
     top: 0;
     left: 0;
     width: 100%;
@@ -287,7 +845,6 @@ export default {
     justify-content: center;
     align-items: center;
     z-index: 10;
-    /* Lower than navbar's z-index */
   }
 
   .loading-content {
@@ -336,18 +893,13 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    /* Crucial for the scrolling effect */
   }
 
   .image-track {
     display: flex;
     flex-direction: row;
-    /* Change to row for horizontal scrolling */
-    /* width: max-content; Ensure the track is wide enough to hold all images */
     height: 100%;
-    /* Ensure the track takes up the full height */
     transition: transform 0.27s ease-out;
-    /* Smooth scrolling transition */
   }
 
   .bag-image {
@@ -364,7 +916,6 @@ export default {
     -ms-user-select: none;
     user-select: none;
     flex-shrink: 0;
-    /* Prevent images from shrinking */
   }
 
   .arrow-nav {
