@@ -612,6 +612,14 @@ export default {
     transform: scale(1.17);
     transition: all 0.3s ease;
   }
+  
+  .confirm-button i {
+    transition: all 0.3s ease;
+  }
+  
+  .cancel-button i {
+    transition: all 0.3s ease;
+  }
 
   @media (max-width: 768px) {
     .bag-detail-page {
