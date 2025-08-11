@@ -531,8 +531,8 @@ export default {
 
 .remove-image-button {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 3px;
+  right: 3px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -544,15 +544,17 @@ export default {
   justify-content: center;
   cursor: pointer;
   font-size: 10px;
+  padding: 0;
 }
 
 .image-position {
   position: absolute;
-  bottom: 5px;
-  left: 5px;
+  bottom: 3px;
+  left: 3px;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 2px 6px;
+  padding-top: 0;
   border-radius: 10px;
   font-size: 10px;
 }
