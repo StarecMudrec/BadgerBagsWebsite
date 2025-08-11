@@ -533,8 +533,8 @@ export default {
   position: absolute;
   top: 3px;
   right: 3px;
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 16px;
   border-radius: 50%;
   background-color: rgba(255, 0, 0, 0.7);
   color: white;
