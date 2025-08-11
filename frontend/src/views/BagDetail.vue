@@ -585,8 +585,8 @@ export default {
     backdrop-filter: blur(5px);
   }
 
-  .edit-buttons:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+  .edit-buttons:hover button {
+    background-color: rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
   }
   
