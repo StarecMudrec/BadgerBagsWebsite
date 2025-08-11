@@ -14,7 +14,7 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="crop-container">
+        <div class="fixed-crop-container">
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
@@ -171,16 +171,36 @@ export default {
   },
   methods: {
     openCropModal(index) {
-      this.currentImageIndex = index;
-      this.imageToCrop = this.item.images[index].preview;
-      this.showCropModal = true;
-      this.$nextTick(() => {
-        if (this.$refs.cropper) {
-          this.$refs.cropper.replace(this.imageToCrop);
-          this.$refs.cropper.reset();
-          this.$refs.cropper.setAspectRatio(1/1.25751633987);
+      try {
+        this.currentImageIndex = index;
+        const image = this.item.images[index];
+        
+        if (!image || !image.preview) {
+          throw new Error('No image available for cropping');
         }
-      });
+        
+        this.imageToCrop = image.preview;
+        this.showCropModal = true;
+        
+        this.$nextTick(() => {
+          if (this.$refs.cropper) {
+            // Initialize with proper dimensions
+            const container = this.$refs.cropper.$el;
+            container.style.width = '700px';
+            container.style.height = '500px';
+            
+            this.$refs.cropper.replace(this.imageToCrop);
+            this.$refs.cropper.reset();
+            this.$refs.cropper.setAspectRatio(1/1.25751633987);
+            this.$refs.cropper.setDragMode('move');
+          }
+        });
+      } catch (error) {
+        console.error('Error opening crop modal:', error);
+        this.showErrorModal = true;
+        this.errorMessage = error.message;
+        this.showCropModal = false;
+      }
     },
     handleFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
@@ -273,20 +293,31 @@ export default {
       }
     },
     onCropperReady() {
-      // Set initial zoom to fit image nicely
-      this.$refs.cropper.zoomTo(0.5);
-      
-      // Prevent zooming beyond boundaries using the event
-      this.$refs.cropper.on('zoom', (event) => {
-        const canvasData = this.$refs.cropper.getCanvasData();
-        const containerData = this.$refs.cropper.getContainerData();
+      try {
+        // Set initial zoom to fit image nicely
+        this.$refs.cropper.zoomTo(0.5);
         
-        // Prevent zooming in too far
-        if (canvasData.width < containerData.width || 
-            canvasData.height < containerData.height) {
-          this.$refs.cropper.zoomTo(1.0); // Reset to 100% if too small
+        // Get the cropper instance
+        const cropper = this.$refs.cropper.cropper;
+        
+        // Add zoom event listener using the cropper instance
+        if (cropper) {
+          cropper.on('zoom', (event) => {
+            const canvasData = cropper.getCanvasData();
+            const containerData = cropper.getContainerData();
+            
+            // Prevent zooming in too far
+            if (canvasData.width < containerData.width || 
+                canvasData.height < containerData.height) {
+              cropper.zoomTo(1.0); // Reset to 100% if too small
+            }
+          });
         }
-      });
+      } catch (error) {
+        console.error('Cropper ready error:', error);
+        this.showErrorModal = true;
+        this.errorMessage = 'Failed to initialize image cropper.';
+      }
     },
 
     onCropStart() {
