@@ -482,6 +482,7 @@ export default {
     font-family: 'Aclonica', sans-serif;
     font-size: 2.5rem;
     color: #333333;
+    transition: all 0.3s ease;
   }
 
   .buy-button {
@@ -564,6 +565,7 @@ export default {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    transition: all 0.3s ease;
   }
 
   .edit-input {
@@ -575,6 +577,7 @@ export default {
     width: 100%;
     box-sizing: border-box; /* Ensures padding doesn't affect width */
     background-color: #ffffff80;
+    transition: all 0.3s ease;
   }
 
   .edit-buttons {
@@ -584,6 +587,7 @@ export default {
     /* padding: 0px 10px; */
     padding-top: 5px;
     padding-left: 5px;
+    transition: all 0.3s ease;
   }
 
   .edit-buttons button {
@@ -602,6 +606,19 @@ export default {
     backdrop-filter: blur(5px);
     padding: 0;
   }
+
+  /* Animation for edit sections */
+  .editable-field-enter-active,
+  .editable-field-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  .editable-field-enter-from,
+  .editable-field-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
   
   .confirm-button:hover i {
     color: #51cf66;
