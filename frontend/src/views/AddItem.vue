@@ -14,7 +14,7 @@
     <!-- Crop Modal -->
     <div v-if="showCropModal" class="crop-modal-overlay">
       <div class="crop-modal-content">
-        <div class="crop-container">
+        <div class="fixed-crop-container">
           <vue-cropper
             ref="cropper"
             :src="imageToCrop"
@@ -29,6 +29,7 @@
             :drag-mode="'move'"
             guides
             background-class="cropper-background"
+            @ready="onCropperReady"
           ></vue-cropper>
         </div>
         <div class="crop-controls">
@@ -812,7 +813,7 @@ textarea {
   align-items: flex-start; /* Align to top for short images */
 }
 
-.crop-container {
+.fixed-crop-container {
   width: 700px;
   height: 500px;
   position: relative;
