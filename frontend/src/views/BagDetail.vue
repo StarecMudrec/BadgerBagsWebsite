@@ -589,6 +589,11 @@ export default {
     height: 100% !important;
   }
 
+  .cropper-bg {
+    width: 700px;
+    height: 500px;
+  }
+
   .crop-controls {
     display: flex;
     justify-content: space-between;
