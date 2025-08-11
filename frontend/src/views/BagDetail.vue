@@ -536,11 +536,15 @@ export default {
           }
         });
         
-        if (formData.entries().next().done === false) { // Check if formData has entries
-          await fetch(`/api/bags/${this.id}/images`, {
+        if (formData.entries().next().done === false) {
+          const response = await fetch(`/api/bags/${this.id}/images/`, {  // Add trailing slash
             method: 'POST',
             body: formData
           });
+          
+          if (!response.ok) {
+            throw new Error('Failed to upload images');
+          }
         }
         
         this.showAddImagesModal = false;

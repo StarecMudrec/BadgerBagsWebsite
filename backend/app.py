@@ -429,6 +429,7 @@ def update_image_order(bag_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
+@app.route('/api/bags/<int:bag_id>/images/', methods=['POST'])
 def add_bag_images(bag_id):
     if 'telegram_id' not in session:
         return jsonify({'error': 'Authentication required'}), 401
