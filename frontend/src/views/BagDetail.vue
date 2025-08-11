@@ -549,7 +549,7 @@ export default {
   /* Edit Icon Styles */
   .edit-icon {
     cursor: pointer;
-    margin-left: 8px;
+    /* margin-left: 8px; */
     font-size: 1.2em;
     color: #777;
     /* Adjust color as needed */
