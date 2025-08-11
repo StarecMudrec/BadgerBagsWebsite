@@ -583,6 +583,7 @@ export default {
     justify-content: space-between;
     /* padding: 0px 10px; */
     padding-top: 5px;
+    padding-left: 5px;
   }
 
   .edit-buttons button {
@@ -599,6 +600,7 @@ export default {
     transition: all 0.3s ease;
     font-size: 1.5rem;
     backdrop-filter: blur(5px);
+    padding: 0;
   }
   
   .confirm-button:hover i {
