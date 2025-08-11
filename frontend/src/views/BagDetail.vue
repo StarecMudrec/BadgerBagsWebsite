@@ -37,6 +37,17 @@
             <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
           </svg>
         </div>
+
+        <!-- Image Dots -->
+        <div class="image-dots">
+          <span
+            v-for="(image, index) in images"
+            :key="index"
+            class="image-dot"
+            :class="{ 'active': index === currentImageIndex }"
+            @click="currentImageIndex = index"
+          ></span>
+        </div>
       </div>
 
       <!-- Text Section (60% width) -->
@@ -253,6 +264,30 @@ export default {
     opacity: 0.9;
   }
 
+  /* Image dots styles */
+  .image-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .image-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .image-dot.active {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
   .text-section {
     width: 60%;
     padding: 40px  40px ;
@@ -416,6 +451,17 @@ export default {
     
     .arrow-nav.right {
       right: 10px;
+    }
+
+    /*Image dots*/
+     .image-dots {
+        bottom: 10px;
+        gap: 5px;
+    }
+
+    .image-dot {
+        width: 8px;
+        height: 8px;
     }
   }
 </style>
