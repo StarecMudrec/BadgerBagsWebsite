@@ -466,8 +466,8 @@ export default {
 
 <style scoped>           
   .spinner {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     border: 5px solid rgba(66, 49, 37, 0.2); /* Light brown with opacity */
     border-top-color: white;
     border-radius: 50%;
