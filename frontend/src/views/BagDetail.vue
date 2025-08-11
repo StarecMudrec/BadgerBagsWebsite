@@ -65,7 +65,7 @@
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
 
-          <transition name="fade-slide" mode="out-in">
+          <transition name="fade-slide">
             <div class="editable-field" v-if="!editingDescription" key="description-view">
               <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
               <span class="edit-icon" @click="editDescription">
@@ -85,7 +85,7 @@
           </transition>
 
           <div class="price-section">
-            <transition name="fade-slide" mode="out-in">
+            <transition name="fade-slide">
               <div class="price-container" v-if="!editingPrice" key="price-view">
                 <div class="price">{{ bag.price }}₽</div>
                 <span class="edit-icon" @click="editPrice">
