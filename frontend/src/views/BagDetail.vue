@@ -72,8 +72,8 @@
           <div class="editable-field" v-else>
             <textarea v-model="descriptionInput" class="edit-input"></textarea>
             <div class="edit-buttons">
-              <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check"></i></button>
-              <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times"></i></button>
+              <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+              <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
             </div>
           </div>
 
@@ -85,8 +85,8 @@
             <div class="price-container" v-else>
               <input type="number" v-model.number="priceInput" class="edit-input" />
               <div class="edit-buttons">
-                <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check"></i></button>
-                <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times"></i></button>
+                <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+                <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
               </div>
             </div>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
