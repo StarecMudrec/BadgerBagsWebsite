@@ -84,17 +84,19 @@
             <div class="image-preview-container">
               <draggable 
                 v-model="item.images" 
-                group="images" 
+                item-key="preview"
                 @end="updateImageOrder"
                 class="image-preview-list"
               >
-                <div v-for="(image, index) in item.images" :key="index" class="image-preview-item">
-                  <img :src="image.preview" class="preview-image" />
-                  <button @click="removeImage(index)" class="remove-image-button">
-                    <i class="fas fa-times"></i>
-                  </button>
-                  <span class="image-position">{{ index + 1 }}</span>
-                </div>
+                <template #item="{ element, index }">
+                  <div class="image-preview-item">
+                    <img :src="element.preview" class="preview-image" />
+                    <button @click="removeImage(index)" class="remove-image-button">
+                      <i class="fas fa-times"></i>
+                    </button>
+                    <span class="image-position">{{ index + 1 }}</span>
+                  </div>
+                </template>
               </draggable>
             </div>
           </div>
@@ -325,22 +327,42 @@ export default {
         formData.append('price', this.item.price);
         
         // Append all images
-        this.item.images.forEach((image, index) => {
+        this.item.images.forEach((image) => {
           formData.append('images[]', image.cropped || image.file);
         });
 
         const response = await axios.post('/api/bags', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
+          },
+          transformRequest: (data, headers) => {
+            // Remove Content-Type header to let browser set it with boundary
+            delete headers['Content-Type'];
+            return data;
           }
         });
         
-        this.$router.push('/');
+        if (response.data.status === 'success') {
+          this.$router.push('/');
+        } else {
+          throw new Error(response.data.message || 'Unknown error occurred');
+        }
       } catch (error) {
-        this.errorMessage = 'Ошибка при добавлении товара: ' + 
-          (error.response?.data?.error || error.message);
+        let errorMessage = 'Ошибка при добавлении товара';
+        if (error.response) {
+          // Handle HTML response from server
+          if (error.response.headers['content-type'].includes('text/html')) {
+            errorMessage += ': Server error occurred';
+          } else {
+            errorMessage += ': ' + (error.response.data?.error || error.message);
+          }
+        } else {
+          errorMessage += ': ' + error.message;
+        }
+        
+        this.errorMessage = errorMessage;
         this.showErrorModal = true;
-        console.error('Error details:', error.response);
+        console.error('Error details:', error);
       } finally {
         this.isSubmitting = false;
       }
@@ -375,6 +397,7 @@ export default {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
+  min-height: 50px;
 }
 
 .image-preview-item {
@@ -385,10 +408,20 @@ export default {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
+  cursor: move;
 }
 
 .image-preview-item:hover {
   transform: scale(1.05);
+}
+
+.image-preview-item.sortable-ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+
+.image-preview-item.sortable-chosen {
+  opacity: 0.8;
 }
 
 .preview-image {

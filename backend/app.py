@@ -295,49 +295,60 @@ def serve_bag_image(filename):
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
-    if 'images[]' not in request.files:
-        return jsonify({'error': 'No files'}), 400
-    
-    files = request.files.getlist('images[]')
-    if not files or files[0].filename == '':
-        return jsonify({'error': 'Empty files'}), 400
+    try:
+        if 'images[]' not in request.files:
+            return jsonify({'error': 'No files uploaded', 'status': 'error'}), 400
+        
+        files = request.files.getlist('images[]')
+        if not files or files[0].filename == '':
+            return jsonify({'error': 'Empty files uploaded', 'status': 'error'}), 400
 
-    # Create the item first
-    new_item = Item(
-        name=request.form.get('name'),
-        description=request.form.get('description'),
-        price=request.form.get('price')
-    )
-    db.session.add(new_item)
-    db.session.commit()
+        # Validate other form data
+        if not request.form.get('name') or not request.form.get('description') or not request.form.get('price'):
+            return jsonify({'error': 'Missing required fields', 'status': 'error'}), 400
 
-    # Process each image
-    saved_filenames = []
-    for i, file in enumerate(files):
-        if file and allowed_file(file.filename):
-            file_ext = os.path.splitext(file.filename)[1].lower()
-            filename = f"{uuid.uuid4()}{file_ext}"
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            
-            # Save file
-            file.save(filepath)
-            
-            # Create image record
-            new_image = ItemImage(
-                item_id=new_item.id,
-                filename=filename,
-                position=i
-            )
-            db.session.add(new_image)
-            saved_filenames.append(filename)
+        # Create the item
+        new_item = Item(
+            name=request.form.get('name'),
+            description=request.form.get('description'),
+            price=request.form.get('price')
+        )
+        db.session.add(new_item)
+        db.session.commit()
 
-    db.session.commit()
+        # Process images
+        saved_filenames = []
+        for i, file in enumerate(files):
+            if file and allowed_file(file.filename):
+                file_ext = os.path.splitext(file.filename)[1].lower()
+                filename = f"{uuid.uuid4()}{file_ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                file.save(filepath)
+                
+                new_image = ItemImage(
+                    item_id=new_item.id,
+                    filename=filename,
+                    position=i
+                )
+                db.session.add(new_image)
+                saved_filenames.append(filename)
 
-    return jsonify({
-        'status': 'success',
-        'item_id': new_item.id,
-        'filenames': saved_filenames
-    }), 201
+        db.session.commit()
+
+        return jsonify({
+            'status': 'success',
+            'item_id': new_item.id,
+            'filenames': saved_filenames
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error adding bag: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'error': str(e)
+        }), 500
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
