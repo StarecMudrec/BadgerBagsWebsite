@@ -497,7 +497,7 @@ export default {
     font-size: 1.8rem;
     line-height: 1.3;
     color: #423125;
-    min-height: 120px;
+    /* min-height: 120px; */
     resize: vertical;
     background-color: rgba(255, 255, 255, 0.3);
     border: 1px solid rgba(0, 0, 0, 0.1);
