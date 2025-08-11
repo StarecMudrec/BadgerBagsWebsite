@@ -53,19 +53,16 @@
         <div class="form-group">
           <label for="name">Название:</label>
           <input type="text" id="name" v-model="item.name" required>
-          <span v-if="fieldErrors.name" class="field-error">Пожалуйста, введите название</span>
         </div>
-
+        
         <div class="form-group">
           <label for="description">Описание:</label>
           <textarea id="description" v-model="item.description" required></textarea>
-          <span v-if="fieldErrors.description" class="field-error">Пожалуйста, введите описание</span>
         </div>
-
+        
         <div class="form-group">
           <label for="price">Цена (₽):</label>
           <input type="number" id="price" v-model.number="item.price" required>
-          <span v-if="fieldErrors.price" class="field-error">Пожалуйста, укажите цену</span>
         </div>
         
         <div class="form-group">
@@ -122,7 +119,6 @@
           type="submit" 
           :disabled="isSubmitting || item.images.length === 0"
           class="submit-button"
-          @click="validateForm"
         >
           <!-- <div class="spinner-container">
             <div class="spinner"></div>
@@ -176,13 +172,7 @@ export default {
       fileError: false,
       isSubmitting: false,
       currentImageIndex: 0,
-      submissionError: '',
-      fieldErrors: {
-        name: false,
-        description: false,
-        price: false,
-        images: false
-      }
+      submissionError: ''
     }
   },
   computed: {
@@ -193,23 +183,6 @@ export default {
     }
   },
   methods: {
-    validateForm() {
-      let isValid = true;
-      
-      this.fieldErrors = {
-        name: !this.item.name,
-        description: !this.item.description,
-        price: !this.item.price,
-        images: this.item.images.length === 0
-      };
-
-      // Check if any errors exist
-      if (Object.values(this.fieldErrors).some(error => error)) {
-        isValid = false;
-      }
-
-      return isValid;
-    },
     openCropModal(index) {
       try {
         this.currentImageIndex = index;
@@ -416,9 +389,6 @@ export default {
       this.errorMessage = '';
     },
     async submitForm() {
-      if (!this.validateForm()) {
-        return; // Don't submit if validation fails
-      }
       if (this.isSubmitting) return;
       
       if (this.item.images.length === 0) {
@@ -510,17 +480,6 @@ export default {
     background-color: rgba(255, 68, 68, 0.1);
     border-radius: 4px;
     border-left: 3px solid #ff4444;
-  }
-  .field-error {
-    color: #ff4444;
-    font-size: 0.8rem;
-    margin-top: 4px;
-    display: block;
-  }
-
-  /* Add red border to invalid fields */
-  input:invalid, textarea:invalid {
-    border-color: #ff4444;
   }
   .spinner {
     width: 30px;
