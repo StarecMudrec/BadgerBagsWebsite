@@ -395,18 +395,19 @@ def get_bag_details(bag_id):
     if not item:
         return jsonify({'error': 'Bag not found'}), 404
     
-    images = [{
-        'id': img.id,
-        'url': url_for('serve_bag_image', filename=img.filename, _external=True),
-        'position': img.position
-    } for img in item.images]
+    # Get images ordered by position
+    images = ItemImage.query.filter_by(item_id=bag_id).order_by(ItemImage.position).all()
     
     return jsonify({
         'id': item.id,
         'name': item.name,
         'description': item.description,
         'price': item.price,
-        'images': images
+        'images': [{
+            'id': img.id,
+            'url': url_for('serve_bag_image', filename=img.filename, _external=True),
+            'position': img.position
+        } for img in images]
     })
 
 @app.route('/api/bags/<int:bag_id>/images/order', methods=['PUT'])
@@ -423,6 +424,51 @@ def update_image_order(bag_id):
         
         db.session.commit()
         return jsonify({'message': 'Image order updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
+def add_bag_images(bag_id):
+    if 'telegram_id' not in session:
+        return jsonify({'error': 'Authentication required'}), 401
+
+    # Check if files were uploaded
+    if 'images[]' not in request.files:
+        return jsonify({'error': 'No files uploaded'}), 400
+
+    files = request.files.getlist('images[]')
+    if not files or files[0].filename == '':
+        return jsonify({'error': 'No files selected'}), 400
+
+    try:
+        # Get current max position to append new images
+        max_position = db.session.query(db.func.max(ItemImage.position)).filter_by(item_id=bag_id).scalar() or 0
+        
+        saved_filenames = []
+        for i, file in enumerate(files):
+            if file and allowed_file(file.filename):
+                # Secure the filename
+                original_ext = os.path.splitext(file.filename)[1].lower()
+                filename = f"{uuid.uuid4()}{original_ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                file.save(filepath)
+                
+                new_image = ItemImage(
+                    item_id=bag_id,
+                    filename=filename,
+                    position=max_position + i + 1  # Append after existing images
+                )
+                db.session.add(new_image)
+                saved_filenames.append(filename)
+
+        db.session.commit()
+        return jsonify({
+            'status': 'success',
+            'filenames': saved_filenames
+        }), 201
+
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

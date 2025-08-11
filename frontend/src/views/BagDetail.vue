@@ -509,15 +509,49 @@ export default {
         // Combine kept existing images with new images
         this.images = [...keptExistingImages, ...addedImages];
         
+        // Prepare data for API call
+        const imageOrder = {};
+        this.images.forEach((image, index) => {
+          if (image.id) { // Only include existing images in the order update
+            imageOrder[image.id] = index;
+          }
+        });
+        
+        // Update image order in the database
+        await fetch(`/api/bags/${this.id}/images/order`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ order: imageOrder })
+        });
+        
+        // Upload new images if needed
+        const formData = new FormData();
+        addedImages.forEach((image, index) => {
+          if (image.cropped) {
+            formData.append('images[]', image.cropped);
+          } else if (image.file) {
+            formData.append('images[]', image.file);
+          }
+        });
+        
+        if (formData.entries().next().done === false) { // Check if formData has entries
+          await fetch(`/api/bags/${this.id}/images`, {
+            method: 'POST',
+            body: formData
+          });
+        }
+        
         this.showAddImagesModal = false;
         this.newImages = [];
         
-        // Here you would typically make an API call to:
-        // 1. Delete removed images from server
-        // 2. Upload new images
-        // 3. Update image order if needed
+        // Refresh the bag details to get updated image URLs
+        await this.fetchBagDetails();
+        
       } catch (error) {
         console.error('Error saving new images:', error);
+        alert('Произошла ошибка при сохранении изображений');
       }
     },
     removeImage(index) {
