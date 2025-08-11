@@ -600,23 +600,15 @@ export default {
     font-size: 1.5rem;
     backdrop-filter: blur(5px);
   }
-
-  .confirm-button:hover {
-    /* background-color: rgba(0, 0, 0, 0.3); */
-    transform: scale(1.1);
-  }
   
   .confirm-button:hover i {
     color: #51cf66;
-  }
-
-  .cancel-button:hover {
-    /* background-color: rgba(0, 0, 0, 0.3); */
     transform: scale(1.1);
   }
   
   .cancel-button:hover i {
     color: #ff6b6b;
+    transform: scale(1.1);
   }
 
   @media (max-width: 768px) {
