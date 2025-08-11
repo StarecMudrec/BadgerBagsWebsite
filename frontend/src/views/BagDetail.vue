@@ -206,6 +206,12 @@ export default {
     object-position: center;
     min-width: 0;
     min-height: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .arrow-nav {
