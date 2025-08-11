@@ -23,9 +23,18 @@
             <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
           </svg>
         </div>
-        
-        <img :src="currentImage" :alt="bag.name" class="bag-image" />
-        
+
+        <div class="image-container">
+          <img
+            v-for="(image, index) in images"
+            :key="index"
+            :src="image"
+            :alt="bag.name"
+            class="bag-image"
+            :class="{ 'active': index === currentImageIndex }"
+          />
+        </div>
+
         <div class="arrow-nav right" @click="nextImage" :class="{ 'disabled': images.length <= 1 }">
           <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
             <defs>
@@ -45,7 +54,7 @@
             :key="index"
             class="image-dot"
             :class="{ 'active': index === currentImageIndex }"
-            @click="currentImageIndex = index"
+            @click="setCurrentImageIndex(index)"
           ></span>
         </div>
       </div>
@@ -55,15 +64,15 @@
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
           <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
-          
+
           <div class="price-section">
-              <div class="price">{{ bag.price }}₽</div>
-              <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
-                  <span class="button-text">КУПИТЬ</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
-                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
-                  </svg>
-              </a>
+            <div class="price">{{ bag.price }}₽</div>
+            <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
+              <span class="button-text">КУПИТЬ</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
+              </svg>
+            </a>
           </div>
         </div>
       </div>
@@ -89,21 +98,21 @@ export default {
     }
   },
   computed: {
-    currentImage() {
-      return this.images.length > 0 ? this.images[this.currentImageIndex] : '/placeholder.jpg';
-    }
+    // currentImage() {
+    //   return this.images.length > 0 ? this.images[this.currentImageIndex] : '/placeholder.jpg';
+    // }
   },
   methods: {
     async fetchBagDetails() {
       this.loading = true;
       try {
         const response = await fetch(`/api/bags/${this.id}`);
-        
+
         if (!response.ok) {
           const error = await response.json().catch(() => ({ error: 'Unknown error' }));
           throw new Error(error.message || 'Failed to fetch bag details');
         }
-        
+
         const data = await response.json();
         this.bag = data;
         // Store all image URLs in the images array
@@ -119,11 +128,11 @@ export default {
     },
     nextImage() {
       if (this.images.length <= 1) return;
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+      this.setCurrentImageIndex((this.currentImageIndex + 1) % this.images.length);
     },
     prevImage() {
       if (this.images.length <= 1) return;
-      this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+      this.setCurrentImageIndex((this.currentImageIndex - 1 + this.images.length) % this.images.length);
     },
     handleWheel(event) {
       if (this.images.length <= 1) return;
@@ -132,6 +141,9 @@ export default {
       } else {
         this.prevImage();
       }
+    },
+    setCurrentImageIndex(index) {
+      this.currentImageIndex = index;
     }
   },
   mounted() {
@@ -158,7 +170,8 @@ export default {
 
   /* Loading overlay styles */
   .loading-overlay {
-    position: absolute; /* Changed from fixed to absolute */
+    position: absolute;
+    /* Changed from fixed to absolute */
     top: 0;
     left: 0;
     width: 100%;
@@ -167,7 +180,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10; /* Lower than navbar's z-index */
+    z-index: 10;
+    /* Lower than navbar's z-index */
   }
 
   .loading-content {
@@ -194,7 +208,9 @@ export default {
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   /* Rest of your existing styles remain the same */
@@ -210,7 +226,16 @@ export default {
     overflow: hidden;
   }
 
+  .image-container {
+    width: 100%;
+    height: 100%;
+    position: relative; /* Required for absolute positioning of images */
+  }
+
   .bag-image {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -223,6 +248,12 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out; /* Transition for the fade effect */
+  }
+
+  .bag-image.active {
+    opacity: 1; /* Make the active image visible */
   }
 
   .arrow-nav {
@@ -290,7 +321,7 @@ export default {
 
   .text-section {
     width: 60%;
-    padding: 40px  40px ;
+    padding: 40px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -382,7 +413,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
     border-radius: 8px;
     z-index: -1;
   }
@@ -423,45 +454,45 @@ export default {
       height: auto;
       object-fit: contain;
     }
-    
+
     .text-section {
       width: 100%;
       padding: 30px 20px;
       padding-top: 10px;
     }
-    
+
     .section-title {
       font-size: 2.4rem;
       margin-top: 0px;
     }
-    
+
     .section-text {
       font-size: 1.5rem;
     }
-    
+
     .arrow-nav {
       width: 28px;
       height: 28px;
       padding: 14px;
     }
-    
+
     .arrow-nav.left {
       left: 10px;
     }
-    
+
     .arrow-nav.right {
       right: 10px;
     }
 
     /*Image dots*/
-     .image-dots {
-        bottom: 10px;
-        gap: 5px;
+    .image-dots {
+      bottom: 10px;
+      gap: 5px;
     }
 
     .image-dot {
-        width: 8px;
-        height: 8px;
+      width: 8px;
+      height: 8px;
     }
   }
 </style>
