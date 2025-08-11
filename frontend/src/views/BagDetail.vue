@@ -179,19 +179,30 @@
         </div>
         
         <div class="image-preview-container">
-          <div class="image-preview-list">
-            <div class="image-preview-item" v-for="(image, index) in newImages" :key="image.id || index">
-              <img 
-                :src="image.preview" 
-                class="preview-image" 
-                @click="openCropModalForNewImage(index)"
-              />
-              <button @click="removeNewImage(index)" class="remove-image-button">
-                <i class="fas fa-times"></i>
-              </button>
-              <div v-if="!image.isNew" class="existing-image-tag">Existing</div>
-            </div>
-          </div>
+          <draggable 
+            v-model="newImages" 
+            tag="div" 
+            class="image-preview-list" 
+            item-key="id"
+            handle=".preview-image"
+          >
+            <template #item="{element, index}">
+              <div class="image-preview-item">
+                <img 
+                  :src="element.preview" 
+                  class="preview-image" 
+                  @click="openCropModalForNewImage(index)"
+                />
+                <button @click="removeNewImage(index)" class="remove-image-button">
+                  <i class="fas fa-times"></i>
+                </button>
+                <div v-if="!element.isNew" class="existing-image-tag">Existing</div>
+                <div class="drag-handle">
+                  <i class="fas fa-arrows-alt"></i>
+                </div>
+              </div>
+            </template>
+          </draggable>
         </div>
         
         <div class="modal-buttons">
@@ -211,11 +222,13 @@
 <script>
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+import draggable from 'vuedraggable';
 
 export default {
   name: 'BagDetail',
   components: {
-    VueCropper
+    VueCropper,
+    draggable
   },
   props: {
     id: {
@@ -530,6 +543,44 @@ export default {
 </script>
 
 <style scoped>
+  .drag-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .drag-handle i {
+    color: white;
+    font-size: 14px;
+  }
+
+  .image-preview-item:hover .drag-handle {
+    opacity: 1;
+  }
+
+  /* Add this to make dragging more visible */
+  .draggable-item-dragging {
+    opacity: 0.8;
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .draggable-ghost {
+    opacity: 0.5;
+    background: #c8ebfb;
+  }
   .upload-limit-reached {
     color: #ff6b6b;
     margin-top: 8px;
@@ -792,6 +843,7 @@ export default {
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
+    cursor: move;
   }
 
   .image-preview-item:hover {
