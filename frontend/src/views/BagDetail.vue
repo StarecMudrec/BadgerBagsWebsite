@@ -482,17 +482,6 @@ export default {
     flex-direction: column;
   }
 
-  .price-container input.edit-input {
-    font-family: 'Aclonica', sans-serif;
-    font-size: 2.5rem;
-    color: #333333;
-    border: none;
-    background: transparent;
-    padding: 0;
-    width: auto;
-    max-width: 200px;
-  }
-
   textarea.edit-input {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
@@ -607,6 +596,7 @@ export default {
     box-sizing: border-box; /* Ensures padding doesn't affect width */
     background-color: #ffffff80;
     transition: all 0.3s ease;
+    overflow: hidden;
   }
 
   .edit-buttons {
