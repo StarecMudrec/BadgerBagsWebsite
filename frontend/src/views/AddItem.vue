@@ -466,7 +466,7 @@ export default {
   color: #666;
   text-align: center;
   padding: 5px;
-  background-color: #f8f8f8;
+  background-color: #ffffff7d;
   border-radius: 4px;
 }
 
@@ -606,7 +606,7 @@ export default {
 }
 
 .add-item-container {
-  max-width: 500px;
+  max-width: 517px;
   margin: 0 auto;
   padding: 30px;
   background-color: #f3efebd9;
