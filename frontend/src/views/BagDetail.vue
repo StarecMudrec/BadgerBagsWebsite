@@ -64,10 +64,16 @@
       <div class="text-section">
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
-          <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
+          <div class="editable-field">
+            <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
+            <span class="edit-icon" @click="editDescription">✏️</span>
+          </div>
 
           <div class="price-section">
-            <div class="price">{{ bag.price }}₽</div>
+            <div class="price-container">
+              <div class="price">{{ bag.price }}₽</div>
+              <span class="edit-icon" @click="editPrice">✏️</span>
+            </div>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
               <span class="button-text">КУПИТЬ</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
@@ -97,7 +103,13 @@ export default {
       currentImageIndex: 0,
       loading: true,
       imageTrackOffset: 0,
-      imageWidth: 0
+      imageWidth: 0,
+      //Editing states
+      editingDescription: false,
+      editingPrice: false,
+      // For Editing
+      descriptionInput: '',
+      priceInput: ''
     }
   },
   watch: {
@@ -109,7 +121,19 @@ export default {
         this.calculateImageWidth();
         this.scrollToImage();
       });
-    }
+    },
+      'bag.description': {
+          handler(newVal) {
+              this.descriptionInput = newVal;
+          },
+          immediate: true
+      },
+      'bag.price': {
+          handler(newVal) {
+              this.priceInput = newVal;
+          },
+          immediate: true
+      }
   },
   methods: {
     async fetchBagDetails() {
@@ -168,6 +192,34 @@ export default {
         this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
       });
 
+    },
+    //Edit Functions
+    editDescription() {
+      this.editingDescription = true;
+      this.descriptionInput = this.bag.description || ''; // Initialize input with existing description
+    },
+    editPrice() {
+      this.editingPrice = true;
+      this.priceInput = this.bag.price || ''; // Initialize input with existing price
+    },
+    saveDescription() {
+      // Here, you would make an API call to update the description on the server.
+      // For now, we'll just update the local `bag` data.
+      this.bag.description = this.descriptionInput;
+      this.editingDescription = false;
+    },
+    savePrice() {
+        // Here, you would make an API call to update the price on the server.
+        this.bag.price = this.priceInput;
+        this.editingPrice = false;
+    },
+    cancelEditDescription() {
+        this.editingDescription = false;
+        this.descriptionInput = this.bag.description; // Revert to the original value
+    },
+    cancelEditPrice() {
+        this.editingPrice = false;
+        this.priceInput = this.bag.price; // Revert to the original value
     }
   },
   mounted() {
@@ -388,6 +440,11 @@ export default {
     margin-top: 40px;
   }
 
+  .price-container{
+    display: flex;
+    align-items: center;
+  }
+
   .price {
     font-family: 'Aclonica', sans-serif;
     font-size: 2.5rem;
@@ -455,6 +512,25 @@ export default {
     vertical-align: middle;
     margin-left: 7px;
   }
+
+  /* Edit Icon Styles */
+  .edit-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 1.2em;
+    color: #777; /* Adjust color as needed */
+    transition: color 0.2s;
+  }
+
+  .edit-icon:hover {
+    color: #333;
+  }
+
+  .editable-field{
+    display: flex;
+    align-items: center;
+  }
+
 
   @media (max-width: 768px) {
     .bag-detail-page {
