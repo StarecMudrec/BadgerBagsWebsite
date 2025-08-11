@@ -183,34 +183,52 @@ export default {
       const files = event.target.files;
       this.fileError = false;
 
+      if (!files || files.length === 0) return;
+
       if (files.length + this.item.images.length > MAX_IMAGES) {
-        this.errorMessage = `Вы можете загрузить не более ${MAX_IMAGES} изображений`;
+        this.errorMessage = `You can upload up to ${MAX_IMAGES} images`;
         this.showErrorModal = true;
         event.target.value = '';
         return;
       }
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
+      // Process each file
+      Array.from(files).forEach((file, index) => {
         if (file.size > MAX_FILE_SIZE) {
-          this.errorMessage = 'Размер изображения должен быть меньше 5MB.';
+          this.errorMessage = 'Image size must be less than 5MB';
           this.showErrorModal = true;
-          continue;
+          return;
         }
         
         if (file && file.type.startsWith('image/')) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            this.item.images.push({
+            const newImage = {
               file: file,
               preview: e.target.result,
               cropped: null
-            });
+            };
+            this.item.images.push(newImage);
+            
+            // Open cropper for the first image immediately
+            if (index === 0) {
+              this.currentImageIndex = this.item.images.length - 1;
+              this.imageToCrop = e.target.result;
+              this.showCropModal = true;
+              
+              // Initialize cropper in next tick
+              this.$nextTick(() => {
+                if (this.$refs.cropper) {
+                  this.$refs.cropper.replace(e.target.result);
+                  this.$refs.cropper.reset();
+                  this.$refs.cropper.setAspectRatio(1/1.25751633987);
+                }
+              });
+            }
           };
           reader.readAsDataURL(file);
         }
-      }
+      });
       
       event.target.value = '';
     },
@@ -448,9 +466,15 @@ export default {
 }
 
 .preview-image {
+  cursor: pointer;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.preview-image:hover {
+  transform: scale(1.05);
 }
 
 .remove-image-button {
