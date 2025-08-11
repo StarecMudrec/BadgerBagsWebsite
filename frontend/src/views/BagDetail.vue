@@ -550,7 +550,8 @@ export default {
 
   .editable-field {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    flex-direction: column;
   }
 
   .edit-input {
@@ -567,6 +568,9 @@ export default {
   .edit-buttons {
     display: flex;
     gap: 5px;
+    justify-content: space-between;
+    padding: 0px 10px;
+    padding-top: 5px;
   }
 
   .edit-buttons button {
@@ -574,7 +578,7 @@ export default {
     height: 30px;
     border-radius: 50%;
     border: none;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0);
     color: white;
     display: flex;
     justify-content: center;
@@ -586,7 +590,7 @@ export default {
   }
 
   .confirm-button:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    /* background-color: rgba(0, 0, 0, 0.3); */
     transform: scale(1.1);
   }
   
@@ -595,7 +599,7 @@ export default {
   }
 
   .cancel-button:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    /* background-color: rgba(0, 0, 0, 0.3); */
     transform: scale(1.1);
   }
   
