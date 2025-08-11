@@ -160,7 +160,7 @@
         <div class="file-upload-group">
           <label for="new-images" class="file-upload-label">
             <span class="file-upload-text">
-              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото (${images.length + newImages.length}/${MAX_TOTAL_IMAGES})` : `Загрузите фото (${images.length}/${MAX_TOTAL_IMAGES})` }}
+              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото` : 'Загрузите фото...' }}
             </span>
             <span class="file-upload-button">Загрузить</span>
             <input 
@@ -240,8 +240,7 @@ export default {
       // New images
       showAddImagesModal: false,
       newImages: [],
-      isEditingNewImage: false,
-      MAX_TOTAL_IMAGES: 10, // Add this constant
+      isEditingNewImage: false
     }
   },
   watch: {
@@ -417,31 +416,24 @@ export default {
     },
     handleNewFileUpload(event) {
       const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-      const MAX_TOTAL_IMAGES = 10;
+      const MAX_IMAGES = 10;
       const files = event.target.files;
       
       if (!files || files.length === 0) return;
 
-      // Calculate how many new images we can add without exceeding the limit
-      const currentTotalImages = this.images.length;
-      const availableSlots = MAX_TOTAL_IMAGES - currentTotalImages;
+      // Calculate how many new images we can still add
+      const existingCount = this.newImages.filter(img => !img.isNew).length;
+      const remainingSlots = MAX_IMAGES - existingCount;
       
-      if (availableSlots <= 0) {
-        alert(`Максимальное количество изображений (${MAX_TOTAL_IMAGES}) уже достигнуто`);
+      if (files.length > remainingSlots) {
+        alert(`Вы можете добавить максимум ${remainingSlots} изображений (всего не более ${MAX_IMAGES})`);
         event.target.value = '';
         return;
       }
 
-      // Take only as many files as we have available slots
-      const filesToProcess = Array.from(files).slice(0, availableSlots);
-      
-      if (files.length > availableSlots) {
-        alert(`Вы можете добавить только ${availableSlots} изображений (максимум ${MAX_TOTAL_IMAGES} всего)`);
-      }
-
-      filesToProcess.forEach((file) => {
+      Array.from(files).forEach((file) => {
         if (file.size > MAX_FILE_SIZE) {
-          alert(`Изображение ${file.name} слишком большое (максимум 5MB)`);
+          alert('Размер изображения должен быть меньше 5MB');
           return;
         }
         
@@ -488,17 +480,6 @@ export default {
     },
     async saveNewImages() {
       try {
-        const MAX_TOTAL_IMAGES = 10;
-        
-        // Calculate how many images we'll have after saving
-        const newImagesCount = this.newImages.filter(img => img.isNew).length;
-        const totalAfterSave = this.images.length + newImagesCount;
-        
-        if (totalAfterSave > MAX_TOTAL_IMAGES) {
-          alert(`Нельзя сохранить - будет превышен лимит в ${MAX_TOTAL_IMAGES} изображений`);
-          return;
-        }
-
         // Filter out removed existing images
         const existingImageIds = this.images.map(img => img.id);
         const keptExistingImages = this.newImages.filter(img => !img.isNew && existingImageIds.includes(img.id));
@@ -512,7 +493,10 @@ export default {
         this.showAddImagesModal = false;
         this.newImages = [];
         
-        // Here you would make API calls to update images on server
+        // Here you would typically make an API call to:
+        // 1. Delete removed images from server
+        // 2. Upload new images
+        // 3. Update image order if needed
       } catch (error) {
         console.error('Error saving new images:', error);
       }
