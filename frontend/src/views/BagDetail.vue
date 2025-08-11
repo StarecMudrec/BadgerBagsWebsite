@@ -720,7 +720,7 @@ export default {
     background-color: #f4ebe2;
     padding: 30px;
     border-radius: 12px;
-    max-width: 600px;
+    max-width: 521px;
     width: 90%;
     text-align: center;
     border: 1px solid #d0cbc4;
