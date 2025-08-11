@@ -25,7 +25,7 @@
         </div>
 
         <div class="image-container">
-          <div class="image-track" :style="{ transform: `translateY(${imageTrackOffset}px)` }">
+          <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
             <img
               v-for="(image, index) in images"
               :key="index"
@@ -97,7 +97,7 @@ export default {
       currentImageIndex: 0,
       loading: true,
       imageTrackOffset: 0,
-      imageHeight: 0
+      imageWidth: 0
     }
   },
   watch: {
@@ -106,7 +106,7 @@ export default {
     },
     images() {
       this.$nextTick(() => {
-        this.calculateImageHeight();
+        this.calculateImageWidth();
         this.scrollToImage();
       });
     }
@@ -145,7 +145,8 @@ export default {
     },
     handleWheel(event) {
       if (this.images.length <= 1) return;
-      if (event.deltaY > 0) {
+      //Reverse the wheel direction
+      if (event.deltaY < 0) {
         this.nextImage();
       } else {
         this.prevImage();
@@ -154,17 +155,17 @@ export default {
     setCurrentImageIndex(index) {
       this.currentImageIndex = index;
     },
-    calculateImageHeight() {
+    calculateImageWidth() {
       const imageElement = document.querySelector('.bag-image');
       if (imageElement) {
-        this.imageHeight = imageElement.clientHeight;
+        this.imageWidth = imageElement.clientWidth;
       }
     },
     scrollToImage() {
       //Use $nextTick to ensure DOM is updated
       this.$nextTick(() => {
-        this.calculateImageHeight();
-        this.imageTrackOffset = -this.currentImageIndex * this.imageHeight;
+        this.calculateImageWidth();
+        this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
       });
 
     }
@@ -257,7 +258,8 @@ export default {
 
   .image-track {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Change to row for horizontal scrolling */
+    width: max-content; /* Ensure the track is wide enough to hold all images */
     height: 100%; /* Ensure the track takes up the full height */
     transition: transform 0.3s ease-out; /* Smooth scrolling transition */
   }
