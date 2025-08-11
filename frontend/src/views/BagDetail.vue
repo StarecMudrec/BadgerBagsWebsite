@@ -276,16 +276,16 @@ export default {
   }
 
   .image-dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
 
   .image-dot.active {
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(255, 255, 255, 0.7);
   }
 
   .text-section {
