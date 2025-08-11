@@ -486,7 +486,11 @@ export default {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
-  min-height: 50px;
+  /* min-height: 50px;  */
+  border: dotted;
+  border-color: rgb(208 203 196);
+  border-radius: 10px;
+  padding: 5px;
 }
 
 .image-preview-item {
