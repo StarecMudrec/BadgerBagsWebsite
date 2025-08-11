@@ -109,6 +109,10 @@
               </draggable>
             </div>
           </div>
+          <div class="crop-instructions">
+            <p>Вы можете обрезать изображения, нажав на их миниатюру выше</p>
+            <p>You can crop images by clicking on their thumbnails above</p>
+          </div>
         </div>
         
         <button 
@@ -455,7 +459,20 @@ export default {
 }
 </script>
 
-<style scoped>                        
+<style scoped>           
+.crop-instructions {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  padding: 5px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+}
+
+.crop-instructions p {
+  margin: 3px 0;
+}             
 .image-upload-container {
   margin-top: 10px;
 }
