@@ -64,16 +64,10 @@
       <div class="text-section">
         <div class="text-content">
           <h2 class="section-title">О сумке:</h2>
-          <div class="editable-field">
-            <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
-            <span class="edit-icon" @click="editDescription">✏️</span>
-          </div>
+          <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
 
           <div class="price-section">
-            <div class="price-container">
-                <div class="price">{{ bag.price }}₽</div>
-                <span class="edit-icon" @click="editPrice">✏️</span>
-            </div>
+            <div class="price">{{ bag.price }}₽</div>
             <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
               <span class="button-text">КУПИТЬ</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
@@ -103,10 +97,7 @@ export default {
       currentImageIndex: 0,
       loading: true,
       imageTrackOffset: 0,
-      imageWidth: 0,
-      //Editing states
-      editingDescription: false,
-      editingPrice: false
+      imageWidth: 0
     }
   },
   watch: {
@@ -177,17 +168,6 @@ export default {
         this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
       });
 
-    },
-    //Edit Functions
-    editDescription() {
-      console.log("Edit Description Clicked"); //For testing
-      //Here you would open a modal or replace the <p> tag with an <input> or <textarea>
-      //and handle the saving of the updated description.
-    },
-    editPrice() {
-      console.log("Edit Price Clicked"); //For testing
-      //Similar to editDescription, you would open a modal or replace the <div> with an <input>
-      //and handle the saving of the updated price.
     }
   },
   mounted() {
@@ -408,11 +388,6 @@ export default {
     margin-top: 40px;
   }
 
-  .price-container{
-    display: flex;
-    align-items: center;
-  }
-
   .price {
     font-family: 'Aclonica', sans-serif;
     font-size: 2.5rem;
@@ -480,25 +455,6 @@ export default {
     vertical-align: middle;
     margin-left: 7px;
   }
-
-  /* Edit Icon Styles */
-  .edit-icon {
-    cursor: pointer;
-    margin-left: 8px;
-    font-size: 1.2em;
-    color: #777; /* Adjust color as needed */
-    transition: color 0.2s;
-  }
-
-  .edit-icon:hover {
-    color: #333;
-  }
-
-  .editable-field{
-    display: flex;
-    align-items: center;
-  }
-
 
   @media (max-width: 768px) {
     .bag-detail-page {
