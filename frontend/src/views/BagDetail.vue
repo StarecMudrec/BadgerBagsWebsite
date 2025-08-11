@@ -197,9 +197,9 @@
                   <i class="fas fa-times"></i>
                 </button>
                 <div v-if="!element.isNew" class="existing-image-tag">Existing</div>
-                <div class="drag-handle">
+                <!-- <div class="drag-handle">
                   <i class="fas fa-arrows-alt"></i>
-                </div>
+                </div> -->
               </div>
             </template>
           </draggable>
