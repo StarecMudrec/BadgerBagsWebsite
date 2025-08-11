@@ -537,7 +537,11 @@ export default {
         });
         
         if (formData.entries().next().done === false) {
-          const response = await fetch(`/api/bags/${this.id}/images/`, {  // Add trailing slash
+          console.log('FormData contents:');
+          for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+          }
+          const response = await fetch(`/api/bags/${this.id}/images`, {  // Add trailing slash
             method: 'POST',
             body: formData
           });
