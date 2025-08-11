@@ -451,7 +451,8 @@ export default {
     line-height: 1.3;
     color: #423125;
     letter-spacing: 0.2px;
-    margin-bottom: 40px;
+    margin: 0;
+    margin-bottom: 10px;
   }
 
   .price-section {
@@ -463,7 +464,7 @@ export default {
 
   .price-container {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-direction: column;
   }
 
@@ -551,7 +552,7 @@ export default {
 
   .editable-field {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-direction: column;
   }
 
@@ -570,7 +571,7 @@ export default {
     display: flex;
     gap: 5px;
     justify-content: space-between;
-    padding: 0px 10px;
+    /* padding: 0px 10px; */
     padding-top: 5px;
   }
 
