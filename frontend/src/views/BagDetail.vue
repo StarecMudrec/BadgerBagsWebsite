@@ -173,6 +173,9 @@
               :disabled="remainingImageSlots <= 0"
             >
           </label>
+          <div v-if="remainingImageSlots <= 0" class="upload-limit-reached">
+            Достигнут лимит в 10 изображений
+          </div>
         </div>
         
         <div class="image-preview-container">
@@ -426,20 +429,15 @@ export default {
       const currentTotal = this.newImages.length;
       const availableSlots = MAX_TOTAL_IMAGES - currentTotal;
       
-      if (availableSlots <= 0) {
-        alert(`Максимальное количество изображений: ${MAX_TOTAL_IMAGES}`);
+      // Completely cancel if trying to upload more than available slots
+      if (files.length > availableSlots) {
+        alert(`Вы можете добавить максимум ${availableSlots} изображений (всего не более ${MAX_TOTAL_IMAGES})`);
         event.target.value = '';
         return;
       }
 
-      // Take only as many files as we have available slots
-      const filesToProcess = Array.from(files).slice(0, availableSlots);
-      
-      if (files.length > availableSlots) {
-        alert(`Вы можете добавить только ${availableSlots} изображений (всего не более ${MAX_TOTAL_IMAGES})`);
-      }
-
-      filesToProcess.forEach((file) => {
+      // Process each file
+      Array.from(files).forEach((file) => {
         if (file.size > MAX_FILE_SIZE) {
           alert('Размер изображения должен быть меньше 5MB');
           return;
@@ -532,6 +530,17 @@ export default {
 </script>
 
 <style scoped>
+  .upload-limit-reached {
+    color: #ff6b6b;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .file-upload-input:disabled + .file-upload-label {
+    opacity: 0.5;
+    pointer-events: none;
+  }
   .file-upload-input:disabled + .file-upload-label {
     opacity: 0.7;
     cursor: not-allowed;
