@@ -120,7 +120,7 @@
           :disabled="isSubmitting || item.images.length === 0"
           class="submit-button"
         >
-          <span v-if="!isSubmitting">Добавить<div class="spinner"></div></span>
+          <span v-if="!isSubmitting">Добавить</span>
           <span v-else><div class="spinner"></div></span>
         </button>
       </form>
