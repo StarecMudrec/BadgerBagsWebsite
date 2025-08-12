@@ -506,20 +506,41 @@ export default {
         // Get new images
         const addedImages = this.newImages.filter(img => img.isNew);
         
-        // Combine kept existing images with new images
-        this.images = [...keptExistingImages, ...addedImages];
+        // First upload new images
+        const formData = new FormData();
+        addedImages.forEach((image, index) => {
+          if (image.cropped) {
+            formData.append('images[]', image.cropped);
+          } else if (image.file) {
+            formData.append('images[]', image.file);
+          }
+        });
         
-        // Prepare data for API call - only include existing images with numeric IDs
+        let newImageIds = [];
+        if (formData.entries().next().done === false) {
+          const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (!uploadResponse.ok) {
+            throw new Error('Failed to upload images');
+          }
+          
+          // Refresh to get the new image IDs
+          await this.fetchBagDetails();
+        }
+        
+        // Now update the order for all images (existing + new)
+        const allImages = [...this.images]; // This now includes the newly uploaded images
+        
         const imageOrder = {};
-        this.images.forEach((image, index) => {
-          if (typeof image.id === 'number') { // Only include numeric IDs
+        allImages.forEach((image, index) => {
+          if (image.id) { // Only include images that have IDs (both existing and newly uploaded)
             imageOrder[image.id] = index;
           }
         });
 
-        console.log('Sending order update:', imageOrder);
-
-        // Update image order in the database
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -534,29 +555,8 @@ export default {
           throw new Error(errorData.message || 'Failed to update image order');
         }
         
-        // Upload new images if needed
-        const formData = new FormData();
-        addedImages.forEach((image, index) => {
-          if (image.cropped) {
-            formData.append('images[]', image.cropped);
-          } else if (image.file) {
-            formData.append('images[]', image.file);
-          }
-        });
-        
-        if (formData.entries().next().done === false) {
-          const response = await fetch(`/api/bags/${this.id}/images`, {
-            method: 'POST',
-            body: formData
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to upload images');
-          }
-          
-          // After successful upload, refresh to get the new image IDs
-          await this.fetchBagDetails();
-        }
+        // Final refresh to get everything in the correct order
+        await this.fetchBagDetails();
         
         this.showAddImagesModal = false;
         this.newImages = [];

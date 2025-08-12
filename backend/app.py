@@ -417,21 +417,29 @@ def update_image_order(bag_id):
         return jsonify({'error': 'No order data provided'}), 400
     
     try:
+        # First get all existing images for this bag
+        existing_images = ItemImage.query.filter_by(item_id=bag_id).all()
+        existing_image_ids = {str(img.id) for img in existing_images}
+        
+        # Process the order updates
         for image_id, position in data['order'].items():
+            # Skip if this is a new image (temp ID) or doesn't exist
+            if image_id not in existing_image_ids:
+                continue
+                
             try:
-                # Convert image_id to integer (will fail for temp IDs)
                 image_id_int = int(image_id)
                 image = ItemImage.query.filter_by(id=image_id_int, item_id=bag_id).first()
                 if image:
                     image.position = position
             except ValueError:
-                # Skip non-integer IDs (temp IDs for new images)
                 continue
         
         db.session.commit()
         return jsonify({'message': 'Image order updated successfully'}), 200
     except Exception as e:
         db.session.rollback()
+        logging.error(f"Error updating image order: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
