@@ -473,6 +473,11 @@ def add_bag_images(bag_id):
         return jsonify({'error': 'No files selected'}), 400
 
     try:
+        # Verify the bag exists
+        bag = Item.query.get(bag_id)
+        if not bag:
+            return jsonify({'error': 'Bag not found'}), 404
+
         # Get current max position to append new images
         max_position = db.session.query(db.func.max(ItemImage.position)).filter_by(item_id=bag_id).scalar() or 0
         
@@ -498,8 +503,10 @@ def add_bag_images(bag_id):
                 )
                 db.session.add(new_image)
                 saved_filenames.append(filename)
+                print(f"Adding image record: {filename} for bag {bag_id}")  # Debug log
 
         db.session.commit()
+        print(f"Successfully committed {len(saved_filenames)} images to database")  # Debug log
         return jsonify({
             'status': 'success',
             'filenames': saved_filenames,
@@ -508,6 +515,7 @@ def add_bag_images(bag_id):
 
     except Exception as e:
         db.session.rollback()
+        print(f"Database error: {str(e)}")  # Debug log
         logging.error(f"Error adding images to bag {bag_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
