@@ -499,36 +499,15 @@ export default {
     },
     async saveNewImages() {
       try {
-        // Create a mapping of all images we want to keep (both existing and new)
-        const imageOrder = {};
-        let position = 0;
-        
-        // First collect all images we want to keep (both existing and new)
-        const keptImages = this.newImages.filter(img => {
-          // Keep all new images
-          if (img.isNew) return true;
-          // Keep existing images that are still in the list
-          return this.images.some(existingImg => existingImg.id === img.id);
-        });
-        
-        // Build the order object with their new positions
-        keptImages.forEach((image, index) => {
-          if (image.id) { // Existing image
-            imageOrder[image.id] = index;
-          }
-        });
-        
-        // First upload new images if any
+        // First upload new images
         const formData = new FormData();
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
         if (newImagesToUpload.length > 0) {
-          newImagesToUpload.forEach((image) => {
-            if (image.cropped) {
-              formData.append('images[]', image.cropped);
-            } else if (image.file) {
-              formData.append('images[]', image.file);
-            }
+          newImagesToUpload.forEach((image, index) => {
+            // Use the cropped version if available, otherwise the original file
+            const fileToUpload = image.cropped || image.file;
+            formData.append('images[]', fileToUpload);
           });
           
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
@@ -537,11 +516,21 @@ export default {
           });
           
           if (!uploadResponse.ok) {
-            throw new Error('Failed to upload images');
+            const errorData = await uploadResponse.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to upload images');
           }
         }
-        
-        // Now update the order (this will also delete any images not in the order)
+
+        // Now build the order mapping for all images (existing + new)
+        const imageOrder = {};
+        this.newImages.forEach((image, index) => {
+          if (image.id) { // Existing image
+            imageOrder[image.id] = index;
+          }
+          // New images will be handled by their position in the array
+        });
+
+        // Update the order (this will include the newly uploaded images)
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -552,8 +541,7 @@ export default {
 
         if (!orderResponse.ok) {
           const errorData = await orderResponse.json().catch(() => ({}));
-          console.error('Order update failed:', orderResponse.status, errorData);
-          throw new Error(errorData.message || 'Failed to update image order');
+          throw new Error(errorData.error || 'Failed to update image order');
         }
         
         // Final refresh to get everything in the correct order
@@ -563,8 +551,8 @@ export default {
         this.newImages = [];
         
       } catch (error) {
-        console.error('Error saving new images:', error);
-        alert('Произошла ошибка при сохранении изображений');
+        console.error('Error saving images:', error);
+        alert(`Ошибка при сохранении: ${error.message}`);
       }
     },
     async deleteImage(imageId) {
