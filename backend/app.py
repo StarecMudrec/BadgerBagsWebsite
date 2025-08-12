@@ -287,18 +287,16 @@ def allowed_file(filename):
 @app.route('/bags_imgs/<filename>')
 def serve_bag_image(filename):
     try:
-        # Add security check to prevent directory traversal
         if not filename or '../' in filename:
             raise FileNotFoundError
         
         return send_from_directory(
             app.config['UPLOAD_FOLDER'],
             filename,
-            mimetype='image/jpeg'  # Adjust based on your image types
+            mimetype='image/jpeg'
         )
     except FileNotFoundError:
         app.logger.error(f"Missing file: {filename} in {app.config['UPLOAD_FOLDER']}")
-        # Return a default image or 404 response
         return send_from_directory('static', 'default-image.jpg', mimetype='image/jpeg'), 404
 
 @app.route('/api/bags', methods=['POST'])
@@ -399,7 +397,6 @@ def get_bag_details(bag_id):
     if not item:
         return jsonify({'error': 'Bag not found'}), 404
     
-    # Get images ordered by position
     images = ItemImage.query.filter_by(item_id=bag_id).order_by(ItemImage.position).all()
     
     return jsonify({
@@ -409,7 +406,7 @@ def get_bag_details(bag_id):
         'price': item.price,
         'images': [{
             'id': img.id,
-            'url': url_for('serve_bag_image', filename=img.filename, _external=True),
+            'url': url_for('serve_bag_image', filename=img.filename, _external=True, _scheme='https'),
             'position': img.position
         } for img in images]
     })
