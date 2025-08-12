@@ -499,10 +499,10 @@ export default {
     },
     async saveNewImages() {
       try {
-        // First upload new images
         const formData = new FormData();
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
+        // Upload new images first
         if (newImagesToUpload.length > 0) {
           newImagesToUpload.forEach((image) => {
             // Use the cropped version if available, otherwise the original file
@@ -528,6 +528,7 @@ export default {
           if (image.id) { // Existing image
             imageOrder[image.id] = index;
           }
+          // Note: Newly uploaded images will be included in the order after refresh
         });
 
         // Update the order (this will include the newly uploaded images)

@@ -460,6 +460,13 @@ def update_image_order(bag_id):
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
 def add_bag_images(bag_id):
+    # Check Telegram session authentication
+    if 'telegram_id' not in session:
+        return jsonify({'error': 'Telegram authentication required'}), 401
+    
+    # Additional admin check if needed
+    if not session.get('is_admin', False):
+        return jsonify({'error': 'Admin privileges required'}), 403
 
     # Check if files were uploaded
     if 'images[]' not in request.files:
