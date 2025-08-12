@@ -502,10 +502,8 @@ export default {
         const formData = new FormData();
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
-        // Upload new images first
         if (newImagesToUpload.length > 0) {
           newImagesToUpload.forEach((image) => {
-            // Use the cropped version if available, otherwise the original file
             const fileToUpload = image.cropped || image.file;
             formData.append('images[]', fileToUpload, fileToUpload.name);
           });
@@ -513,25 +511,26 @@ export default {
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData,
-            // Don't set Content-Type header - let the browser set it with boundary
+            // Don't set Content-Type header - let the browser set it
           });
           
           if (!uploadResponse.ok) {
             const errorData = await uploadResponse.json().catch(() => ({}));
             throw new Error(errorData.error || 'Failed to upload images');
           }
+          
+          const result = await uploadResponse.json();
+          console.log('Upload successful:', result);
         }
 
-        // Now build the order mapping for all images (existing + new)
+        // Update image order
         const imageOrder = {};
         this.newImages.forEach((image, index) => {
-          if (image.id) { // Existing image
+          if (image.id) {
             imageOrder[image.id] = index;
           }
-          // Note: Newly uploaded images will be included in the order after refresh
         });
 
-        // Update the order (this will include the newly uploaded images)
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -545,7 +544,7 @@ export default {
           throw new Error(errorData.error || 'Failed to update image order');
         }
         
-        // Final refresh to get everything in the correct order
+        // Refresh the bag details
         await this.fetchBagDetails();
         
         this.showAddImagesModal = false;

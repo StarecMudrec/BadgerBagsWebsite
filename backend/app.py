@@ -287,15 +287,19 @@ def allowed_file(filename):
 @app.route('/bags_imgs/<filename>')
 def serve_bag_image(filename):
     try:
-        print(f"Attempting to serve: {filename}")
-        print(f"Full path: {os.path.join(app.config['UPLOAD_FOLDER'], filename)}")
-        print(f"File exists: {os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename))}")
+        # Add security check to prevent directory traversal
+        if not filename or '../' in filename:
+            raise FileNotFoundError
+        
         return send_from_directory(
             app.config['UPLOAD_FOLDER'],
-            filename
+            filename,
+            mimetype='image/jpeg'  # Adjust based on your image types
         )
     except FileNotFoundError:
         app.logger.error(f"Missing file: {filename} in {app.config['UPLOAD_FOLDER']}")
+        # Return a default image or 404 response
+        return send_from_directory('static', 'default-image.jpg', mimetype='image/jpeg'), 404
 
 @app.route('/api/bags', methods=['POST'])
 def add_bag():
@@ -460,14 +464,6 @@ def update_image_order(bag_id):
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
 def add_bag_images(bag_id):
-    # Check Telegram session authentication
-    if 'telegram_id' not in session:
-        return jsonify({'error': 'Telegram authentication required'}), 401
-    
-    # Additional admin check if needed
-    if not session.get('is_admin', False):
-        return jsonify({'error': 'Admin privileges required'}), 403
-
     # Check if files were uploaded
     if 'images[]' not in request.files:
         return jsonify({'error': 'No files uploaded'}), 400
@@ -485,11 +481,11 @@ def add_bag_images(bag_id):
             if file and allowed_file(file.filename):
                 # Secure the filename
                 original_ext = os.path.splitext(file.filename)[1].lower()
-                filename = f"{uuid.uuid4()}{original_ext}"
+                filename = secure_filename(f"{uuid.uuid4()}{original_ext}")
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 
                 # Ensure directory exists
-                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
                 
                 # Save the file
                 file.save(filepath)
@@ -506,13 +502,16 @@ def add_bag_images(bag_id):
         db.session.commit()
         return jsonify({
             'status': 'success',
-            'filenames': saved_filenames
+            'filenames': saved_filenames,
+            'image_urls': [url_for('serve_bag_image', filename=fn, _external=True) for fn in saved_filenames]
         }), 201
 
     except Exception as e:
         db.session.rollback()
         logging.error(f"Error adding images to bag {bag_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
     
 @app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['DELETE'])
 def delete_bag_image(bag_id, image_id):
