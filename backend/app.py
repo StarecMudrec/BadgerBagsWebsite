@@ -482,36 +482,60 @@ def add_bag_images(bag_id):
         max_position = db.session.query(db.func.max(ItemImage.position)).filter_by(item_id=bag_id).scalar() or 0
         
         saved_filenames = []
+        saved_images = []
+        
+        # Process files sequentially to avoid conflicts
         for i, file in enumerate(files):
             if file and allowed_file(file.filename):
-                # Secure the filename
-                original_ext = os.path.splitext(file.filename)[1].lower()
-                filename = secure_filename(f"{uuid.uuid4()}{original_ext}")
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                
-                # Ensure directory exists
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                
-                # Save the file
-                file.save(filepath)
-                
-                # Create new image record
-                new_image = ItemImage(
-                    item_id=bag_id,
-                    filename=filename,
-                    position=max_position + i + 1  # Append after existing images
-                )
-                db.session.add(new_image)
-                saved_filenames.append(filename)
-                app.logger.info(f"Adding image record: {filename} for bag {bag_id}")
+                try:
+                    # Secure the filename
+                    original_ext = os.path.splitext(file.filename)[1].lower()
+                    filename = secure_filename(f"{uuid.uuid4()}{original_ext}")
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    
+                    # Ensure directory exists
+                    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                    
+                    # Save the file immediately
+                    file.save(filepath)
+                    
+                    # Create new image record
+                    new_image = ItemImage(
+                        item_id=bag_id,
+                        filename=filename,
+                        position=max_position + i + 1
+                    )
+                    db.session.add(new_image)
+                    db.session.flush()  # Flush to get the ID
+                    
+                    saved_filenames.append(filename)
+                    saved_images.append({
+                        'filename': filename,
+                        'id': new_image.id
+                    })
+                    app.logger.info(f"Successfully saved image {filename} for bag {bag_id}")
+                    
+                except Exception as e:
+                    app.logger.error(f"Error processing file {file.filename}: {str(e)}")
+                    # Clean up the file if it was saved but DB operation failed
+                    if os.path.exists(filepath):
+                        try:
+                            os.remove(filepath)
+                        except OSError:
+                            pass
+                    continue
 
         db.session.commit()
-        app.logger.info(f"Successfully committed {len(saved_filenames)} images to database")
+        
+        # Get the URLs for the saved images
+        image_urls = [url_for('serve_bag_image', filename=img['filename'], _external=True) for img in saved_images]
+        image_ids = [img['id'] for img in saved_images]
+        
         return jsonify({
             'status': 'success',
             'filenames': saved_filenames,
-            'image_urls': [url_for('serve_bag_image', filename=fn, _external=True) for fn in saved_filenames],
-            'image_ids': [img.id for img in ItemImage.query.filter(ItemImage.filename.in_(saved_filenames)).all()]
+            'image_urls': image_urls,
+            'image_ids': image_ids
         }), 201
 
     except Exception as e:
