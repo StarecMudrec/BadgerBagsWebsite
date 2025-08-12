@@ -509,12 +509,12 @@ export default {
         // Combine kept existing images with new images
         this.images = [...keptExistingImages, ...addedImages];
         
-        // Prepare data for API call
+        // Prepare data for API call - include all images in order
         const imageOrder = {};
         this.images.forEach((image, index) => {
-          if (image.id) { // Only include existing images in the order update
-            imageOrder[image.id] = index;
-          }
+          // For new images, use a temporary identifier if no ID exists yet
+          const identifier = image.id || `temp_${index}`;
+          imageOrder[identifier] = index;
         });
         
         // Update image order in the database
@@ -537,11 +537,7 @@ export default {
         });
         
         if (formData.entries().next().done === false) {
-          console.log('FormData contents:');
-          for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-          }
-          const response = await fetch(`/api/bags/${this.id}/images`, {  // Add trailing slash
+          const response = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData
           });
@@ -549,13 +545,13 @@ export default {
           if (!response.ok) {
             throw new Error('Failed to upload images');
           }
+          
+          // After successful upload, refresh to get the new image IDs
+          await this.fetchBagDetails();
         }
         
         this.showAddImagesModal = false;
         this.newImages = [];
-        
-        // Refresh the bag details to get updated image URLs
-        await this.fetchBagDetails();
         
       } catch (error) {
         console.error('Error saving new images:', error);
