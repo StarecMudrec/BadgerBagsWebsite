@@ -499,25 +499,38 @@ export default {
     },
     async saveNewImages() {
       try {
-        // Filter out removed existing images
-        const existingImageIds = this.images.map(img => img.id);
-        const keptExistingImages = this.newImages.filter(img => !img.isNew && existingImageIds.includes(img.id));
+        // Create a mapping of all images we want to keep (both existing and new)
+        const imageOrder = {};
+        let position = 0;
         
-        // Get new images
-        const addedImages = this.newImages.filter(img => img.isNew);
+        // First collect all images we want to keep (both existing and new)
+        const keptImages = this.newImages.filter(img => {
+          // Keep all new images
+          if (img.isNew) return true;
+          // Keep existing images that are still in the list
+          return this.images.some(existingImg => existingImg.id === img.id);
+        });
         
-        // First upload new images
-        const formData = new FormData();
-        addedImages.forEach((image, index) => {
-          if (image.cropped) {
-            formData.append('images[]', image.cropped);
-          } else if (image.file) {
-            formData.append('images[]', image.file);
+        // Build the order object with their new positions
+        keptImages.forEach((image, index) => {
+          if (image.id) { // Existing image
+            imageOrder[image.id] = index;
           }
         });
         
-        let newImageIds = [];
-        if (formData.entries().next().done === false) {
+        // First upload new images if any
+        const formData = new FormData();
+        const newImagesToUpload = this.newImages.filter(img => img.isNew);
+        
+        if (newImagesToUpload.length > 0) {
+          newImagesToUpload.forEach((image) => {
+            if (image.cropped) {
+              formData.append('images[]', image.cropped);
+            } else if (image.file) {
+              formData.append('images[]', image.file);
+            }
+          });
+          
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData
@@ -526,21 +539,9 @@ export default {
           if (!uploadResponse.ok) {
             throw new Error('Failed to upload images');
           }
-          
-          // Refresh to get the new image IDs
-          await this.fetchBagDetails();
         }
         
-        // Now update the order for all images (existing + new)
-        const allImages = [...this.images]; // This now includes the newly uploaded images
-        
-        const imageOrder = {};
-        allImages.forEach((image, index) => {
-          if (image.id) { // Only include images that have IDs (both existing and newly uploaded)
-            imageOrder[image.id] = index;
-          }
-        });
-
+        // Now update the order (this will also delete any images not in the order)
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -566,13 +567,25 @@ export default {
         alert('Произошла ошибка при сохранении изображений');
       }
     },
-    removeImage(index) {
-      if (confirm('Удалить это изображение?')) {
-        this.images.splice(index, 1);
-        if (this.currentImageIndex >= this.images.length) {
-          this.currentImageIndex = Math.max(0, this.images.length - 1);
+    async deleteImage(imageId) {
+      if (!confirm('Удалить это изображение?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/bags/${this.id}/images/${imageId}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete image');
         }
-        // Here you would typically make an API call to delete the image from server
+        
+        // Refresh the bag details
+        await this.fetchBagDetails();
+      } catch (error) {
+        console.error('Error deleting image:', error);
+        alert('Произошла ошибка при удалении изображения');
       }
     }
   },

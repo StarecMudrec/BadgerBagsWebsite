@@ -421,12 +421,28 @@ def update_image_order(bag_id):
         existing_images = ItemImage.query.filter_by(item_id=bag_id).all()
         existing_image_ids = {str(img.id) for img in existing_images}
         
+        # Check for images to delete (present in DB but not in the order)
+        submitted_image_ids = set(data['order'].keys())
+        images_to_delete = existing_image_ids - submitted_image_ids
+        
+        # Delete images not in the new order
+        for image_id in images_to_delete:
+            try:
+                image_id_int = int(image_id)
+                image = ItemImage.query.filter_by(id=image_id_int, item_id=bag_id).first()
+                if image:
+                    # Delete the file from filesystem
+                    try:
+                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
+                    except OSError as e:
+                        logging.warning(f"Error deleting image file: {e}")
+                    
+                    db.session.delete(image)
+            except ValueError:
+                continue
+        
         # Process the order updates
         for image_id, position in data['order'].items():
-            # Skip if this is a new image (temp ID) or doesn't exist
-            if image_id not in existing_image_ids:
-                continue
-                
             try:
                 image_id_int = int(image_id)
                 image = ItemImage.query.filter_by(id=image_id_int, item_id=bag_id).first()
@@ -482,6 +498,34 @@ def add_bag_images(bag_id):
             'filenames': saved_filenames
         }), 201
 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['DELETE'])
+def delete_bag_image(bag_id, image_id):
+    # Check Telegram session authentication
+    if 'telegram_id' not in session:
+        return jsonify({'error': 'Telegram authentication required'}), 401
+
+    if not session.get('is_admin', False):
+        return jsonify({'error': 'Admin privileges required'}), 403
+
+    try:
+        # Find and delete the image
+        image = ItemImage.query.filter_by(id=image_id, item_id=bag_id).first()
+        if not image:
+            return jsonify({'error': 'Image not found'}), 404
+        
+        # Delete the file from filesystem
+        try:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image.filename))
+        except OSError as e:
+            logging.warning(f"Error deleting image file: {e}")
+        
+        db.session.delete(image)
+        db.session.commit()
+        return jsonify({'message': 'Image deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
