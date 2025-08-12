@@ -503,20 +503,26 @@ def add_bag_images(bag_id):
                 )
                 db.session.add(new_image)
                 saved_filenames.append(filename)
-                print(f"Adding image record: {filename} for bag {bag_id}")  # Debug log
+                app.logger.info(f"Adding image record: {filename} for bag {bag_id}")
 
         db.session.commit()
-        print(f"Successfully committed {len(saved_filenames)} images to database")  # Debug log
+        app.logger.info(f"Successfully committed {len(saved_filenames)} images to database")
         return jsonify({
             'status': 'success',
             'filenames': saved_filenames,
-            'image_urls': [url_for('serve_bag_image', filename=fn, _external=True) for fn in saved_filenames]
+            'image_urls': [url_for('serve_bag_image', filename=fn, _external=True) for fn in saved_filenames],
+            'image_ids': [img.id for img in ItemImage.query.filter(ItemImage.filename.in_(saved_filenames)).all()]
         }), 201
 
     except Exception as e:
         db.session.rollback()
-        print(f"Database error: {str(e)}")  # Debug log
-        logging.error(f"Error adding images to bag {bag_id}: {str(e)}")
+        app.logger.error(f"Error adding images to bag {bag_id}: {str(e)}")
+        # Clean up any saved files if transaction failed
+        for filename in saved_filenames:
+            try:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            except OSError:
+                pass
         return jsonify({'error': str(e)}), 500
 
 

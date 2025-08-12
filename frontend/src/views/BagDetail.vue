@@ -511,7 +511,6 @@ export default {
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData,
-            // Don't set Content-Type header - let the browser set it
           });
           
           if (!uploadResponse.ok) {
@@ -521,12 +520,23 @@ export default {
           
           const result = await uploadResponse.json();
           console.log('Upload successful:', result);
+          
+          // Update the newImages array with the returned IDs
+          result.image_ids.forEach((id, index) => {
+            const correspondingImage = this.newImages.find(img => 
+              img.isNew && (img.cropped?.name === newImagesToUpload[index].cropped?.name || 
+                          img.file?.name === newImagesToUpload[index].file?.name)
+            );
+            if (correspondingImage) {
+              correspondingImage.id = id;
+            }
+          });
         }
 
-        // Update image order
+        // Prepare image order mapping
         const imageOrder = {};
         this.newImages.forEach((image, index) => {
-          if (image.id) {
+          if (image.id) { // Only include images that have IDs (either existing or newly uploaded)
             imageOrder[image.id] = index;
           }
         });
