@@ -509,15 +509,15 @@ export default {
         // Combine kept existing images with new images
         this.images = [...keptExistingImages, ...addedImages];
         
-        // Prepare data for API call - include all images in order
+        // Prepare data for API call - only include existing images with numeric IDs
         const imageOrder = {};
         this.images.forEach((image, index) => {
-          // For new images, use a temporary identifier
-          const identifier = image.id || `temp_${index}`;
-          imageOrder[identifier] = index;
+          if (typeof image.id === 'number') { // Only include numeric IDs
+            imageOrder[image.id] = index;
+          }
         });
 
-        console.log('Sending order update:', imageOrder); // Debug log
+        console.log('Sending order update:', imageOrder);
 
         // Update image order in the database
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {

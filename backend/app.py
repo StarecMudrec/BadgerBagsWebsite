@@ -418,9 +418,15 @@ def update_image_order(bag_id):
     
     try:
         for image_id, position in data['order'].items():
-            image = ItemImage.query.filter_by(id=image_id, item_id=bag_id).first()
-            if image:
-                image.position = position
+            try:
+                # Convert image_id to integer (will fail for temp IDs)
+                image_id_int = int(image_id)
+                image = ItemImage.query.filter_by(id=image_id_int, item_id=bag_id).first()
+                if image:
+                    image.position = position
+            except ValueError:
+                # Skip non-integer IDs (temp IDs for new images)
+                continue
         
         db.session.commit()
         return jsonify({'message': 'Image order updated successfully'}), 200
