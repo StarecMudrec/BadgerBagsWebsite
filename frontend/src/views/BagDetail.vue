@@ -512,19 +512,27 @@ export default {
         // Prepare data for API call - include all images in order
         const imageOrder = {};
         this.images.forEach((image, index) => {
-          // For new images, use a temporary identifier if no ID exists yet
+          // For new images, use a temporary identifier
           const identifier = image.id || `temp_${index}`;
           imageOrder[identifier] = index;
         });
-        
+
+        console.log('Sending order update:', imageOrder); // Debug log
+
         // Update image order in the database
-        await fetch(`/api/bags/${this.id}/images/order`, {
+        const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ order: imageOrder })
         });
+
+        if (!orderResponse.ok) {
+          const errorData = await orderResponse.json().catch(() => ({}));
+          console.error('Order update failed:', orderResponse.status, errorData);
+          throw new Error(errorData.message || 'Failed to update image order');
+        }
         
         // Upload new images if needed
         const formData = new FormData();
