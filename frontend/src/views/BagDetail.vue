@@ -438,6 +438,21 @@ export default {
       
       if (!files || files.length === 0) return;
 
+      // Check each file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > MAX_FILE_SIZE) {
+          alert(`File "${file.name}" is too large (max 5MB)`);
+          event.target.value = '';
+          return;
+        }
+        if (!file.type.startsWith('image/')) {
+          alert(`File "${file.name}" is not an image`);
+          event.target.value = '';
+          return;
+        }
+      }
+
       // Calculate how many new images we can add without exceeding the limit
       const currentTotal = this.newImages.length;
       const availableSlots = MAX_TOTAL_IMAGES - currentTotal;
@@ -503,34 +518,31 @@ export default {
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
         if (newImagesToUpload.length > 0) {
-          newImagesToUpload.forEach((image) => {
+          // Upload files sequentially to avoid issues
+          for (let i = 0; i < newImagesToUpload.length; i++) {
+            const image = newImagesToUpload[i];
             const fileToUpload = image.cropped || image.file;
-            formData.append('images[]', fileToUpload, fileToUpload.name);
-          });
-          
-          const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
-            method: 'POST',
-            body: formData,
-          });
-          
-          if (!uploadResponse.ok) {
-            const errorData = await uploadResponse.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Failed to upload images');
-          }
-          
-          const result = await uploadResponse.json();
-          console.log('Upload successful:', result);
-          
-          // Update the newImages array with the returned IDs
-          result.image_ids.forEach((id, index) => {
-            const correspondingImage = this.newImages.find(img => 
-              img.isNew && (img.cropped?.name === newImagesToUpload[index].cropped?.name || 
-                          img.file?.name === newImagesToUpload[index].file?.name)
-            );
-            if (correspondingImage) {
-              correspondingImage.id = id;
+            
+            const singleFileFormData = new FormData();
+            singleFileFormData.append('images[]', fileToUpload, fileToUpload.name);
+            
+            try {
+              const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
+                method: 'POST',
+                body: singleFileFormData,
+              });
+              
+              if (!uploadResponse.ok) {
+                throw new Error(`Failed to upload image ${i+1}/${newImagesToUpload.length}`);
+              }
+              
+              const result = await uploadResponse.json();
+              console.log(`Uploaded image ${i+1}:`, result);
+            } catch (error) {
+              console.error(`Error uploading image ${i+1}:`, error);
+              throw error;
             }
-          });
+          }
         }
 
         // Prepare image order mapping
