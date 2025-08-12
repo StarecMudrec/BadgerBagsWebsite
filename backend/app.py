@@ -459,8 +459,12 @@ def update_image_order(bag_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
-@app.route('/api/bags/<int:bag_id>/images/', methods=['POST'])
 def add_bag_images(bag_id):
+    # Check authentication
+    if 'telegram_id' not in session:
+        return jsonify({'error': 'Telegram authentication required'}), 401
+    if not session.get('is_admin', False):
+        return jsonify({'error': 'Admin privileges required'}), 403
 
     # Check if files were uploaded
     if 'images[]' not in request.files:
@@ -482,8 +486,13 @@ def add_bag_images(bag_id):
                 filename = f"{uuid.uuid4()}{original_ext}"
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 
+                # Ensure directory exists
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                
+                # Save the file
                 file.save(filepath)
                 
+                # Create new image record
                 new_image = ItemImage(
                     item_id=bag_id,
                     filename=filename,
@@ -500,6 +509,7 @@ def add_bag_images(bag_id):
 
     except Exception as e:
         db.session.rollback()
+        logging.error(f"Error adding images to bag {bag_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
     
 @app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['DELETE'])
