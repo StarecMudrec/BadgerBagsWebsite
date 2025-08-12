@@ -504,15 +504,16 @@ export default {
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
         if (newImagesToUpload.length > 0) {
-          newImagesToUpload.forEach((image, index) => {
+          newImagesToUpload.forEach((image) => {
             // Use the cropped version if available, otherwise the original file
             const fileToUpload = image.cropped || image.file;
-            formData.append('images[]', fileToUpload);
+            formData.append('images[]', fileToUpload, fileToUpload.name);
           });
           
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            // Don't set Content-Type header - let the browser set it with boundary
           });
           
           if (!uploadResponse.ok) {
@@ -527,7 +528,6 @@ export default {
           if (image.id) { // Existing image
             imageOrder[image.id] = index;
           }
-          // New images will be handled by their position in the array
         });
 
         // Update the order (this will include the newly uploaded images)
