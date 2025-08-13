@@ -811,8 +811,8 @@ export default {
   }
 
   .cropper-bg {
-    width: 100% !important;
-    height: 100% !important;
+    width: 700px;
+    height: 500px;
   }
 
   .crop-controls {
