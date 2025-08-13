@@ -848,6 +848,10 @@ export default {
     width: 100% !important;
     height: 100% !important;
   }
+  
+  .cropper-wrap-box {
+    overflow: hidden !important;
+  }
 
   .cropper-background {
     width: 700px !important;
