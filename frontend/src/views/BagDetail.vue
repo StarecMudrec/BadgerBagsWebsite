@@ -141,9 +141,6 @@
             :max-container-height="500"
             :max-canvas-width="700"
             :max-canvas-height="500"
-            :crop-box-movable="true"
-            :crop-box-resizable="true"
-            :toggle-drag-mode-on-dblclick="false"
             guides
             background-class="cropper-background"
             @ready="onCropperReady"
