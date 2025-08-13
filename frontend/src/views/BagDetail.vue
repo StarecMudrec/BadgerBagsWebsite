@@ -794,16 +794,15 @@ export default {
   }
 
   .fixed-crop-container {
-    width: 700px;
-    height: 500px;
-    margin: 0 auto;
     position: relative;
     background-color: #f4ebe2;
+    width: 700px;
+    height: 500px;
   }
 
   .cropper-container {
-    width: 100% !important;
-    height: 100% !important;
+    width: 700px !important;
+    height: 500px !important;
   }
 
   .cropper-background {
