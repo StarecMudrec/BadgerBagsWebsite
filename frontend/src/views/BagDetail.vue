@@ -503,14 +503,20 @@ export default {
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
         if (newImagesToUpload.length > 0) {
-          newImagesToUpload.forEach((image) => {
+          // Clear any existing files in formData
+          formData.delete('images[]');
+          
+          // Append all new images to formData
+          newImagesToUpload.forEach((image, index) => {
             const fileToUpload = image.cropped || image.file;
+            // Use the same field name 'images[]' for all files to create an array
             formData.append('images[]', fileToUpload, fileToUpload.name);
           });
           
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData,
+            // Don't set Content-Type header - let the browser set it with boundary
           });
           
           if (!uploadResponse.ok) {
@@ -522,17 +528,18 @@ export default {
           console.log('Upload successful:', result);
           
           // Update the newImages array with the returned IDs
-          result.image_ids.forEach((id, index) => {
-            const correspondingImage = this.newImages.find(img => 
-              img.isNew && (img.cropped?.name === newImagesToUpload[index].cropped?.name || 
-                          img.file?.name === newImagesToUpload[index].file?.name)
-            );
-            if (correspondingImage) {
-              correspondingImage.id = id;
-            }
-          });
+          if (result.image_ids && result.image_ids.length > 0) {
+            let uploadedIndex = 0;
+            this.newImages.forEach((img, index) => {
+              if (img.isNew) {
+                img.id = result.image_ids[uploadedIndex];
+                uploadedIndex++;
+              }
+            });
+          }
         }
 
+        // Rest of your code remains the same...
         // Prepare image order mapping
         const imageOrder = {};
         this.newImages.forEach((image, index) => {
