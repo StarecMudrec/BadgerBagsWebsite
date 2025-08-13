@@ -804,11 +804,9 @@ export default {
   .cropper-container {
     width: 100% !important;
     height: 100% !important;
-    width: 700px !important;
-    height: 500px !important;
   }
 
-  .cropper-bg {
+  .cropper-background {
     width: 700px !important;
     height: 500px !important;
   }
