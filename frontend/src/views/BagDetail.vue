@@ -133,10 +133,17 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
-            :min-container-width="200"
-            :min-container-height="200"
-            :min-canvas-width="200"
-            :min-canvas-height="200"
+            :min-container-width="700"
+            :min-container-height="500"
+            :min-canvas-width="700"
+            :min-canvas-height="500"
+            :max-container-width="700"
+            :max-container-height="500"
+            :max-canvas-width="700"
+            :max-canvas-height="500"
+            :crop-box-movable="true"
+            :crop-box-resizable="true"
+            :toggle-drag-mode-on-dblclick="false"
             guides
             background-class="cropper-background"
             @ready="onCropperReady"
@@ -392,12 +399,30 @@ export default {
           this.$refs.cropper.reset();
           this.$refs.cropper.setAspectRatio(1/1.25751633987);
           this.$refs.cropper.setDragMode('move');
+          
+          // Add these constraints when opening the modal
+          const cropper = this.$refs.cropper;
+          cropper.setCropBoxData({
+            minWidth: 100,
+            minHeight: 100,
+            maxWidth: cropper.getCanvasData().width,
+            maxHeight: cropper.getCanvasData().height
+          });
         }
       });
     },
     onCropperReady() {
       if (this.$refs.cropper) {
+        // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
+        
+        // Set minimum dimensions for the crop box
+        this.$refs.cropper.setCropBoxData({
+          minWidth: 100,  // Minimum width for crop box
+          minHeight: 100, // Minimum height for crop box
+          maxWidth: this.$refs.cropper.getCanvasData().width,  // Max width = image width
+          maxHeight: this.$refs.cropper.getCanvasData().height // Max height = image height
+        });
       }
     },
     cancelCrop() {
@@ -786,8 +811,8 @@ export default {
   }
 
   .cropper-bg {
-    width: 700px;
-    height: 500px;
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .crop-controls {
