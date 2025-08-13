@@ -839,6 +839,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
+    overflow: hidden !important;
   }
 
   .cropper-crop-box, 
