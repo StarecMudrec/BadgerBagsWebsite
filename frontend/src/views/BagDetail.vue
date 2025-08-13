@@ -889,7 +889,7 @@ export default {
     max-height: 500px !important;
   }
 
-  .cropper-container .cropper-bg {
+  .cropper-container cropper-bg {
     width: 700px !important;
     height: 500px !important;
     max-width: 700px !important;
