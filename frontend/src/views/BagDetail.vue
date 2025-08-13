@@ -396,13 +396,20 @@ export default {
           this.$refs.cropper.setAspectRatio(1/1.25751633987);
           this.$refs.cropper.setDragMode('move');
           
-          // Add these constraints when opening the modal
-          const cropper = this.$refs.cropper;
-          cropper.setCropBoxData({
-            minWidth: 100,
-            minHeight: 100,
-            maxWidth: cropper.getCanvasData().width,
-            maxHeight: cropper.getCanvasData().height
+          // Get crop box dimensions after it's initialized
+          const cropBoxData = this.$refs.cropper.getCropBoxData();
+          
+          // Set minimum dimensions for both canvas and crop box
+          this.$refs.cropper.setCanvasData({
+            minWidth: cropBoxData.width,
+            minHeight: cropBoxData.height
+          });
+          
+          this.$refs.cropper.setCropBoxData({
+            minWidth: cropBoxData.width,
+            minHeight: cropBoxData.height,
+            maxWidth: this.$refs.cropper.getCanvasData().width,
+            maxHeight: this.$refs.cropper.getCanvasData().height
           });
         }
       });
@@ -412,12 +419,21 @@ export default {
         // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
         
-        // Set minimum dimensions for the crop box
+        // Get crop box dimensions
+        const cropBoxData = this.$refs.cropper.getCropBoxData();
+        
+        // Set minimum dimensions for the canvas (image) to match crop box size
+        this.$refs.cropper.setCanvasData({
+          minWidth: cropBoxData.width,
+          minHeight: cropBoxData.height
+        });
+        
+        // Also set minimum dimensions for the crop box itself
         this.$refs.cropper.setCropBoxData({
-          minWidth: 100,  // Minimum width for crop box
-          minHeight: 100, // Minimum height for crop box
-          maxWidth: this.$refs.cropper.getCanvasData().width,  // Max width = image width
-          maxHeight: this.$refs.cropper.getCanvasData().height // Max height = image height
+          minWidth: cropBoxData.width,
+          minHeight: cropBoxData.height,
+          maxWidth: this.$refs.cropper.getCanvasData().width,
+          maxHeight: this.$refs.cropper.getCanvasData().height
         });
       }
     },
@@ -528,6 +544,22 @@ export default {
           this.$refs.cropper.reset();
           this.$refs.cropper.setAspectRatio(1/1.25751633987);
           this.$refs.cropper.setDragMode('move');
+          
+          // Get crop box dimensions after it's initialized
+          const cropBoxData = this.$refs.cropper.getCropBoxData();
+          
+          // Set minimum dimensions for both canvas and crop box
+          this.$refs.cropper.setCanvasData({
+            minWidth: cropBoxData.width,
+            minHeight: cropBoxData.height
+          });
+          
+          this.$refs.cropper.setCropBoxData({
+            minWidth: cropBoxData.width,
+            minHeight: cropBoxData.height,
+            maxWidth: this.$refs.cropper.getCanvasData().width,
+            maxHeight: this.$refs.cropper.getCanvasData().height
+          });
         }
       });
     },
