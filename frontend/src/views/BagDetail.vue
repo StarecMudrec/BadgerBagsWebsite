@@ -804,13 +804,13 @@ export default {
   .cropper-container {
     width: 100% !important;
     height: 100% !important;
-    width: 700px;
-    height: 500px;
+    width: 700px !important;
+    height: 500px !important;
   }
 
   .cropper-bg {
-    width: 700px;
-    height: 500px;
+    width: 700px !important;
+    height: 500px !important;
   }
 
   .crop-controls {
