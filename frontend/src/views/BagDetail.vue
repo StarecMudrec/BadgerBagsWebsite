@@ -798,6 +798,7 @@ export default {
     background-color: #f4ebe2;
     width: 700px;
     height: 500px;
+    overflow: hidden;
   }
 
   .cropper-container {
