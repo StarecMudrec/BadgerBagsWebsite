@@ -889,6 +889,13 @@ export default {
     max-height: 500px !important;
   }
 
+  .cropper-container .cropper-bg {
+    width: 700px !important;
+    height: 500px !important;
+    max-width: 700px !important;
+    max-height: 500px !important;
+  }
+
   .crop-controls {
     display: flex;
     justify-content: space-between;
