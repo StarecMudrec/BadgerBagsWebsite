@@ -133,10 +133,10 @@
             :zoom-on-touch="true"
             :zoom-on-wheel="true"
             :drag-mode="'move'"
-            :min-container-width="200"
-            :min-container-height="200"
-            :min-canvas-width="200"
-            :min-canvas-height="200"
+            :min-container-width="700"
+            :min-container-height="500"
+            :min-canvas-width="700"
+            :min-canvas-height="500"
             :crop-box-movable="true"
             :crop-box-resizable="true"
             :toggle-drag-mode-on-dblclick="false"
@@ -803,6 +803,16 @@ export default {
   .cropper-container {
     width: 700px !important;
     height: 500px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .cropper-crop-box, 
+  .cropper-view-box, 
+  .cropper-canvas {
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .cropper-background {
