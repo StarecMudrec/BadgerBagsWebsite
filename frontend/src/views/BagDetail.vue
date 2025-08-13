@@ -396,19 +396,25 @@ export default {
           this.$refs.cropper.setAspectRatio(1/1.25751633987);
           this.$refs.cropper.setDragMode('move');
           
-          // Get dimensions after initialization
-          const cropBoxData = this.$refs.cropper.getCropBoxData();
+          // Get container data first
           const containerData = this.$refs.cropper.getContainerData();
           
-          // Set minimum dimensions
+          // Set canvas data to match container
           this.$refs.cropper.setCanvasData({
-            minWidth: cropBoxData.width,
-            minHeight: cropBoxData.height
+            width: containerData.width,
+            height: containerData.height,
+            minWidth: containerData.width,
+            minHeight: containerData.height,
+            maxWidth: containerData.width,
+            maxHeight: containerData.height
           });
           
+          // Set crop box dimensions
           this.$refs.cropper.setCropBoxData({
-            minWidth: cropBoxData.width,
-            minHeight: cropBoxData.height,
+            width: containerData.width,
+            height: containerData.height,
+            minWidth: containerData.width,
+            minHeight: containerData.height,
             maxWidth: containerData.width,
             maxHeight: containerData.height
           });
@@ -417,8 +423,8 @@ export default {
           this.$refs.cropper.setData({
             minLeft: 0,
             minTop: 0,
-            maxLeft: containerData.width - cropBoxData.width,
-            maxTop: containerData.height - cropBoxData.height
+            maxLeft: 0,
+            maxTop: 0
           });
         }
       });
@@ -428,20 +434,28 @@ export default {
         // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
         
-        // Get crop box dimensions
-        const cropBoxData = this.$refs.cropper.getCropBoxData();
+        // Get container data first
         const containerData = this.$refs.cropper.getContainerData();
         
-        // Set minimum dimensions for the canvas (image) to match crop box size
+        // Set canvas data to match container
         this.$refs.cropper.setCanvasData({
-          minWidth: cropBoxData.width,
-          minHeight: cropBoxData.height
+          width: containerData.width,
+          height: containerData.height,
+          minWidth: containerData.width,
+          minHeight: containerData.height,
+          maxWidth: containerData.width,
+          maxHeight: containerData.height
         });
         
-        // Also set minimum dimensions for the crop box itself
+        // Get crop box dimensions
+        const cropBoxData = this.$refs.cropper.getCropBoxData();
+        
+        // Set crop box dimensions
         this.$refs.cropper.setCropBoxData({
-          minWidth: cropBoxData.width,
-          minHeight: cropBoxData.height,
+          width: containerData.width,
+          height: containerData.height,
+          minWidth: containerData.width,
+          minHeight: containerData.height,
           maxWidth: containerData.width,
           maxHeight: containerData.height
         });
@@ -450,8 +464,8 @@ export default {
         this.$refs.cropper.setData({
           minLeft: 0,
           minTop: 0,
-          maxLeft: containerData.width - cropBoxData.width,
-          maxTop: containerData.height - cropBoxData.height
+          maxLeft: 0,
+          maxTop: 0
         });
       }
     },
@@ -858,11 +872,13 @@ export default {
     width: 700px;
     height: 500px;
     overflow: hidden;
+    max-height: 500px; /* Add this line */
   }
 
   .cropper-container {
     width: 700px !important;
     height: 500px !important;
+    max-height: 500px !important; /* Add this line */
     position: absolute;
     top: 0;
     left: 0;
@@ -880,13 +896,14 @@ export default {
     overflow: hidden !important;
     width: 700px !important;
     height: 500px !important;
+    max-height: 500px !important; /* Add this line */
   }
 
   .cropper-background {
     width: 700px !important;
     height: 500px !important;
     max-width: 700px !important;
-    max-height: 500px !important;
+    max-height: 500px !important; /* Add this line */
   }
 
   .cropper-container cropper-bg {
