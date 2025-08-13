@@ -799,16 +799,29 @@ export default {
     margin: 0 auto;
     position: relative;
     background-color: #f4ebe2;
+    overflow: hidden;
   }
 
   .cropper-container {
     width: 100% !important;
     height: 100% !important;
+    max-height: 500px !important;
   }
 
   .cropper-bg {
-    width: 700px;
-    height: 500px;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 500px !important;
+  }
+
+  /* Ensure the cropper canvas respects the container */
+  .cropper-canvas {
+    max-height: 500px !important;
+  }
+
+  /* Ensure the cropper crop box respects the container */
+  .cropper-crop-box {
+    max-height: 500px !important;
   }
 
   .crop-controls {
