@@ -885,6 +885,8 @@ export default {
   .cropper-background {
     width: 700px !important;
     height: 500px !important;
+    max-width: 700px !important;
+    max-height: 500px !important;
   }
 
   .crop-controls {
