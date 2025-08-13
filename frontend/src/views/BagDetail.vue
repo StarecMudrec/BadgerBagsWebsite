@@ -410,11 +410,24 @@ export default {
         const croppedFile = new File([blob], fileName, { type: 'image/png' });
         
         if (this.isEditingNewImage) {
-          // Update new image
-          this.newImages[this.currentEditingIndex].preview = URL.createObjectURL(blob);
-          this.newImages[this.currentEditingIndex].cropped = croppedFile;
+          // For existing images in the upload modal, we need to mark them as modified
+          const isExistingImage = !this.newImages[this.currentEditingIndex].isNew;
+          
+          if (isExistingImage) {
+            // For existing images, we'll treat them as new uploads with the cropped version
+            this.newImages[this.currentEditingIndex] = {
+              ...this.newImages[this.currentEditingIndex],
+              preview: URL.createObjectURL(blob),
+              cropped: croppedFile,
+              isNew: true // Mark as new to force upload
+            };
+          } else {
+            // For truly new images
+            this.newImages[this.currentEditingIndex].preview = URL.createObjectURL(blob);
+            this.newImages[this.currentEditingIndex].cropped = croppedFile;
+          }
         } else {
-          // Update existing image
+          // For main view cropping
           this.images[this.currentEditingIndex].preview = URL.createObjectURL(blob);
           this.images[this.currentEditingIndex].cropped = croppedFile;
         }
@@ -438,19 +451,20 @@ export default {
       
       if (!files || files.length === 0) return;
 
-      // Calculate how many new images we can add without exceeding the limit
-      const currentTotal = this.newImages.length;
-      const availableSlots = MAX_TOTAL_IMAGES - currentTotal;
+      // Filter out any null or undefined files
+      const validFiles = Array.from(files).filter(file => file);
       
-      // Completely cancel if trying to upload more than available slots
-      if (files.length > availableSlots) {
+      // Calculate available slots considering existing newImages
+      const availableSlots = MAX_TOTAL_IMAGES - this.newImages.length;
+      
+      if (validFiles.length > availableSlots) {
         alert(`Вы можете добавить максимум ${availableSlots} изображений (всего не более ${MAX_TOTAL_IMAGES})`);
         event.target.value = '';
         return;
       }
 
-      // Process each file
-      Array.from(files).forEach((file) => {
+      // Process each valid file
+      validFiles.slice(0, availableSlots).forEach((file) => {
         if (file.size > MAX_FILE_SIZE) {
           alert('Размер изображения должен быть меньше 5MB');
           return;
@@ -474,7 +488,16 @@ export default {
     },
     openCropModalForNewImage(index) {
       this.currentEditingIndex = index;
-      this.imageToCrop = this.newImages[index].preview;
+      const image = this.newImages[index];
+      
+      // If it's an existing image, use its URL directly
+      if (!image.isNew) {
+        this.imageToCrop = image.url;
+      } else {
+        // For new images, use the preview
+        this.imageToCrop = image.preview;
+      }
+      
       this.isEditingNewImage = true;
       this.showCropModal = true;
       
@@ -503,20 +526,15 @@ export default {
         const newImagesToUpload = this.newImages.filter(img => img.isNew);
         
         if (newImagesToUpload.length > 0) {
-          // Clear any existing files in formData
           formData.delete('images[]');
-          
-          // Append all new images to formData
           newImagesToUpload.forEach((image, index) => {
             const fileToUpload = image.cropped || image.file;
-            // Use the same field name 'images[]' for all files to create an array
             formData.append('images[]', fileToUpload, fileToUpload.name);
           });
           
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData,
-            // Don't set Content-Type header - let the browser set it with boundary
           });
           
           if (!uploadResponse.ok) {
@@ -527,7 +545,6 @@ export default {
           const result = await uploadResponse.json();
           console.log('Upload successful:', result);
           
-          // Update the newImages array with the returned IDs
           if (result.image_ids && result.image_ids.length > 0) {
             let uploadedIndex = 0;
             this.newImages.forEach((img, index) => {
@@ -539,15 +556,15 @@ export default {
           }
         }
 
-        // Rest of your code remains the same...
-        // Prepare image order mapping
+        // Create image order mapping for ALL images (including existing ones that weren't deleted)
         const imageOrder = {};
         this.newImages.forEach((image, index) => {
-          if (image.id) { // Only include images that have IDs (either existing or newly uploaded)
+          if (image.id) {
             imageOrder[image.id] = index;
           }
         });
 
+        // If no images left, send empty order to delete all images
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -561,7 +578,8 @@ export default {
           throw new Error(errorData.error || 'Failed to update image order');
         }
         
-        // Refresh the bag details
+        // Force refresh the bag details instead of just fetching
+        this.loading = true;
         await this.fetchBagDetails();
         
         this.showAddImagesModal = false;
