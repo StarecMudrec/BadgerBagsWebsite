@@ -249,7 +249,6 @@ def get_bags():
             'id': item.id,
             'image': preview_image,  # Use the first image as preview
             'price': item.price,
-            'name': item.name  # Include name if needed
         })
     return jsonify(bags_data), 200
 
@@ -390,7 +389,6 @@ def get_bag_details(bag_id):
     
     return jsonify({
         'id': item.id,
-        'name': item.name,
         'description': item.description,
         'price': item.price,
         'images': [{
