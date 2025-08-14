@@ -619,6 +619,12 @@ export default {
     cursor: pointer;
     font-size: 10px;
     padding: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .image-position {
@@ -783,6 +789,12 @@ export default {
     border-radius: 0 8px 8px 0;
     font-size: 1rem;
     transition: background-color 0.3s ease;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .file-upload-button:hover {
@@ -810,6 +822,12 @@ export default {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 10px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .submit-button:hover {
@@ -898,6 +916,12 @@ export default {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .modal-button:hover {
@@ -1018,6 +1042,12 @@ export default {
     transition: all 0.3s ease;
     font-size: 1.5rem;
     backdrop-filter: blur(5px);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .crop-button:hover {

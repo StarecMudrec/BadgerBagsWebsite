@@ -1050,6 +1050,12 @@ export default {
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 10;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .edit-image-button:hover {
@@ -1079,6 +1085,12 @@ export default {
     z-index: 100;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .edit-images-button:hover {
@@ -1176,6 +1188,12 @@ export default {
     transition: all 0.3s ease;
     font-size: 1.5rem;
     backdrop-filter: blur(5px);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .crop-button:hover {
@@ -1234,6 +1252,12 @@ export default {
     justify-content: center;
     gap: 15px;
     margin-top: 20px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .modal-button {
@@ -1245,6 +1269,12 @@ export default {
     transition: all 0.3s ease;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
     font-weight: 600;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .modal-button.confirm {
@@ -1325,6 +1355,12 @@ export default {
     cursor: pointer;
     font-size: 10px;
     padding: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   /* File upload styles (same as in AddItem.vue) */
@@ -1362,6 +1398,12 @@ export default {
     transition: background-color 0.3s ease;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
     font-weight: 600;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .file-upload-button:hover {
@@ -1702,6 +1744,12 @@ export default {
   .button-text {
     display: inline-block;
     vertical-align: middle;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .telegram-icon {
@@ -1755,6 +1803,12 @@ export default {
     padding-top: 5px;
     padding-left: 5px;
     transition: all 0.3s ease;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .edit-buttons button {

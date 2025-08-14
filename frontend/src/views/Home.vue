@@ -619,6 +619,12 @@ export default {
     text-shadow: 1px 2px 3px rgb(0 0 0 / 67%);
     transition: all 0.2s ease;
     z-index: 100;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .delete-button:hover {
@@ -678,6 +684,12 @@ export default {
     display: flex;
     justify-content: center;
     gap: 20px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .confirm-button, .cancel-button {
@@ -694,6 +706,12 @@ export default {
     transition: all 0.3s ease;
     font-size: 1.5rem;
     backdrop-filter: blur(5px);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .confirm-button:hover {
@@ -865,6 +883,12 @@ export default {
     display: flex;
     flex-direction: column;
     /* min-height: 100%; Ensure they take full height */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .bag-item {
@@ -975,6 +999,12 @@ export default {
     /* aspect-ratio: 1 / 1.56630057630; */
     /* margin-bottom: 10px; */ 
     min-height: 50px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .add-item-button:hover {
@@ -1112,6 +1142,12 @@ export default {
     transition: color 0.3s ease, box-shadow 0.3s ease;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .navbar-button:hover {
@@ -1141,6 +1177,12 @@ export default {
     align-items: center;
     gap: 10px;
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .telegram-button:hover {
