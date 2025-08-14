@@ -1254,7 +1254,7 @@ export default {
     display: none;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1000px) {
     .fixed-crop-container {
       width: 90vw;
       height: 90vw;
@@ -1695,7 +1695,7 @@ export default {
     transition: all 0.3s ease;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1000px) {
     .bag-detail-page {
       flex-direction: column;
       height: auto;
