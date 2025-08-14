@@ -287,11 +287,10 @@ def add_bag():
             return jsonify({'status': 'error', 'error': 'No files selected'}), 400
 
         # Validate form data
-        name = request.form.get('name')
         description = request.form.get('description')
         price = request.form.get('price')
         
-        if not all([name, description, price]):
+        if not all([description, price]):
             return jsonify({'status': 'error', 'error': 'Missing required fields'}), 400
 
         # Create upload directory if it doesn't exist
@@ -299,7 +298,6 @@ def add_bag():
 
         # Create the item
         new_item = Item(
-            name=name,
             description=description,
             price=price
         )

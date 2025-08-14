@@ -12,7 +12,6 @@ class AuthToken(db.Model):
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(100))
     description = db.Column(db.String(1000))
     price = db.Column(db.Integer)
     images = db.relationship('ItemImage', backref='item', lazy=True, 
