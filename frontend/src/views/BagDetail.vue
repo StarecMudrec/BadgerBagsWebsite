@@ -1773,8 +1773,17 @@ export default {
     .fixed-crop-container {
       width: calc(100vw - 20px); /* Full width minus some padding */
       height: calc(100vh - 65px); /* Full height minus buttons space */
-      max-width: none;
-      max-height: none;
+      /* max-width: none;
+      max-height: none; */
+    }
+    .crop-modal-overlay .cropper-container,
+    .crop-modal-overlay .cropper-wrap-box,
+    .crop-modal-overlay .cropper-canvas,
+    .crop-modal-overlay .cropper-crop-box,
+    .crop-modal-overlay .cropper-view-box,
+    .crop-modal-overlay .cropper-bg {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .cropper-background {
