@@ -11,7 +11,7 @@ import requests  # Import the requests library
 from joserfc.errors import JoseError
 import logging
 from flask_sqlalchemy import SQLAlchemy  # Database integration
-from models import db, AuthToken, Item, AllowedUser, AdminToken, ItemImage
+from models import db, AuthToken, Item, AdminToken, ItemImage
 from config import Config
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
