@@ -1163,7 +1163,7 @@ export default {
     border-radius: 8px 0 0 8px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #423125;
-    font-size: 1rem;
+    font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1177,7 +1177,7 @@ export default {
     color: #423125;
     border: 1px solid #d0cbc4;
     border-radius: 0 8px 8px 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: background-color 0.3s ease;
     font-family: 'Noto Serif TC', 'Noto Serif', serif;
     font-weight: 600;
