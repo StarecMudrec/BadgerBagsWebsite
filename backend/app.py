@@ -15,6 +15,7 @@ from models import db, AuthToken, Item, AllowedUser, AdminToken, ItemImage
 from config import Config
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
 
 executor = ThreadPoolExecutor(2)  # Background threads for file ops
 
@@ -103,6 +104,15 @@ def is_authenticated(request, session):
     except Exception as e:
         logging.exception(f"Auth error: {e}")
         return False, None
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        is_auth, user_id = is_authenticated(request, session)
+        if not is_auth or not session.get('is_admin'):
+            return jsonify({'status': 'error', 'error': 'Admin access required'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Telegram OAuth Callback Route
 @app.route('/auth/telegram-callback')
@@ -265,6 +275,7 @@ def serve_bag_image(filename):
         return send_from_directory('static', 'default-image.jpg', mimetype='image/jpeg'), 404
 
 @app.route('/api/bags', methods=['POST'])
+@admin_required
 def add_bag():
     try:
         # Check if files were uploaded
@@ -335,6 +346,7 @@ def add_bag():
         }), 500
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
+@admin_required
 def delete_bag(bag_id):
     try:
         # Start a transaction
@@ -391,6 +403,7 @@ def get_bag_details(bag_id):
     })
 
 @app.route('/api/bags/<int:bag_id>', methods=['PUT'])
+@admin_required
 def update_bag(bag_id):
     
     bag = Item.query.get(bag_id)
@@ -415,6 +428,7 @@ def update_bag(bag_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>/images/order', methods=['PUT'])
+@admin_required
 def update_image_order(bag_id):
     data = request.get_json()
     if not data or 'order' not in data:
@@ -463,6 +477,7 @@ def update_image_order(bag_id):
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>/images', methods=['POST'])
+@admin_required
 def add_bag_images(bag_id):
     # Check if files were uploaded
     if 'images[]' not in request.files:
@@ -550,6 +565,7 @@ def add_bag_images(bag_id):
         return jsonify({'error': str(e)}), 500
     
 @app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['DELETE'])
+@admin_required
 def delete_bag_image(bag_id, image_id):
 
     try:

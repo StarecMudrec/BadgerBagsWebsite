@@ -36,7 +36,7 @@
                   :alt="bag.name"
                   class="bag-image"
                 />
-                <button class="edit-image-button" @click="openCropModal(index)">
+                <button v-if="!loading && user?.is_admin" class="edit-image-button" @click="openCropModal(index)">
                   <i class="fas fa-edit"></i>
                 </button>
               </div>
@@ -75,7 +75,7 @@
             <transition name="fade-slide" mode="out-in">
               <div class="editable-field" v-if="!editingDescription" key="description-view">
                 <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
-                <span class="edit-icon" @click="editDescription">
+                <span v-if="!loading && user?.is_admin" class="edit-icon" @click="editDescription">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -95,7 +95,7 @@
               <transition name="fade-slide" mode="out-in">
                 <div class="price-container" v-if="!editingPrice" key="price-view">
                   <div class="price">{{ bag.price }}₽</div>
-                  <span class="edit-icon" @click="editPrice">
+                  <span v-if="!loading && user?.is_admin" class="edit-icon" @click="editPrice">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -225,7 +225,7 @@
     </transition>
 
     <!-- Edit Images Button -->
-    <button v-if="!loading" class="edit-images-button" @click="openAddImagesModal">
+    <button v-if="!loading && user?.is_admin" class="edit-images-button" @click="openAddImagesModal">
       <i class="fas fa-plus"></i> Загрузить изображения
     </button>
   </div>
@@ -250,6 +250,7 @@ export default {
   },
   data() {
     return {
+      user: null,
       bag: {},
       images: [], // Array of image objects with preview and file data
       currentImageIndex: 0,
@@ -277,6 +278,10 @@ export default {
       touchStartTime: 0,
     }
   },
+  async created() {
+    await this.fetchUser();
+    this.fetchBagDetails();
+  },
   watch: {
     currentImageIndex() {
       this.scrollToImage();
@@ -301,6 +306,16 @@ export default {
     }
   },
   methods: {
+    async fetchUser() {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          this.user = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    },
     handleTouchStart(e) {
       if (this.images.length <= 1) return;
       this.touchStartX = e.touches[0].clientX;

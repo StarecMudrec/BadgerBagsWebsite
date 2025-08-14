@@ -1,5 +1,5 @@
 <template>
-  <div class="add-item-page">
+  <div v-if="user?.is_admin" class="add-item-page">
     <!-- Background image div -->
     <div class="background-image"></div>
     <!-- Error Modal -->
@@ -133,6 +133,11 @@
       <router-link to="/" class="back-link">← На главную</router-link>
     </div>
   </div>
+  <div v-else class="unauthorized-message">
+    <h2>Unauthorized Access</h2>
+    <p>You don't have permission to view this page.</p>
+    <router-link to="/" class="back-link">← Back to Home</router-link>
+  </div>
 </template>
 
 <script>
@@ -149,6 +154,7 @@ export default {
   },
   data() {
     return {
+      user: null,
       item: {
         name: '',
         description: '',
@@ -171,6 +177,13 @@ export default {
       currentImageIndex: 0
     }
   },
+  async created() {
+    await this.fetchUser();
+    if (!this.user?.is_admin) {
+      // Optionally redirect immediately
+      // this.$router.push('/');
+    }
+  },
   computed: {
     containerStyle() {
       return {
@@ -179,6 +192,13 @@ export default {
     }
   },
   methods: {
+    async created() {
+      await this.fetchUser();
+      if (!this.user?.is_admin) {
+        // Optionally redirect immediately
+        // this.$router.push('/');
+      }
+    },
     checkImageSize() {
       if (this.$refs.cropper) {
         const canvasData = this.$refs.cropper.getCanvasData();
@@ -520,6 +540,27 @@ export default {
 </script>
 
 <style scoped>           
+  .unauthorized-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #f4ebe2;
+  }
+
+  .unauthorized-message h2 {
+    color: #423125;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .unauthorized-message p {
+    color: #423125;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
   .spinner {
     width: 30px;
     height: 30px;

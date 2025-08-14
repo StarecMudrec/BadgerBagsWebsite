@@ -77,13 +77,12 @@
           
           <!-- Add delete button -->
           <button 
-            v-if="showDeleteButton" 
+            v-if="showDeleteButton && user?.is_admin" 
             @click="openConfirmation"
             class="delete-button"
             :disabled="isDeleting"
           >
             <span>
-              <!-- {{ selectedBags.size }}  -->
               <i class="bi bi-trash"></i>
             </span>
           </button>
@@ -97,7 +96,7 @@
             v-for="bag in sortedBags" 
             :key="'bag-' + bag.id"  
             :bag="bag" 
-            :selection-mode="showDeleteButton"
+            :selection-mode="showDeleteButton && user?.is_admin"
             class="bag-item"
             :class="{ 
               'selected': selectedBags.has(bag.id),
@@ -107,11 +106,13 @@
             @bag-selected="handleBagSelected"
           />
           <div style=" display: flex; flex-direction: column; align-items: center;">
-            <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
-              <div class="add-item-inner">
-                <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+            <div v-if="user?.is_admin" style="display: flex; flex-direction: column; align-items: center;">
+              <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
+                <div class="add-item-inner">
+                  <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
               </div>
             </div>
             <!-- <div data-v-db91d383="" class="bag-price unselectable" style="color: rgb(0, 0, 0, 0);">.</div> -->
@@ -162,6 +163,7 @@ export default {
   data() {
     return {
       bags: [],
+      user: null,
       showSortDropdown: false,
       loading: true,
       sortMethod: 'default',
@@ -190,6 +192,16 @@ export default {
   },
 
   methods: {
+    async fetchUser() {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          this.user = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    },
     // Add these animation methods for selected state
     beforeEnter(el) {
       gsap.set(el, {
@@ -410,6 +422,7 @@ export default {
   },
 
   async created() {
+    await this.fetchUser();
     const response = await fetch('/api/bags');
     try {
       this.bags = await response.json();
@@ -417,7 +430,7 @@ export default {
     } finally {
       this.loading = false;
     }
-  }
+  },
 };
 </script>
 
