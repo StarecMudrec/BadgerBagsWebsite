@@ -1176,6 +1176,13 @@ export default {
     fill: #333333;
   }
 
+  @media (max-width: 768px) {
+    .bag-grid {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
   @media (max-width: 1550px) {
     .bag-catalog {
       margin-left: 50px;
