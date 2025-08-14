@@ -435,28 +435,79 @@ export default {
         // Get crop box dimensions
         const cropBoxData = this.$refs.cropper.getCropBoxData();
         const containerData = this.$refs.cropper.getContainerData();
+        const canvasData = this.$refs.cropper.getCanvasData();
         
-        // Set minimum dimensions for the canvas (image) to match crop box size
-        this.$refs.cropper.setCanvasData({
-          minWidth: cropBoxData.width,
-          minHeight: cropBoxData.height
-        });
+        // Set up event listeners for crop box changes
+        this.$refs.cropper.on('cropboxmove', this.handleCropBoxMove);
+        this.$refs.cropper.on('zoom', this.handleZoom);
         
-        // Also set minimum dimensions for the crop box itself
+        // Set initial dimensions
+        this.adjustCropBoxToImage();
+      }
+    },
+    handleZoom() {
+      this.adjustCropBoxToImage();
+    },
+    handleCropBoxMove() {
+      this.constrainCropBoxPosition();
+    },
+    adjustCropBoxToImage() {
+      if (!this.$refs.cropper) return;
+      
+      const canvasData = this.$refs.cropper.getCanvasData();
+      const containerData = this.$refs.cropper.getContainerData();
+      
+      // Get current crop box data
+      let cropBoxData = this.$refs.cropper.getCropBoxData();
+      
+      // If image is smaller than crop box in either dimension
+      if (canvasData.width < cropBoxData.width || canvasData.height < cropBoxData.height) {
+        // Calculate new dimensions that fit within the image
+        const newWidth = Math.min(cropBoxData.width, canvasData.width);
+        const newHeight = Math.min(cropBoxData.height, canvasData.height);
+        
+        // Maintain aspect ratio
+        const aspectRatio = cropBoxData.width / cropBoxData.height;
+        let finalWidth = newWidth;
+        let finalHeight = newHeight;
+        
+        if (newWidth / newHeight > aspectRatio) {
+          finalWidth = newHeight * aspectRatio;
+        } else {
+          finalHeight = newWidth / aspectRatio;
+        }
+        
+        // Update crop box dimensions
         this.$refs.cropper.setCropBoxData({
-          minWidth: cropBoxData.width,
-          minHeight: cropBoxData.height,
-          maxWidth: containerData.width,
-          maxHeight: containerData.height
+          width: finalWidth,
+          height: finalHeight
         });
         
-        // Limit the movement of the crop box
-        this.$refs.cropper.setData({
-          minLeft: 0,
-          minTop: 0,
-          maxLeft: containerData.width - cropBoxData.width,
-          maxTop: containerData.height - cropBoxData.height
-        });
+        // Re-center the crop box
+        this.constrainCropBoxPosition();
+      }
+    },
+    constrainCropBoxPosition() {
+      if (!this.$refs.cropper) return;
+      
+      const canvasData = this.$refs.cropper.getCanvasData();
+      const cropBoxData = this.$refs.cropper.getCropBoxData();
+      
+      // Calculate maximum allowed position
+      const maxLeft = canvasData.left + canvasData.width - cropBoxData.width;
+      const maxTop = canvasData.top + canvasData.height - cropBoxData.height;
+      
+      // Get current position
+      let left = cropBoxData.left;
+      let top = cropBoxData.top;
+      
+      // Constrain position
+      left = Math.max(canvasData.left, Math.min(left, maxLeft));
+      top = Math.max(canvasData.top, Math.min(top, maxTop));
+      
+      // Update position if needed
+      if (left !== cropBoxData.left || top !== cropBoxData.top) {
+        this.$refs.cropper.setCropBoxData({ left, top });
       }
     },
     cancelCrop() {
@@ -702,6 +753,13 @@ export default {
   },
   mounted() {
     this.fetchBagDetails();
+  },
+  beforeDestroy() {
+    // Clean up event listeners
+    if (this.$refs.cropper) {
+      this.$refs.cropper.off('cropboxmove', this.handleCropBoxMove);
+      this.$refs.cropper.off('zoom', this.handleZoom);
+    }
   },
   computed: {
     remainingImageSlots() {
