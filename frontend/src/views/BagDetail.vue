@@ -1486,7 +1486,7 @@ export default {
   }
   
   .image-track.no-transition {
-    /* transition: none !important; */
+    transition: none !important;
   }
 
   .bag-image {
