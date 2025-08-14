@@ -1731,6 +1731,14 @@ export default {
       padding-bottom: 50px;
     }
 
+    .price-section {
+      flex-direction: column;
+    }
+
+    .text-content {
+      min-width: 250px;
+    }
+
     .section-title {
       font-size: 2.4rem;
       margin-top: 0px;
