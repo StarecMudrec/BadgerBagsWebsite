@@ -110,7 +110,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         is_auth, user_id = is_authenticated(request, session)
         if not is_auth or not session.get('is_admin'):
-            return jsonify({'status': 'error', 'error': 'Admin access required'}), 403
+            return jsonify({'status': 'error', 'error': f'Admin access required.User is admin: {session.get('is_admin')}'}), 403
         return f(*args, **kwargs)
     return decorated_function
 
