@@ -1181,6 +1181,13 @@ export default {
       padding-left: 0px;
       padding-right: 0px;
     }
+    .bag-catalog[data-v-2dc54a20] {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    .add-item-button {
+      height: 50px;      
+    }
   }
 
   @media (max-width: 1550px) {
