@@ -28,7 +28,7 @@
           <div class="image-container" ref="imageContainer"
             @touchstart="handleTouchStart"
             @touchmove="handleTouchMove"
-            @touchend="handleTouchEnd">>
+            @touchend="handleTouchEnd">
             <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
               <div v-for="(image, index) in images" :key="index" class="image-wrapper">
                 <img
