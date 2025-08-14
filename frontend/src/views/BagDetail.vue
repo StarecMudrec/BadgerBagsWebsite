@@ -118,7 +118,7 @@
     </template>
 
     <!-- Crop Modal -->
-    <div v-if="showCropModal" class="crop-modal-overlay">
+    <div v-if="showCropModal" class="crop-modal-overlay" :style="{ backgroundColor: cropModalBackground }">
       <div class="crop-modal-content">
         <div class="fixed-crop-container">
           <vue-cropper
@@ -260,7 +260,8 @@ export default {
       // New images
       showAddImagesModal: false,
       newImages: [],
-      isEditingNewImage: false
+      isEditingNewImage: false,
+      cropModalBackground: 'rgba(0, 0, 0, 0.8)' // default
     }
   },
   watch: {
@@ -507,11 +508,7 @@ export default {
       }
     },
     cancelCrop() {
-      // Restore the original modal overlay background color
-      const modalOverlay = document.querySelector('.crop-modal-overlay');
-      if (modalOverlay) {
-        modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-      }
+      this.cropModalBackground = 'rgba(0, 0, 0, 0.8)';
       this.showCropModal = false;
       this.imageToCrop = '';
     },
@@ -543,12 +540,8 @@ export default {
           this.images[this.currentEditingIndex].cropped = croppedFile;
         }
         
-        // Restore the original modal overlay background color
-        const modalOverlay = document.querySelector('.crop-modal-overlay');
-        if (modalOverlay) {
-          modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        }
-        
+        this.cropModalBackground = 'rgba(0, 0, 0, 0.8)';
+
         this.showCropModal = false;
       }, 'image/png');
     },
@@ -618,11 +611,7 @@ export default {
       this.isEditingNewImage = true;
       this.showCropModal = true;
 
-      // Change the modal overlay background color
-      const modalOverlay = document.querySelector('.crop-modal-overlay');
-      if (modalOverlay) {
-        modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-      }
+      this.cropModalBackground = 'rgba(0, 0, 0, 0.1)';
       
       this.$nextTick(() => {
         if (this.$refs.cropper) {
