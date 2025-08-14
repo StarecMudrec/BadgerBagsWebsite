@@ -223,7 +223,7 @@
 
     <!-- Edit Images Button -->
     <button v-if="!loading" class="edit-images-button" @click="openAddImagesModal">
-      <i class="fas fa-plus"></i> Редактировать изображения
+      <i class="fas fa-plus"></i> Загрузить изображения
     </button>
   </div>
 </template>
