@@ -1018,6 +1018,7 @@ export default {
     /* aspect-ratio: 1 / 1.56630057630; */
     /* margin-bottom: 10px; */ 
     min-height: 50px;
+    min-width: 150px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
