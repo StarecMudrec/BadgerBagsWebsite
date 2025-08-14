@@ -179,6 +179,32 @@ export default {
     }
   },
   methods: {
+    checkImageSize() {
+      if (this.$refs.cropper) {
+        const canvasData = this.$refs.cropper.getCanvasData();
+        const cropBoxData = this.$refs.cropper.getCropBoxData();
+        
+        // Check if image is smaller than crop box in either dimension
+        if (canvasData.width < cropBoxData.width || canvasData.height < cropBoxData.height) {
+          // Calculate the minimum scale needed to fit the crop box
+          const minScale = Math.max(
+            cropBoxData.width / canvasData.naturalWidth,
+            cropBoxData.height / canvasData.naturalHeight
+          );
+          
+          // Set the minimum canvas dimensions to match crop box
+          this.$refs.cropper.setCanvasData({
+            width: cropBoxData.width,
+            height: cropBoxData.height
+          });
+          
+          // Reset zoom to minimum scale
+          this.$refs.cropper.zoomTo(minScale);
+          return false;
+        }
+      }
+      return true;
+    },
     openCropModal(index) {
       try {
         this.currentImageIndex = index;
@@ -203,6 +229,13 @@ export default {
             this.$refs.cropper.reset();
             this.$refs.cropper.setAspectRatio(1/1.25751633987);
             this.$refs.cropper.setDragMode('move');
+      
+            // Add event listeners
+            this.$refs.cropper.$el.addEventListener('wheel', this.handleCropperWheel);
+            this.$refs.cropper.$el.addEventListener('touchmove', this.handleCropperTouch);
+            
+            // Initial check
+            this.checkImageSize();
           }
         });
       } catch (error) {
@@ -323,9 +356,25 @@ export default {
             }
           });
         }
+    
+        // Add event listeners to prevent making image smaller than crop box
+        this.$refs.cropper.$el.addEventListener('wheel', this.handleCropperWheel);
+        this.$refs.cropper.$el.addEventListener('touchmove', this.handleCropperTouch);
       } catch (error) {
         console.error('Cropper ready handler:', error);
         // Don't show error modal since functionality still works
+      }
+    },
+
+    handleCropperWheel(e) {
+      if (!this.checkImageSize()) {
+        e.preventDefault();
+      }
+    },
+    
+    handleCropperTouch(e) {
+      if (!this.checkImageSize()) {
+        e.preventDefault();
       }
     },
 
@@ -460,7 +509,13 @@ export default {
         fileInput.value = '';
       }
     }
-  }
+  },
+  beforeDestroy() {
+    if (this.$refs.cropper) {
+      this.$refs.cropper.$el.removeEventListener('wheel', this.handleCropperWheel);
+      this.$refs.cropper.$el.removeEventListener('touchmove', this.handleCropperTouch);
+    }
+  },
 }
 </script>
 
