@@ -1728,6 +1728,7 @@ export default {
       width: 100%;
       padding: 30px 20px;
       padding-top: 10px;
+      padding-bottom: 50px;
     }
 
     .section-title {
