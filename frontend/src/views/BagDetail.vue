@@ -1488,6 +1488,12 @@ export default {
     font-size: 2rem;
     color: #423125;
     font-weight: 700;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   @keyframes spin {

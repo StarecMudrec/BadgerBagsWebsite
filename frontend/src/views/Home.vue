@@ -795,6 +795,12 @@ export default {
     font-weight: 600;
     font-size: 2rem;
     color: #423125;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .spinner {
