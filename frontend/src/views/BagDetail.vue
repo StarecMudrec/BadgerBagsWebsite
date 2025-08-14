@@ -432,19 +432,25 @@ export default {
         // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
         
-        // Get container and image data
+        // Get container and crop box data
         const containerData = this.$refs.cropper.getContainerData();
-        const imageData = this.$refs.cropper.getImageData();
-
-        // Set initial crop box to match container size
+        const cropBoxData = this.$refs.cropper.getCropBoxData();
+        
+        // Set minimum canvas dimensions to match container
+        this.$refs.cropper.setCanvasData({
+          minWidth: containerData.width,
+          minHeight: containerData.height
+        });
+        
+        // Set crop box to match container initially
         this.$refs.cropper.setCropBoxData({
           left: 0,
           top: 0,
           width: containerData.width,
           height: containerData.height
         });
-
-        // Set up event listeners
+        
+        // Set up event listeners for zoom and scale changes
         this.$refs.cropper.$el.addEventListener('wheel', this.handleCropZoom);
         this.$refs.cropper.$el.addEventListener('crop', this.handleCropMove);
       }
@@ -454,23 +460,23 @@ export default {
         if (this.$refs.cropper) {
           const canvasData = this.$refs.cropper.getCanvasData();
           const containerData = this.$refs.cropper.getContainerData();
-          const cropBoxData = this.$refs.cropper.getCropBoxData();
           
-          // Calculate the maximum possible crop box size
-          const maxWidth = Math.min(canvasData.width, containerData.width);
-          const maxHeight = Math.min(canvasData.height, containerData.height);
-
-          // Get current crop box position relative to canvas
-          const currentLeft = cropBoxData.left - canvasData.left;
-          const currentTop = cropBoxData.top - canvasData.top;
-
-          // Adjust crop box size if needed
-          if (cropBoxData.width > maxWidth || cropBoxData.height > maxHeight) {
+          // If canvas is smaller than container, resize crop box to match canvas
+          if (canvasData.width < containerData.width || 
+              canvasData.height < containerData.height) {
             this.$refs.cropper.setCropBoxData({
-              width: maxWidth,
-              height: maxHeight,
-              left: canvasData.left + Math.max(0, currentLeft),
-              top: canvasData.top + Math.max(0, currentTop)
+              width: canvasData.width,
+              height: canvasData.height,
+              left: 0,
+              top: 0
+            });
+          } else {
+            // Otherwise, set crop box to container size
+            this.$refs.cropper.setCropBoxData({
+              width: containerData.width,
+              height: containerData.height,
+              left: 0,
+              top: 0
             });
           }
         }
@@ -480,15 +486,8 @@ export default {
       if (this.$refs.cropper) {
         const canvasData = this.$refs.cropper.getCanvasData();
         const cropBoxData = this.$refs.cropper.getCropBoxData();
-        const imageData = this.$refs.cropper.getImageData();
-
-        // Calculate the visible image area (considering zoom and position)
-        const visibleImageLeft = -canvasData.left;
-        const visibleImageTop = -canvasData.top;
-        const visibleImageRight = visibleImageLeft + canvasData.width;
-        const visibleImageBottom = visibleImageTop + canvasData.height;
-
-        // Prevent crop box from being larger than visible image area
+        
+        // Prevent crop box from being larger than canvas
         if (cropBoxData.width > canvasData.width) {
           this.$refs.cropper.setCropBoxData({
             width: canvasData.width
@@ -500,17 +499,14 @@ export default {
             height: canvasData.height
           });
         }
-
-        // Calculate maximum allowed positions based on visible image area
-        const maxLeft = visibleImageRight - cropBoxData.width;
-        const maxTop = visibleImageBottom - cropBoxData.height;
-        const minLeft = visibleImageLeft;
-        const minTop = visibleImageTop;
-
-        // Constrain crop box to visible image area
+        
+        // Keep crop box within canvas bounds
+        const maxLeft = canvasData.width - cropBoxData.width;
+        const maxTop = canvasData.height - cropBoxData.height;
+        
         this.$refs.cropper.setCropBoxData({
-          left: Math.max(minLeft, Math.min(cropBoxData.left, maxLeft)),
-          top: Math.max(minTop, Math.min(cropBoxData.top, maxTop))
+          left: Math.max(0, Math.min(cropBoxData.left, maxLeft)),
+          top: Math.max(0, Math.min(cropBoxData.top, maxTop))
         });
       }
     },
