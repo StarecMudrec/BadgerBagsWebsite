@@ -742,9 +742,9 @@ export default {
       }
     },
     async deleteImage(imageId) {
-      if (!confirm('Удалить это изображение?')) {
-        return;
-      }
+      // if (!confirm('Удалить это изображение?')) {
+      //   return;
+      // }
       
       try {
         const response = await fetch(`/api/bags/${this.id}/images/${imageId}`, {
