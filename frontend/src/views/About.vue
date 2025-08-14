@@ -98,7 +98,7 @@ export default {
 }
 
 .section-text {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Noto Serif TC', 'Noto Serif', serif;
   font-weight: 700;
   font-size: 1.8rem;
   line-height: 1.7;
