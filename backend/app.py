@@ -373,13 +373,6 @@ def add_bag():
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
-    # Check Telegram session authentication
-    if 'telegram_id' not in session:
-        return jsonify({'error': 'Telegram authentication required'}), 401
-    
-    # Additional admin check if needed
-    if not session.get('is_admin', False):
-        return jsonify({'error': 'Admin privileges required'}), 403
     
     bag = Item.query.get(bag_id)
     if not bag:
@@ -572,14 +565,9 @@ def add_bag_images(bag_id):
             except OSError:
                 pass
         return jsonify({'error': str(e)}), 500
-
-
     
 @app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['DELETE'])
 def delete_bag_image(bag_id, image_id):
-
-    if not session.get('is_admin', False):
-        return jsonify({'error': 'Admin privileges required'}), 403
 
     try:
         # Find and delete the image
