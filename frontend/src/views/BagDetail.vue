@@ -453,8 +453,8 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          container.style.width = '700px';
-          container.style.height = '500px';
+          container.style.width = '';
+          container.style.height = '';
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
@@ -650,8 +650,8 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          container.style.width = '700px';
-          container.style.height = '500px';
+          container.style.width = '';
+          container.style.height = '';
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
