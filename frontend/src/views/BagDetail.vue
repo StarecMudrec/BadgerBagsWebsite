@@ -662,9 +662,9 @@ export default {
       });
     },
     removeNewImage(index) {
-      if (!this.newImages[index].isNew) {
-        return;
-      }
+      // if (!this.newImages[index].isNew && !confirm('Удалить это изображение?')) {
+      //   return;
+      // }
       this.newImages.splice(index, 1);
     },
     cancelAddImages() {
