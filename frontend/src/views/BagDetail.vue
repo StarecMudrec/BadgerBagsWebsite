@@ -1338,7 +1338,7 @@ export default {
 
   /* Rest of your existing styles remain the same */
   .image-section {
-    width: calc(100vh * 1.25751633987); /* Calculate width based on viewport height */
+    width: calc(100vh / 1.25751633987); /* Calculate width based on viewport height */
     height: 100vh;
     position: relative;
     background-color: #f4ebe2;
@@ -1703,8 +1703,8 @@ export default {
 
     .image-section {
       width: 100%;
-      height: calc(100vw / 1.25751633987); /* Calculate height based on viewport width */
-      min-height: 50vh;
+      height: calc(100vw * 1.25751633987); /* Calculate height based on viewport width */
+      min-height: 20vh;
       position: relative;
       display: flex;
       align-items: center;
