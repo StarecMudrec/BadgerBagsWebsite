@@ -268,14 +268,7 @@ export default {
       newImages: [],
       isEditingNewImage: false,
       cropModalBackground: 'rgba(0, 0, 0, 0.8)', // default
-      width: 0,
     }
-  },
-  created() {
-    const onResize = () => this.width = window.innerWidth;
-    onResize();
-    window.addEventListener('resize', onResize);
-    this.$on('hook:beforeDestroy', () => window.removeEventListener('resize', onResize));
   },
 
   watch: {
@@ -461,7 +454,7 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          if (this.width <= 1000) {
+          if (window.innerWidth <= 1000) {
             container.style.width = '';
             container.style.height = '';
           }
@@ -664,7 +657,7 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          if (this.width <= 1000) {
+          if (window.innerWidth <= 1000) {
             container.style.width = '';
             container.style.height = '';
           }
