@@ -417,10 +417,6 @@ def get_bag_details(bag_id):
 @app.route('/api/bags/<int:bag_id>', methods=['PUT'])
 def update_bag(bag_id):
     
-    # Additional admin check if needed
-    if not session.get('is_admin', False):
-        return jsonify({'error': 'Admin privileges required'}), 403
-    
     bag = Item.query.get(bag_id)
     if not bag:
         return jsonify({'error': 'Bag not found'}), 404
