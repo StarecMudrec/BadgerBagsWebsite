@@ -25,7 +25,7 @@
             </svg>
           </div>
 
-          <div class="image-container">
+          <div class="image-container" ref="imageContainer">
             <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
               <div v-for="(image, index) in images" :key="index" class="image-wrapper">
                 <img
@@ -270,6 +270,7 @@ export default {
       cropModalBackground: 'rgba(0, 0, 0, 0.8)', // default
       touchStartX: 0,
       touchEndX: 0,
+      isSwiping: false,
     }
   },
   watch: {
@@ -297,12 +298,42 @@ export default {
   },
   methods: {
     handleTouchStart(e) {
-      this.touchStartX = e.changedTouches[0].screenX;
+      if (this.images.length <= 1) return;
+      this.touchStartX = e.touches[0].clientX;
+      this.isSwiping = true;
     },
     
-    handleTouchEnd(e) {
-      this.touchEndX = e.changedTouches[0].screenX;
-      this.handleSwipe();
+    handleTouchMove(e) {
+      if (!this.isSwiping || this.images.length <= 1) return;
+      e.preventDefault();
+      
+      // Calculate current position and apply temporary transform
+      this.touchEndX = e.touches[0].clientX;
+      const diff = this.touchStartX - this.touchEndX;
+      this.$refs.imageContainer.querySelector('.image-track').style.transition = 'none';
+      this.$refs.imageContainer.querySelector('.image-track').style.transform = `translateX(calc(${-this.currentImageIndex * this.imageWidth}px - ${diff}px))`;
+    },
+    
+    handleTouchEnd() {
+      if (!this.isSwiping || this.images.length <= 1) return;
+      this.isSwiping = false;
+      
+      // Restore transition
+      this.$refs.imageContainer.querySelector('.image-track').style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      
+      const threshold = this.imageWidth * 0.2; // 20% of image width as threshold
+      const diff = this.touchStartX - this.touchEndX;
+      
+      if (diff > threshold) {
+        // Swipe left - go to next image
+        this.nextImage();
+      } else if (diff < -threshold) {
+        // Swipe right - go to previous image
+        this.prevImage();
+      } else {
+        // Return to current image if swipe wasn't strong enough
+        this.scrollToImage();
+      }
     },
     
     handleSwipe() {
@@ -835,10 +866,10 @@ export default {
   mounted() {
     this.fetchBagDetails();
     
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-      imageContainer.addEventListener('touchstart', this.handleTouchStart, { passive: true });
-      imageContainer.addEventListener('touchend', this.handleTouchEnd, { passive: true });
+    if (this.$refs.imageContainer) {
+      this.$refs.imageContainer.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+      this.$refs.imageContainer.addEventListener('touchmove', this.handleTouchMove, { passive: false });
+      this.$refs.imageContainer.addEventListener('touchend', this.handleTouchEnd, { passive: true });
     }
   },
   beforeDestroy() {
@@ -847,10 +878,10 @@ export default {
       this.$refs.cropper.$el.removeEventListener('touchmove', this.handleCropperTouch);
     }
     
-    const imageContainer = document.querySelector('.image-container');
-    if (imageContainer) {
-      imageContainer.removeEventListener('touchstart', this.handleTouchStart);
-      imageContainer.removeEventListener('touchend', this.handleTouchEnd);
+    if (this.$refs.imageContainer) {
+      this.$refs.imageContainer.removeEventListener('touchstart', this.handleTouchStart);
+      this.$refs.imageContainer.removeEventListener('touchmove', this.handleTouchMove);
+      this.$refs.imageContainer.removeEventListener('touchend', this.handleTouchEnd);
     }
   },
   computed: {
@@ -1406,8 +1437,8 @@ export default {
     overflow: hidden;
   }
   .image-container {
-    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
-    touch-action: pan-y; /* Allow vertical scrolling but prevent browser defaults */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 
   .image-track {
@@ -1415,6 +1446,10 @@ export default {
     flex-direction: row;
     height: 100%;
     transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform; /* Optimize for performance */
+  }
+  .image-track.no-transition {
+    transition: none !important;
   }
 
   .bag-image {
