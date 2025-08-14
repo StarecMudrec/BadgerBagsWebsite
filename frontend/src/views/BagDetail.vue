@@ -267,7 +267,9 @@ export default {
       showAddImagesModal: false,
       newImages: [],
       isEditingNewImage: false,
-      cropModalBackground: 'rgba(0, 0, 0, 0.8)' // default
+      cropModalBackground: 'rgba(0, 0, 0, 0.8)', // default
+      touchStartX: 0,
+      touchEndX: 0,
     }
   },
   watch: {
@@ -294,6 +296,29 @@ export default {
     }
   },
   methods: {
+    handleTouchStart(e) {
+      this.touchStartX = e.changedTouches[0].screenX;
+    },
+    
+    handleTouchEnd(e) {
+      this.touchEndX = e.changedTouches[0].screenX;
+      this.handleSwipe();
+    },
+    
+    handleSwipe() {
+      if (this.images.length <= 1) return;
+      
+      const threshold = 50; // minimum swipe distance to trigger
+      const diff = this.touchStartX - this.touchEndX;
+      
+      if (diff > threshold) {
+        // Swipe left - go to next image
+        this.nextImage();
+      } else if (diff < -threshold) {
+        // Swipe right - go to previous image
+        this.prevImage();
+      }
+    },
     checkImageSize() {
       if (this.$refs.cropper) {
         const canvasData = this.$refs.cropper.getCanvasData();
@@ -809,11 +834,23 @@ export default {
   },
   mounted() {
     this.fetchBagDetails();
+    
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+      imageContainer.addEventListener('touchstart', this.handleTouchStart, { passive: true });
+      imageContainer.addEventListener('touchend', this.handleTouchEnd, { passive: true });
+    }
   },
   beforeDestroy() {
     if (this.$refs.cropper) {
       this.$refs.cropper.$el.removeEventListener('wheel', this.handleCropperWheel);
       this.$refs.cropper.$el.removeEventListener('touchmove', this.handleCropperTouch);
+    }
+    
+    const imageContainer = document.querySelector('.image-container');
+    if (imageContainer) {
+      imageContainer.removeEventListener('touchstart', this.handleTouchStart);
+      imageContainer.removeEventListener('touchend', this.handleTouchEnd);
     }
   },
   computed: {
@@ -1368,12 +1405,16 @@ export default {
     height: 100%;
     overflow: hidden;
   }
+  .image-container {
+    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+    touch-action: pan-y; /* Allow vertical scrolling but prevent browser defaults */
+  }
 
   .image-track {
     display: flex;
     flex-direction: row;
     height: 100%;
-    transition: transform 0.27s ease-out;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .bag-image {
