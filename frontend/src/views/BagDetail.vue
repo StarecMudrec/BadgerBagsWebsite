@@ -1041,9 +1041,11 @@ export default {
 
   .error-title {
     color: #423125;
-    font-weight: 600;
-    margin-bottom: 15px;
-    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 17px;
+    margin-top: 0;
+    font-size: 1.7rem;
+    font-family: 'Noto Serif TC', 'Noto Serif', serif;
   }
 
   .modal-buttons {
@@ -1060,6 +1062,8 @@ export default {
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.3s ease;
+    font-family: 'Noto Serif TC', 'Noto Serif', serif;
+    font-weight: 600;
   }
 
   .modal-button.confirm {
@@ -1159,10 +1163,12 @@ export default {
     border-radius: 8px 0 0 8px;
     background-color: rgba(255, 255, 255, 0.8);
     color: #423125;
-    font-size: 1rem;
+    font-size: 1.1rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Noto Serif TC', 'Noto Serif', serif;
+    font-weight: 600;
   }
 
   .file-upload-button {
@@ -1171,8 +1177,10 @@ export default {
     color: #423125;
     border: 1px solid #d0cbc4;
     border-radius: 0 8px 8px 0;
-    font-size: 1rem;
+    font-size: 1.1rem;
     transition: background-color 0.3s ease;
+    font-family: 'Noto Serif TC', 'Noto Serif', serif;
+    font-weight: 600;
   }
 
   .file-upload-button:hover {
