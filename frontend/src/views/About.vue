@@ -99,8 +99,8 @@ export default {
 
 .section-text {
   font-family: 'Noto Serif TC', 'Noto Serif', serif;
-  font-weight: 700;
-  font-size: 1.8rem;
+  font-weight: 600;
+  font-size: 1.6rem;
   line-height: 1.7;
   color: #423125;
   letter-spacing: 0.2px;
