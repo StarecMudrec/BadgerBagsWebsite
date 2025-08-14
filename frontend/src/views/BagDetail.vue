@@ -1699,6 +1699,12 @@ export default {
     .bag-detail-page {
       flex-direction: column;
       height: auto;
+      overflow-y: auto; /* Allow scrolling for the whole page */
+    }
+
+    .content-wrapper {
+      flex-direction: column;
+      height: auto;
     }
 
     .image-section {
