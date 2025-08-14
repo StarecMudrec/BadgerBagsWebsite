@@ -453,8 +453,13 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          container.style.width = '';
-          container.style.height = '';
+          const image = this.newImages[index];
+          
+          if (!image.isNew) {
+            this.imageToCrop = image.url;
+          } else {
+            this.imageToCrop = image.preview;
+          }
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
@@ -650,8 +655,13 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          container.style.width = '';
-          container.style.height = '';
+          const image = this.newImages[index];
+          
+          if (!image.isNew) {
+            this.imageToCrop = image.url;
+          } else {
+            this.imageToCrop = image.preview;
+          }
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
@@ -1773,8 +1783,8 @@ export default {
     .fixed-crop-container {
       width: calc(100vw - 20px); /* Full width minus some padding */
       height: calc(100vh - 65px); /* Full height minus buttons space */
-      max-width: calc(100vw - 20px);
-      max-height: calc(100vh - 65px);
+      max-width: none;
+      max-height: none;
     }
 
     .cropper-background {
