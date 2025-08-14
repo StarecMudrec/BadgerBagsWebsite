@@ -1897,6 +1897,10 @@ export default {
     }
   }
   @media (max-width: 1000px) {
+    .bag-grid {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
     .fixed-crop-container {
       width: calc(100vw - 20px); /* Full width minus some padding */
       height: calc(100vh - 100px); /* Full height minus buttons space */
