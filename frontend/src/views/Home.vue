@@ -107,8 +107,8 @@
           />
           <div style=" display: flex; flex-direction: column; align-items: center;">
             <div v-if="user?.is_admin" style="display: flex; flex-direction: column; align-items: center;">
-              <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
-                <div class="add-item-inner">
+              <div class="add-item-container" v-if="user?.is_admin">
+                <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
                   <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
                   </svg>
@@ -902,12 +902,9 @@ export default {
     display: flex;
     flex-direction: column;
     /* min-height: 100%; Ensure they take full height */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  }
+  .add-item-container {
+    display: contents; /* Makes the container invisible to the grid layout */
   }
 
   .bag-item {
@@ -1005,26 +1002,18 @@ export default {
 
   .add-item-button {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     border: 2px dashed #423125;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.05);
     width: 100%;
-    position: relative;
-    overflow: hidden;
     height: 100%;
-    /* aspect-ratio: 1 / 1.56630057630; */
-    /* margin-bottom: 10px; */ 
-    min-height: 50px;
-    min-width: 150px;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    aspect-ratio: 1 / 1.78; /* Match other grid items */
+    min-height: 0;
+    min-width: 0;
   }
 
   .add-item-button:hover {
