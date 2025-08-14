@@ -1731,10 +1731,6 @@ export default {
       padding-bottom: 50px;
     }
 
-    .price-section {
-      flex-direction: column;
-    }
-
     .text-content {
       min-width: 250px;
     }
@@ -1771,6 +1767,12 @@ export default {
     .image-dot {
       width: 8px;
       height: 8px;
+    }
+  }
+  @media (max-width: 500px) {
+
+    .price-section {
+      flex-direction: column;
     }
   }
 </style>
