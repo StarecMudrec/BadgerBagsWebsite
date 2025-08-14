@@ -118,102 +118,106 @@
     </template>
 
     <!-- Crop Modal -->
-    <div v-if="showCropModal" class="crop-modal-overlay" :style="{ backgroundColor: cropModalBackground }">
-      <div class="crop-modal-content">
-        <div class="fixed-crop-container">
-          <vue-cropper
-            ref="cropper"
-            :src="imageToCrop"
-            :aspect-ratio="1/1.25751633987"
-            :view-mode="1"
-            :auto-crop-area="0.8"
-            :zoomable="true"
-            :movable="true"
-            :scalable="true"
-            :zoom-on-touch="true"
-            :zoom-on-wheel="true"
-            :drag-mode="'move'"
-            :min-container-width="700"
-            :min-container-height="500"
-            :min-canvas-width="200"
-            :min-canvas-height="200"
-            :crop-box-movable="true"
-            :crop-box-resizable="true"
-            :toggle-drag-mode-on-dblclick="false"
-            guides
-            background-class="cropper-background"
-            @ready="onCropperReady"
-          ></vue-cropper>
-        </div>
-        <div class="crop-controls">
-          <button @click="cancelCrop" class="crop-button cancel">
-            <i class="fas fa-times"></i>
-          </button>
-          <button @click="applyCrop" class="crop-button confirm">
-            <i class="fas fa-check"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Images Modal -->
-    <div v-if="showAddImagesModal" class="modal-overlay">
-      <div class="modal-content">
-        <h3 class="error-title">Добавить изображения</h3>
-        <div class="file-upload-group">
-          <label for="new-images" class="file-upload-label">
-            <span class="file-upload-text">
-              {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото (осталось ${remainingImageSlots})` : `Загрузите фото (осталось ${remainingImageSlots})` }}
-            </span>
-            <span class="file-upload-button">Загрузить</span>
-            <input 
-              type="file" 
-              id="new-images" 
-              @change="handleNewFileUpload" 
-              accept="image/*"
-              class="file-upload-input"
-              multiple
-              :disabled="remainingImageSlots <= 0"
-            >
-          </label>
-          <div v-if="remainingImageSlots <= 0" class="upload-limit-reached">
-            Достигнут лимит в 10 изображений
+    <transition name="fade">
+      <div v-if="showCropModal" class="crop-modal-overlay" :style="{ backgroundColor: cropModalBackground }">
+        <div class="crop-modal-content">
+          <div class="fixed-crop-container">
+            <vue-cropper
+              ref="cropper"
+              :src="imageToCrop"
+              :aspect-ratio="1/1.25751633987"
+              :view-mode="1"
+              :auto-crop-area="0.8"
+              :zoomable="true"
+              :movable="true"
+              :scalable="true"
+              :zoom-on-touch="true"
+              :zoom-on-wheel="true"
+              :drag-mode="'move'"
+              :min-container-width="700"
+              :min-container-height="500"
+              :min-canvas-width="200"
+              :min-canvas-height="200"
+              :crop-box-movable="true"
+              :crop-box-resizable="true"
+              :toggle-drag-mode-on-dblclick="false"
+              guides
+              background-class="cropper-background"
+              @ready="onCropperReady"
+            ></vue-cropper>
+          </div>
+          <div class="crop-controls">
+            <button @click="cancelCrop" class="crop-button cancel">
+              <i class="fas fa-times"></i>
+            </button>
+            <button @click="applyCrop" class="crop-button confirm">
+              <i class="fas fa-check"></i>
+            </button>
           </div>
         </div>
-        
-        <div class="image-preview-container">
-          <draggable 
-            v-model="newImages" 
-            tag="div" 
-            class="image-preview-list" 
-            item-key="id"
-            handle=".preview-image"
-          >
-            <template #item="{element, index}">
-              <div class="image-preview-item">
-                <img 
-                  :src="element.preview" 
-                  class="preview-image" 
-                  @click="openCropModalForNewImage(index)"
-                />
-                <button @click="removeNewImage(index)" class="remove-image-button">
-                  <i class="fas fa-times"></i>
-                </button>
-                <div v-if="!element.isNew" class="existing-image-tag">Existing</div>
-                <!-- <div class="drag-handle">
-                  <i class="fas fa-arrows-alt"></i>
-                </div> -->
-              </div>
-            </template>
-          </draggable>
-        </div>
-        
-        <div class="modal-buttons">
-          <button @click="saveNewImages" class="modal-button confirm">Сохранить</button>
-          <button @click="cancelAddImages" class="modal-button cancel">Отмена</button>
+      </div>
+    </transition>
+
+    <!-- Add Images Modal -->
+    <transition name="fade">
+      <div v-if="showAddImagesModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="error-title">Добавить изображения</h3>
+          <div class="file-upload-group">
+            <label for="new-images" class="file-upload-label">
+              <span class="file-upload-text">
+                {{ newImages.length > 0 ? `Выбрано ${newImages.length} фото (осталось ${remainingImageSlots})` : `Загрузите фото (осталось ${remainingImageSlots})` }}
+              </span>
+              <span class="file-upload-button">Загрузить</span>
+              <input 
+                type="file" 
+                id="new-images" 
+                @change="handleNewFileUpload" 
+                accept="image/*"
+                class="file-upload-input"
+                multiple
+                :disabled="remainingImageSlots <= 0"
+              >
+            </label>
+            <div v-if="remainingImageSlots <= 0" class="upload-limit-reached">
+              Достигнут лимит в 10 изображений
+            </div>
+          </div>
+          
+          <div class="image-preview-container">
+            <draggable 
+              v-model="newImages" 
+              tag="div" 
+              class="image-preview-list" 
+              item-key="id"
+              handle=".preview-image"
+            >
+              <template #item="{element, index}">
+                <div class="image-preview-item">
+                  <img 
+                    :src="element.preview" 
+                    class="preview-image" 
+                    @click="openCropModalForNewImage(index)"
+                  />
+                  <button @click="removeNewImage(index)" class="remove-image-button">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <div v-if="!element.isNew" class="existing-image-tag">Existing</div>
+                  <!-- <div class="drag-handle">
+                    <i class="fas fa-arrows-alt"></i>
+                  </div> -->
+                </div>
+              </template>
+            </draggable>
+          </div>
+          
+          <div class="modal-buttons">
+            <button @click="saveNewImages" class="modal-button confirm">Сохранить</button>
+            <button @click="cancelAddImages" class="modal-button cancel">Отмена</button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
 
     <!-- Edit Images Button -->
     <button v-if="!loading" class="edit-images-button" @click="openAddImagesModal">
@@ -778,6 +782,35 @@ export default {
 </script>
 
 <style scoped>
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  /* For the modal content, we'll add a separate transition */
+  .modal-content-enter-active,
+  .modal-content-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  .modal-content-enter-from,
+  .modal-content-leave-to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .crop-modal-overlay,
+  .modal-overlay {
+    transition: opacity 0.3s ease;
+  }
+  .crop-modal-content,
+  .modal-content {
+    transition: all 0.3s ease;
+  }
   .drag-handle {
     position: absolute;
     top: 50%;
