@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/components/Login.vue'
-import CardDetail from '@/views/CardDetail.vue'
-import AddCard from '@/views/AddCard.vue'
 import About from '@/views/About.vue' // Import the About component
 import BagDetail from '@/views/BagDetail.vue'
 import AddItem from '@/views/AddItem.vue'
@@ -10,7 +8,7 @@ import AddItem from '@/views/AddItem.vue'
 const routes = [
   {
     path: '/',
-    name: 'Cards',
+    name: 'Items',
     component: Home
   },
   {
@@ -21,17 +19,6 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
-  },
-  {
-    path: '/card/:uuid',
-    name: 'CardDetail',
-    component: CardDetail,
-    props: true
-  },
-  {
-    path: '/add-card',
-    name: 'AddCard',
-    component: AddCard
   },
   {
     path: '/logout',

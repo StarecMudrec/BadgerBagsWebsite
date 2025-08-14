@@ -15,8 +15,6 @@ RUN pip install gunicorn python-telegram-bot
 
 COPY . .
 
-RUN mkdir -p /app/card_imgs
-
 EXPOSE 8000
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "wsgi:app"]
