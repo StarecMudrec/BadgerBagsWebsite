@@ -414,6 +414,34 @@ def get_bag_details(bag_id):
         } for img in images]
     })
 
+@app.route('/api/bags/<int:bag_id>', methods=['PUT'])
+def update_bag(bag_id):
+    
+    # Additional admin check if needed
+    if not session.get('is_admin', False):
+        return jsonify({'error': 'Admin privileges required'}), 403
+    
+    bag = Item.query.get(bag_id)
+    if not bag:
+        return jsonify({'error': 'Bag not found'}), 404
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+    
+    try:
+        if 'description' in data:
+            bag.description = data['description']
+        
+        if 'price' in data:
+            bag.price = data['price']
+        
+        db.session.commit()
+        return jsonify({'message': 'Bag updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/bags/<int:bag_id>/images/order', methods=['PUT'])
 def update_image_order(bag_id):
     data = request.get_json()

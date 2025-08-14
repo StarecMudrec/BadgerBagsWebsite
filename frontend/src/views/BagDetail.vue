@@ -389,20 +389,48 @@ export default {
     },
     async saveDescription() {
       try {
-        // Here you would make an API call to update the description
+        const response = await fetch(`/api/bags/${this.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            description: this.descriptionInput
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save description');
+        }
+
         this.bag.description = this.descriptionInput;
         this.editingDescription = false;
       } catch (error) {
         console.error('Error saving description:', error);
+        alert('Failed to save description');
       }
     },
     async savePrice() {
       try {
-        // Here you would make an API call to update the price
+        const response = await fetch(`/api/bags/${this.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            price: this.priceInput
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save price');
+        }
+
         this.bag.price = this.priceInput;
         this.editingPrice = false;
       } catch (error) {
         console.error('Error saving price:', error);
+        alert('Failed to save price');
       }
     },
     cancelEditDescription() {
