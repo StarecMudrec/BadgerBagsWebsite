@@ -660,8 +660,8 @@ export default {
       this.showCropModal = false;
       this.imageToCrop = '';
     },
-    applyCrop() {
-      this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
+    async applyCrop() {
+      this.$refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
         const fileName = 'cropped_' + Date.now() + '.png';
         const croppedFile = new File([blob], fileName, { type: 'image/png' });
         
@@ -683,13 +683,36 @@ export default {
             this.newImages[this.currentEditingIndex].cropped = croppedFile;
           }
         } else {
-          // For main view cropping
-          this.images[this.currentEditingIndex].preview = URL.createObjectURL(blob);
-          this.images[this.currentEditingIndex].cropped = croppedFile;
+          // For main view cropping - upload immediately
+          try {
+            const formData = new FormData();
+            formData.append('image', croppedFile);
+            
+            // Get the original image ID
+            const imageId = this.images[this.currentEditingIndex].id;
+            
+            const response = await fetch(`/api/bags/${this.id}/images/${imageId}`, {
+              method: 'PUT',
+              body: formData
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to update image');
+            }
+            
+            // Update the preview locally
+            this.images[this.currentEditingIndex].preview = URL.createObjectURL(blob);
+            this.images[this.currentEditingIndex].cropped = null; // Clear the cropped file since it's uploaded
+            
+            // Optionally refresh the bag details to get the new image URL from the server
+            await this.fetchBagDetails();
+          } catch (error) {
+            console.error('Error updating image:', error);
+            alert('Failed to save cropped image');
+          }
         }
         
         this.cropModalBackground = 'rgba(0, 0, 0, 0.8)';
-
         this.showCropModal = false;
       }, 'image/png');
     },
@@ -825,15 +848,43 @@ export default {
     async saveNewImages() {
       try {
         const formData = new FormData();
-        const newImagesToUpload = this.newImages.filter(img => img.isNew);
+        const updatedImages = [];
         
-        if (newImagesToUpload.length > 0) {
-          formData.delete('images[]');
-          newImagesToUpload.forEach((image, index) => {
+        // Process all images in the modal
+        for (const image of this.newImages) {
+          if (image.isNew) {
+            // New image - upload it
             const fileToUpload = image.cropped || image.file;
             formData.append('images[]', fileToUpload, fileToUpload.name);
-          });
-          
+          } else if (image.cropped) {
+            // Existing image that was cropped - update it
+            const updateFormData = new FormData();
+            updateFormData.append('image', image.cropped);
+            
+            const updateResponse = await fetch(`/api/bags/${this.id}/images/${image.id}`, {
+              method: 'PUT',
+              body: updateFormData
+            });
+            
+            if (!updateResponse.ok) {
+              throw new Error('Failed to update image');
+            }
+            
+            const result = await updateResponse.json();
+            updatedImages.push({
+              ...image,
+              url: result.url, // Assuming the server returns the new URL
+              preview: result.url,
+              cropped: null
+            });
+          } else {
+            // Existing image not modified
+            updatedImages.push(image);
+          }
+        }
+        
+        // Upload new images if any
+        if (formData.getAll('images[]').length > 0) {
           const uploadResponse = await fetch(`/api/bags/${this.id}/images`, {
             method: 'POST',
             body: formData,
@@ -845,7 +896,6 @@ export default {
           }
           
           const result = await uploadResponse.json();
-          console.log('Upload successful:', result);
           
           if (result.image_ids && result.image_ids.length > 0) {
             let uploadedIndex = 0;
@@ -858,7 +908,7 @@ export default {
           }
         }
 
-        // Create image order mapping for ALL images (including existing ones that weren't deleted)
+        // Create image order mapping
         const imageOrder = {};
         this.newImages.forEach((image, index) => {
           if (image.id) {
@@ -866,7 +916,7 @@ export default {
           }
         });
 
-        // If no images left, send empty order to delete all images
+        // Update image order
         const orderResponse = await fetch(`/api/bags/${this.id}/images/order`, {
           method: 'PUT',
           headers: {
@@ -880,7 +930,7 @@ export default {
           throw new Error(errorData.error || 'Failed to update image order');
         }
         
-        // Force refresh the bag details instead of just fetching
+        // Refresh the bag details
         this.loading = true;
         await this.fetchBagDetails();
         
