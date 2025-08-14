@@ -423,6 +423,60 @@ def update_bag(bag_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/bags/<int:bag_id>/images/<int:image_id>', methods=['PUT'])
+@admin_required
+def update_bag_image(bag_id, image_id):
+    try:
+        # Check if the image exists
+        image = ItemImage.query.filter_by(id=image_id, item_id=bag_id).first()
+        if not image:
+            return jsonify({'error': 'Image not found'}), 404
+
+        # Check if file was uploaded
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file provided'}), 400
+
+        file = request.files['image']
+        if not file or file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'Invalid file type'}), 400
+
+        # Generate new filename (keep same extension)
+        original_ext = os.path.splitext(image.filename)[1].lower()
+        new_filename = f"{uuid.uuid4()}{original_ext}"
+        new_filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+
+        # Save the new file
+        try:
+            file.save(new_filepath)
+        except Exception as e:
+            app.logger.error(f"Error saving new image file: {str(e)}")
+            return jsonify({'error': 'Failed to save image'}), 500
+
+        # Delete the old file
+        old_filepath = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+        try:
+            if os.path.exists(old_filepath):
+                os.remove(old_filepath)
+        except OSError as e:
+            app.logger.warning(f"Error deleting old image file: {str(e)}")
+
+        # Update the image record
+        image.filename = new_filename
+        db.session.commit()
+
+        return jsonify({
+            'status': 'success',
+            'url': url_for('serve_bag_image', filename=new_filename, _external=True)
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error updating image {image_id} for bag {bag_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/bags/<int:bag_id>/images/order', methods=['PUT'])
 @admin_required
 def update_image_order(bag_id):
