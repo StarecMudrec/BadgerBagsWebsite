@@ -661,7 +661,7 @@ export default {
       
           if (isMobile) {
             container.style.width = '';
-            container.style.height = '';
+            container.style.height = 'calc(100vh - 100px)';
           } else {
             container.style.width = '700px';
             container.style.height = '500px';
