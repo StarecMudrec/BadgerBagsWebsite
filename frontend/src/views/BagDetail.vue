@@ -307,9 +307,9 @@ export default {
       this.touchStartTime = Date.now();
       this.isSwiping = true;
       
-      // Disable transitions during swipe
       const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
-      imageTrack.style.transition = 'none';
+      // Add no-transition class during swipe
+      imageTrack.classList.add('no-transition');
     },
     
     handleTouchMove(e) {
@@ -319,20 +319,8 @@ export default {
       this.touchEndX = e.touches[0].clientX;
       const diff = this.touchStartX - this.touchEndX;
       
-      // Calculate potential new offset
+      // Calculate new offset without rubber band effect during movement
       let newOffset = -this.currentImageIndex * this.imageWidth - diff;
-      
-      // Apply boundaries with rubber band effect
-      const maxOffset = 0;
-      const minOffset = -(this.images.length - 1) * this.imageWidth;
-      
-      if (newOffset > maxOffset) {
-        // Apply rubber band effect at start
-        newOffset = maxOffset + (newOffset - maxOffset) * 0.3;
-      } else if (newOffset < minOffset) {
-        // Apply rubber band effect at end
-        newOffset = minOffset + (newOffset - minOffset) * 0.3;
-      }
       
       const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
       imageTrack.style.transition = 'none';
@@ -343,29 +331,28 @@ export default {
       if (!this.isSwiping || this.images.length <= 1) return;
       this.isSwiping = false;
       
-      const threshold = this.imageWidth * 0; // 15% of image width as threshold
+      const threshold = this.imageWidth * 0.15; // 15% of image width as threshold
       const diff = this.touchStartX - this.touchEndX;
       const velocity = Math.abs(diff) / (Date.now() - this.touchStartTime);
       
       const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
       imageTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       
-      // Check if swipe was fast enough or moved far enough
-      if ((Math.abs(diff) > threshold || velocity > 0.3)) {
-        if (diff > 0 && this.currentImageIndex < this.images.length - 1) {
-          // Swipe left - go to next image
-          this.setCurrentImageIndex(this.currentImageIndex + 1);
-        } else if (diff < 0 && this.currentImageIndex > 0) {
-          // Swipe right - go to previous image
-          this.setCurrentImageIndex(this.currentImageIndex - 1);
-        } else {
-          // Return to current image if at boundary
-          this.scrollToImage();
+      // Always snap back to current position first
+      this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
+      
+      // Then check if we should move to next/prev image
+      this.$nextTick(() => {
+        if ((Math.abs(diff) > threshold || velocity > 0.3)) {
+          if (diff > 0 && this.currentImageIndex < this.images.length - 1) {
+            // Swipe left - go to next image
+            this.setCurrentImageIndex(this.currentImageIndex + 1);
+          } else if (diff < 0 && this.currentImageIndex > 0) {
+            // Swipe right - go to previous image
+            this.setCurrentImageIndex(this.currentImageIndex - 1);
+          }
         }
-      } else {
-        // Not enough swipe - spring back to current position
-        this.scrollToImage();
-      }
+      });
     },
     
     handleSwipe() {
@@ -463,14 +450,13 @@ export default {
       }
     },
     scrollToImage() {
-      this.$nextTick(() => {
-        this.calculateImageWidth();
-        const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
-        if (imageTrack) {
-          imageTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-          this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
-        }
-      });
+      this.calculateImageWidth();
+      const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+      if (imageTrack) {
+        // Remove no-transition class if it exists
+        imageTrack.classList.remove('no-transition');
+        this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
+      }
     },
     //Edit Functions
     editDescription() {
