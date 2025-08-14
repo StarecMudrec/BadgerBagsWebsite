@@ -11,6 +11,7 @@
     />
     <div class="bag-price">{{ bag.price }}₽</div>
     <input
+      v-if="user?.is_admin"
       type="checkbox"
       class="selection-checkbox"
       :checked="isSelected"
@@ -37,9 +38,20 @@ export default {
   },
   data() {
     return {
+      user: null,
       isSelected: false,
       isMobile: false
     };
+  },
+  async created() {
+    await this.fetchUser();
+    const response = await fetch('/api/bags');
+    try {
+      this.bags = await response.json();
+      console.log('Bags data:', this.bags);
+    } finally {
+      this.loading = false;
+    }
   },
   mounted() {
     this.checkMobile();
@@ -49,6 +61,16 @@ export default {
     window.removeEventListener('resize', this.checkMobile);
   },
   methods: {
+    async fetchUser() {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          this.user = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    },
     handleCardClick() {
       if (this.selectionMode || this.isSelected) {
         this.toggleSelection();
