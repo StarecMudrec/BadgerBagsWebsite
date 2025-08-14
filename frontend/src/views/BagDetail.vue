@@ -322,7 +322,7 @@ export default {
       // Calculate potential new offset
       let newOffset = -this.currentImageIndex * this.imageWidth - diff;
       
-      // Apply boundaries
+      // Apply boundaries with rubber band effect
       const maxOffset = 0;
       const minOffset = -(this.images.length - 1) * this.imageWidth;
       
@@ -335,6 +335,7 @@ export default {
       }
       
       const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+      imageTrack.style.transition = 'none';
       imageTrack.style.transform = `translateX(${newOffset}px)`;
     },
     
