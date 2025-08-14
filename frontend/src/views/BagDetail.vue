@@ -507,6 +507,11 @@ export default {
       }
     },
     cancelCrop() {
+      // Restore the original modal overlay background color
+      const modalOverlay = document.querySelector('.crop-modal-overlay');
+      if (modalOverlay) {
+        modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+      }
       this.showCropModal = false;
       this.imageToCrop = '';
     },
@@ -536,6 +541,12 @@ export default {
           // For main view cropping
           this.images[this.currentEditingIndex].preview = URL.createObjectURL(blob);
           this.images[this.currentEditingIndex].cropped = croppedFile;
+        }
+        
+        // Restore the original modal overlay background color
+        const modalOverlay = document.querySelector('.crop-modal-overlay');
+        if (modalOverlay) {
+          modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
         }
         
         this.showCropModal = false;
@@ -606,6 +617,12 @@ export default {
       
       this.isEditingNewImage = true;
       this.showCropModal = true;
+
+      // Change the modal overlay background color
+      const modalOverlay = document.querySelector('.crop-modal-overlay');
+      if (modalOverlay) {
+        modalOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+      }
       
       this.$nextTick(() => {
         if (this.$refs.cropper) {
