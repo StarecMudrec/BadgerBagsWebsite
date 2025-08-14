@@ -313,19 +313,28 @@ export default {
       // Calculate current position and apply temporary transform
       this.touchEndX = e.touches[0].clientX;
       const diff = this.touchStartX - this.touchEndX;
-      this.$refs.imageContainer.querySelector('.image-track').style.transition = 'none';
-      this.$refs.imageContainer.querySelector('.image-track').style.transform = `translateX(calc(${-this.currentImageIndex * this.imageWidth}px - ${diff}px))`;
+      
+      // Only move if we're not at the boundaries
+      if (
+        (diff > 0 && this.currentImageIndex < this.images.length - 1) ||
+        (diff < 0 && this.currentImageIndex > 0)
+      ) {
+        const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+        imageTrack.style.transition = 'none';
+        imageTrack.style.transform = `translateX(calc(${-this.currentImageIndex * this.imageWidth}px - ${diff}px))`;
+      }
     },
     
     handleTouchEnd() {
       if (!this.isSwiping || this.images.length <= 1) return;
       this.isSwiping = false;
       
-      // Restore transition
-      this.$refs.imageContainer.querySelector('.image-track').style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      
-      const threshold = this.imageWidth * 0.1; // 20% of image width as threshold
+      const threshold = this.imageWidth * 0.2; // 20% of image width as threshold
       const diff = this.touchStartX - this.touchEndX;
+      
+      // Restore transition for smooth animation
+      const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+      imageTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       
       if (diff > threshold) {
         // Swipe left - go to next image
@@ -436,7 +445,11 @@ export default {
     scrollToImage() {
       this.$nextTick(() => {
         this.calculateImageWidth();
-        this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
+        const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+        if (imageTrack) {
+          imageTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+          this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
+        }
       });
     },
     //Edit Functions
