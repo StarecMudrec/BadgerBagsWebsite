@@ -1769,6 +1769,49 @@ export default {
       height: 8px;
     }
   }
+  @media (max-width: 1000px) {
+    .fixed-crop-container {
+      width: calc(100vw - 20px); /* Full width minus some padding */
+      height: calc(100vh - 65px); /* Full height minus buttons space */
+      max-width: none;
+      max-height: none;
+    }
+
+    .cropper-wrap-box {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .cropper-background {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+
+    .cropper-container cropper-bg {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+
+    .crop-controls {
+      position: fixed;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      justify-content: center;
+      gap: 20px;
+      padding: 0;
+    }
+
+    .crop-button {
+      width: 45px;
+      height: 45px;
+      position: relative;
+    }
+  }
   @media (max-width: 500px) {
 
     .price-section {
