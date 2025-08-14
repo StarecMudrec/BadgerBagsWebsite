@@ -104,25 +104,6 @@ def is_authenticated(request, session):
         logging.exception(f"Auth error: {e}")
         return False, None
 
-
-# Function to download avatar image
-def download_avatar(url, user_id):
-    if not url:
-        return None
-    avatar_dir = 'backend/avatars'
-    os.makedirs(avatar_dir, exist_ok=True)
-    filename = os.path.join(avatar_dir, f"{user_id}.jpg")  # Assuming avatars are JPEGs, adjust if needed
-    try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        with open(filename, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        return filename
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Error downloading avatar from {url}: {e}")
-        return None
-
 # Telegram OAuth Callback Route
 @app.route('/auth/telegram-callback')
 def telegram_callback():
@@ -182,13 +163,6 @@ def telegram_callback():
     except Exception as e:
         app.logger.error(f"Callback error: {str(e)}")
         return "Authentication failed", 500
-
-@app.route('/telegram-webhook', methods=['POST'])
-def telegram_webhook():
-    if request.method == 'POST':
-        update = telebot.types.Update.de_json(request.stream.read().decode('utf-8'))
-        bot.process_new_updates([update])
-    return 'OK', 200
 
 # Logout Route (Clears the Token)
 @app.route("/auth/logout", methods=['GET', 'POST'])
@@ -252,17 +226,6 @@ def home():
 
 
 #API ROUTES
-    
-@app.route('/api/check_permission', methods=['GET'])
-def check_permission():
-    username = request.args.get('username')
-    if not username:
-        return jsonify({'error': 'Username not provided'}), 400
-
-    user = AllowedUser.query.filter_by(username=username).first()
-    is_allowed = user is not None
-
-    return jsonify({'is_allowed': is_allowed})
 
 @app.route("/api/bags", methods=["GET"])
 def get_bags():
