@@ -45,7 +45,7 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, #dad4ce 0%, #f4ebe2 100%);
+  background: linear-gradient(to bottom, #f0e9e100 0%, #e7e2dc 100%);
   overflow: hidden;
 }
 
