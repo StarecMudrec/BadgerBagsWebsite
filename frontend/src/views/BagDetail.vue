@@ -432,97 +432,38 @@ export default {
         // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
         
-        // Get container and crop box data
+        // Get crop box dimensions
+        const cropBoxData = this.$refs.cropper.getCropBoxData();
         const containerData = this.$refs.cropper.getContainerData();
-        const cropBoxData = this.$refs.cropper.getCropBoxData();
         
-        // Set minimum canvas dimensions to match container
+        // Set minimum dimensions for the canvas (image) to match crop box size
         this.$refs.cropper.setCanvasData({
-          minWidth: containerData.width,
-          minHeight: containerData.height
+          minWidth: cropBoxData.width,
+          minHeight: cropBoxData.height
         });
         
-        // Set crop box to match container initially
+        // Also set minimum dimensions for the crop box itself
         this.$refs.cropper.setCropBoxData({
-          left: 0,
-          top: 0,
-          width: containerData.width,
-          height: containerData.height
+          minWidth: cropBoxData.width,
+          minHeight: cropBoxData.height,
+          maxWidth: containerData.width,
+          maxHeight: containerData.height
         });
         
-        // Set up event listeners for zoom and scale changes
-        this.$refs.cropper.$el.addEventListener('wheel', this.handleCropZoom);
-        this.$refs.cropper.$el.addEventListener('crop', this.handleCropMove);
-      }
-    },
-    handleCropZoom() {
-      this.$nextTick(() => {
-        if (this.$refs.cropper) {
-          const canvasData = this.$refs.cropper.getCanvasData();
-          const containerData = this.$refs.cropper.getContainerData();
-          
-          // If canvas is smaller than container, resize crop box to match canvas
-          if (canvasData.width < containerData.width || 
-              canvasData.height < containerData.height) {
-            this.$refs.cropper.setCropBoxData({
-              width: canvasData.width,
-              height: canvasData.height,
-              left: 0,
-              top: 0
-            });
-          } else {
-            // Otherwise, set crop box to container size
-            this.$refs.cropper.setCropBoxData({
-              width: containerData.width,
-              height: containerData.height,
-              left: 0,
-              top: 0
-            });
-          }
-        }
-      });
-    },
-    handleCropMove() {
-      if (this.$refs.cropper) {
-        const canvasData = this.$refs.cropper.getCanvasData();
-        const cropBoxData = this.$refs.cropper.getCropBoxData();
-        
-        // Prevent crop box from being larger than canvas
-        if (cropBoxData.width > canvasData.width) {
-          this.$refs.cropper.setCropBoxData({
-            width: canvasData.width
-          });
-        }
-        
-        if (cropBoxData.height > canvasData.height) {
-          this.$refs.cropper.setCropBoxData({
-            height: canvasData.height
-          });
-        }
-        
-        // Keep crop box within canvas bounds
-        const maxLeft = canvasData.width - cropBoxData.width;
-        const maxTop = canvasData.height - cropBoxData.height;
-        
-        this.$refs.cropper.setCropBoxData({
-          left: Math.max(0, Math.min(cropBoxData.left, maxLeft)),
-          top: Math.max(0, Math.min(cropBoxData.top, maxTop))
+        // Limit the movement of the crop box
+        this.$refs.cropper.setData({
+          minLeft: 0,
+          minTop: 0,
+          maxLeft: containerData.width - cropBoxData.width,
+          maxTop: containerData.height - cropBoxData.height
         });
       }
     },
     cancelCrop() {
-      if (this.$refs.cropper) {
-        this.$refs.cropper.$el.removeEventListener('wheel', this.handleCropZoom);
-        this.$refs.cropper.$el.removeEventListener('crop', this.handleCropMove);
-      }
       this.showCropModal = false;
       this.imageToCrop = '';
     },
     applyCrop() {
-      if (this.$refs.cropper) {
-        this.$refs.cropper.$el.removeEventListener('wheel', this.handleCropZoom);
-        this.$refs.cropper.$el.removeEventListener('crop', this.handleCropMove);
-      }
       this.$refs.cropper.getCroppedCanvas().toBlob((blob) => {
         const fileName = 'cropped_' + Date.now() + '.png';
         const croppedFile = new File([blob], fileName, { type: 'image/png' });
