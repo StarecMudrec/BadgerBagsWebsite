@@ -267,17 +267,9 @@ export default {
       showAddImagesModal: false,
       newImages: [],
       isEditingNewImage: false,
-      cropModalBackground: 'rgba(0, 0, 0, 0.8)', // default
-      width: 0,
+      cropModalBackground: 'rgba(0, 0, 0, 0.8)' // default
     }
   },
-  created() {
-    const onResize = () => this.width = window.innerWidth;
-    onResize();
-    window.addEventListener('resize', onResize);
-    this.$on('hook:beforeDestroy', () => window.removeEventListener('resize', onResize));
-  },
-
   watch: {
     currentImageIndex() {
       this.scrollToImage();
@@ -461,14 +453,8 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          if (this.width <= 1000) {
-            container.style.width = '';
-            container.style.height = '';
-          }
-          else {
-            container.style.width = '700px';
-            container.style.height = '500px';
-          }
+          container.style.width = '';
+          container.style.height = '';
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
@@ -664,14 +650,8 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          if (this.width <= 1000) {
-            container.style.width = '';
-            container.style.height = '';
-          }
-          else {
-            container.style.width = '700px';
-            container.style.height = '500px';
-          }
+          container.style.width = '';
+          container.style.height = '';
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
