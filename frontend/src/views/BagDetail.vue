@@ -1777,33 +1777,42 @@ export default {
       max-height: none;
     }
 
-    .cropper-wrap-box {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
     .cropper-background {
       width: 100% !important;
       height: 100% !important;
-      max-width: none !important;
-      max-height: none !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+
+    .cropper-wrap-box {
+      overflow: hidden !important;
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .cropper-container cropper-bg {
       width: 100% !important;
       height: 100% !important;
-      max-width: none !important;
-      max-height: none !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+
+    .crop-modal-content {
+      width: 100%;
+      height: 100%;
+      justify-content: flex-start;
+      padding-top: 20px;
     }
 
     .crop-controls {
       position: fixed;
-      bottom: 10px;
+      bottom: 20px;
       left: 0;
       right: 0;
+      padding: 0 20px;
       justify-content: center;
       gap: 20px;
-      padding: 0;
+      z-index: 10;
     }
 
     .crop-button {
