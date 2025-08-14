@@ -11,7 +11,7 @@
     <!-- Content (shown when not loading) -->
     <template v-else>
       <!-- Image Section -->
-      <div class="image-section" @wheel="handleWheel">
+      <div class="image-section">
         <div class="arrow-nav left" @click="prevImage" :class="{ 'disabled': images.length <= 1 }">
           <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
             <defs>
