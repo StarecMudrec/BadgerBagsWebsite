@@ -50,10 +50,10 @@
     <div class="add-item-container">
       <h1>Добавьте товар</h1>
       <form @submit.prevent="submitForm" class="item-form">
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="name">Название:</label>
           <input type="text" id="name" v-model="item.name" required>
-        </div>
+        </div> -->
         
         <div class="form-group">
           <label for="description">Описание:</label>
