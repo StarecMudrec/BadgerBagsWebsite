@@ -274,6 +274,7 @@ export default {
       touchStartX: 0,
       touchEndX: 0,
       isSwiping: false,
+      touchStartTime: 0,
     }
   },
   watch: {
@@ -303,47 +304,65 @@ export default {
     handleTouchStart(e) {
       if (this.images.length <= 1) return;
       this.touchStartX = e.touches[0].clientX;
+      this.touchStartTime = Date.now();
       this.isSwiping = true;
+      
+      // Disable transitions during swipe
+      const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+      imageTrack.style.transition = 'none';
     },
     
     handleTouchMove(e) {
       if (!this.isSwiping || this.images.length <= 1) return;
       e.preventDefault();
       
-      // Calculate current position and apply temporary transform
       this.touchEndX = e.touches[0].clientX;
       const diff = this.touchStartX - this.touchEndX;
       
-      // Only move if we're not at the boundaries
-      if (
-        (diff > 0 && this.currentImageIndex < this.images.length - 1) ||
-        (diff < 0 && this.currentImageIndex > 0)
-      ) {
-        const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
-        imageTrack.style.transition = 'none';
-        imageTrack.style.transform = `translateX(calc(${-this.currentImageIndex * this.imageWidth}px - ${diff}px))`;
+      // Calculate potential new offset
+      let newOffset = -this.currentImageIndex * this.imageWidth - diff;
+      
+      // Apply boundaries
+      const maxOffset = 0;
+      const minOffset = -(this.images.length - 1) * this.imageWidth;
+      
+      if (newOffset > maxOffset) {
+        // Apply rubber band effect at start
+        newOffset = maxOffset + (newOffset - maxOffset) * 0.3;
+      } else if (newOffset < minOffset) {
+        // Apply rubber band effect at end
+        newOffset = minOffset + (newOffset - minOffset) * 0.3;
       }
+      
+      const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
+      imageTrack.style.transform = `translateX(${newOffset}px)`;
     },
     
     handleTouchEnd() {
       if (!this.isSwiping || this.images.length <= 1) return;
       this.isSwiping = false;
       
-      const threshold = this.imageWidth * 0.2; // 20% of image width as threshold
+      const threshold = this.imageWidth * 0.15; // 15% of image width as threshold
       const diff = this.touchStartX - this.touchEndX;
+      const velocity = Math.abs(diff) / (Date.now() - this.touchStartTime);
       
-      // Restore transition for smooth animation
       const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
-      imageTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      imageTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       
-      if (diff > threshold) {
-        // Swipe left - go to next image
-        this.nextImage();
-      } else if (diff < -threshold) {
-        // Swipe right - go to previous image
-        this.prevImage();
+      // Check if swipe was fast enough or moved far enough
+      if ((Math.abs(diff) > threshold || velocity > 0.3)) {
+        if (diff > 0 && this.currentImageIndex < this.images.length - 1) {
+          // Swipe left - go to next image
+          this.setCurrentImageIndex(this.currentImageIndex + 1);
+        } else if (diff < 0 && this.currentImageIndex > 0) {
+          // Swipe right - go to previous image
+          this.setCurrentImageIndex(this.currentImageIndex - 1);
+        } else {
+          // Return to current image if at boundary
+          this.scrollToImage();
+        }
       } else {
-        // Return to current image if swipe wasn't strong enough
+        // Not enough swipe - spring back to current position
         this.scrollToImage();
       }
     },
@@ -447,7 +466,7 @@ export default {
         this.calculateImageWidth();
         const imageTrack = this.$refs.imageContainer.querySelector('.image-track');
         if (imageTrack) {
-          imageTrack.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+          imageTrack.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
           this.imageTrackOffset = -this.currentImageIndex * this.imageWidth;
         }
       });
