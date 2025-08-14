@@ -340,17 +340,22 @@ export default {
     async confirmDelete() {
       try {
         this.isDeleting = true;
-        await Promise.all(
-          Array.from(this.selectedBags).map(bagId => 
-            axios.delete(`/api/bags/${bagId}`, { withCredentials: true })
-          )
+        const deletePromises = Array.from(this.selectedBags).map(bagId => 
+          axios.delete(`/api/bags/${bagId}`, { withCredentials: true })
+            .catch(error => {
+              console.error(`Error deleting bag ${bagId}:`, error);
+              throw error; // Re-throw to be caught by the outer catch
+            })
         );
+        
+        await Promise.all(deletePromises);
         this.bags = this.bags.filter(bag => !this.selectedBags.has(bag.id));
         this.closeAfterLoading = true;
-        this.showDialogContent = false; // Start closing animation
+        this.showDialogContent = false;
       } catch (error) {
         console.error('Deletion error:', error);
         this.isDeleting = false;
+        // Optionally show an error message to the user
       }
     },
     

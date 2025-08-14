@@ -373,17 +373,37 @@ def add_bag():
 
 @app.route('/api/bags/<int:bag_id>', methods=['DELETE'])
 def delete_bag(bag_id):
-    
-    bag = Item.query.get(bag_id)
-    if not bag:
-        return jsonify({'error': 'Bag not found'}), 404
-    
     try:
+        # Start a transaction
+        db.session.begin()
+        
+        # Find the bag
+        bag = Item.query.get(bag_id)
+        if not bag:
+            return jsonify({'error': 'Bag not found'}), 404
+        
+        # First delete all associated images
+        images = ItemImage.query.filter_by(item_id=bag_id).all()
+        for image in images:
+            try:
+                # Delete the file from filesystem
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except OSError as e:
+                logging.warning(f"Error deleting image file: {e}")
+            
+            # Delete the image record
+            db.session.delete(image)
+        
+        # Now delete the bag
         db.session.delete(bag)
         db.session.commit()
+        
         return jsonify({'message': 'Deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
+        logging.error(f"Error deleting bag {bag_id}: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/bags/<int:bag_id>')

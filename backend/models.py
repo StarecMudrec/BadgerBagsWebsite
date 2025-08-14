@@ -19,7 +19,9 @@ class Item(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(1000))
     price = db.Column(db.Integer)
-    images = db.relationship('ItemImage', backref='item', lazy=True, order_by='ItemImage.position')
+    images = db.relationship('ItemImage', backref='item', lazy=True, 
+                           order_by='ItemImage.position',
+                           cascade="all, delete-orphan")  # Add this cascade option
 
     def present(self):
         return {
