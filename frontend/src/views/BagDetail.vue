@@ -453,12 +453,14 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          const image = this.newImages[index];
-          
-          if (!image.isNew) {
-            this.imageToCrop = image.url;
+          const isMobile = window.innerWidth < 1000;
+      
+          if (isMobile) {
+            container.style.width = '';
+            container.style.height = '';
           } else {
-            this.imageToCrop = image.preview;
+            container.style.width = '700px';
+            container.style.height = '500px';
           }
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
@@ -655,12 +657,14 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.cropper) {
           const container = this.$refs.cropper.$el;
-          const image = this.newImages[index];
-          
-          if (!image.isNew) {
-            this.imageToCrop = image.url;
+          const isMobile = window.innerWidth < 1000;
+      
+          if (isMobile) {
+            container.style.width = '';
+            container.style.height = '';
           } else {
-            this.imageToCrop = image.preview;
+            container.style.width = '700px';
+            container.style.height = '500px';
           }
           container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
