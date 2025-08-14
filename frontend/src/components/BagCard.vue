@@ -61,7 +61,7 @@ export default {
       this.$emit('bag-selected', this.bag.id, this.isSelected);
     },
     checkMobile() {
-      this.isMobile = window.innerWidth <= 768;
+      this.isMobile = window.innerWidth <= 1000;
     },
     goToDetail() {
       if (this.isSelected) return;
@@ -209,7 +209,7 @@ export default {
   pointer-events: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .selection-checkbox {
     display: block;
   }

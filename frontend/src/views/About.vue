@@ -186,7 +186,7 @@ export default {
   fill: #333333;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .portrait-background {
     width: 100%;
     height: 100vh;
