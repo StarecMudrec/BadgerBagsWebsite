@@ -391,6 +391,10 @@ export default {
       
       this.$nextTick(() => {
         if (this.$refs.cropper) {
+          const container = this.$refs.cropper.$el;
+          container.style.width = '700px';
+          container.style.height = '500px';
+          container.style.overflow = 'hidden';
           this.$refs.cropper.replace(this.imageToCrop);
           this.$refs.cropper.reset();
           this.$refs.cropper.setAspectRatio(1/1.25751633987);
@@ -857,12 +861,13 @@ export default {
     background-color: #f4ebe2;
     width: 700px;
     height: 500px;
-    overflow: hidden;
+    overflow: hidden; /* Add this to prevent content from expanding the container */
+    margin: 0 auto; /* Center the container */
   }
 
   .cropper-container {
-    width: 700px !important;
-    height: 500px !important;
+    width: 100% !important;
+    height: 100% !important;
     position: absolute;
     top: 0;
     left: 0;
