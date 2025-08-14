@@ -1185,9 +1185,6 @@ export default {
         margin-left: 10px;
         margin-right: 10px;
     }
-    .add-item-button {
-      height: 50px;      
-    }
   }
 
   @media (max-width: 1550px) {
