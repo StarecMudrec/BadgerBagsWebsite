@@ -973,7 +973,8 @@ export default {
     overflow: hidden;
     height: 100%;
     /* aspect-ratio: 1 / 1.56630057630; */
-    /* margin-bottom: 10px; */
+    /* margin-bottom: 10px; */ 
+    min-height: 50px;
   }
 
   .add-item-button:hover {
