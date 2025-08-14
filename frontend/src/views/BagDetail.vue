@@ -461,18 +461,14 @@ export default {
           const canvasData = this.$refs.cropper.getCanvasData();
           const containerData = this.$refs.cropper.getContainerData();
           
-          // Calculate visible image area
-          const visibleWidth = Math.min(canvasData.width, containerData.width);
-          const visibleHeight = Math.min(canvasData.height, containerData.height);
-          
-          // Center the crop box if it's larger than the visible area
+          // If canvas is smaller than container, resize crop box to match canvas
           if (canvasData.width < containerData.width || 
               canvasData.height < containerData.height) {
             this.$refs.cropper.setCropBoxData({
-              width: visibleWidth,
-              height: visibleHeight,
-              left: (containerData.width - visibleWidth) / 2,
-              top: (containerData.height - visibleHeight) / 2
+              width: canvasData.width,
+              height: canvasData.height,
+              left: 0,
+              top: 0
             });
           } else {
             // Otherwise, set crop box to container size
@@ -490,43 +486,28 @@ export default {
       if (this.$refs.cropper) {
         const canvasData = this.$refs.cropper.getCanvasData();
         const cropBoxData = this.$refs.cropper.getCropBoxData();
-        const containerData = this.$refs.cropper.getContainerData();
         
-        // Calculate the visible area of the image within the container
-        const visibleImageLeft = Math.max(0, -canvasData.left);
-        const visibleImageTop = Math.max(0, -canvasData.top);
-        const visibleImageRight = Math.min(containerData.width, canvasData.width - canvasData.left);
-        const visibleImageBottom = Math.min(containerData.height, canvasData.height - canvasData.top);
-        const visibleImageWidth = visibleImageRight - visibleImageLeft;
-        const visibleImageHeight = visibleImageBottom - visibleImageTop;
-
-        // Prevent crop box from being larger than the visible image area
-        if (cropBoxData.width > visibleImageWidth) {
+        // Prevent crop box from being larger than canvas
+        if (cropBoxData.width > canvasData.width) {
           this.$refs.cropper.setCropBoxData({
-            width: visibleImageWidth
+            width: canvasData.width
           });
         }
         
-        if (cropBoxData.height > visibleImageHeight) {
+        if (cropBoxData.height > canvasData.height) {
           this.$refs.cropper.setCropBoxData({
-            height: visibleImageHeight
+            height: canvasData.height
           });
         }
         
-        // Calculate maximum allowed positions based on visible image area
-        const maxLeft = visibleImageWidth - cropBoxData.width;
-        const maxTop = visibleImageHeight - cropBoxData.height;
+        // Keep crop box within canvas bounds
+        const maxLeft = canvasData.width - cropBoxData.width;
+        const maxTop = canvasData.height - cropBoxData.height;
         
-        // Adjust crop box position to stay within visible image bounds
-        const newLeft = Math.max(visibleImageLeft, Math.min(cropBoxData.left, visibleImageLeft + maxLeft));
-        const newTop = Math.max(visibleImageTop, Math.min(cropBoxData.top, visibleImageTop + maxTop));
-        
-        if (newLeft !== cropBoxData.left || newTop !== cropBoxData.top) {
-          this.$refs.cropper.setCropBoxData({
-            left: newLeft,
-            top: newTop
-          });
-        }
+        this.$refs.cropper.setCropBoxData({
+          left: Math.max(0, Math.min(cropBoxData.left, maxLeft)),
+          top: Math.max(0, Math.min(cropBoxData.top, maxTop))
+        });
       }
     },
     cancelCrop() {
