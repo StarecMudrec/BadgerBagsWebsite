@@ -432,25 +432,19 @@ export default {
         // Set initial zoom to fit the image within the container
         this.$refs.cropper.zoomTo(0.5);
         
-        // Get container and crop box data
+        // Get container and image data
         const containerData = this.$refs.cropper.getContainerData();
-        const cropBoxData = this.$refs.cropper.getCropBoxData();
-        
-        // Set minimum canvas dimensions to match container
-        this.$refs.cropper.setCanvasData({
-          minWidth: containerData.width,
-          minHeight: containerData.height
-        });
-        
-        // Set crop box to match container initially
+        const imageData = this.$refs.cropper.getImageData();
+
+        // Set initial crop box to match container size
         this.$refs.cropper.setCropBoxData({
           left: 0,
           top: 0,
           width: containerData.width,
           height: containerData.height
         });
-        
-        // Set up event listeners for zoom and scale changes
+
+        // Set up event listeners
         this.$refs.cropper.$el.addEventListener('wheel', this.handleCropZoom);
         this.$refs.cropper.$el.addEventListener('crop', this.handleCropMove);
       }
@@ -460,23 +454,23 @@ export default {
         if (this.$refs.cropper) {
           const canvasData = this.$refs.cropper.getCanvasData();
           const containerData = this.$refs.cropper.getContainerData();
+          const cropBoxData = this.$refs.cropper.getCropBoxData();
           
-          // If canvas is smaller than container, resize crop box to match canvas
-          if (canvasData.width < containerData.width || 
-              canvasData.height < containerData.height) {
+          // Calculate the maximum possible crop box size
+          const maxWidth = Math.min(canvasData.width, containerData.width);
+          const maxHeight = Math.min(canvasData.height, containerData.height);
+
+          // Get current crop box position relative to canvas
+          const currentLeft = cropBoxData.left - canvasData.left;
+          const currentTop = cropBoxData.top - canvasData.top;
+
+          // Adjust crop box size if needed
+          if (cropBoxData.width > maxWidth || cropBoxData.height > maxHeight) {
             this.$refs.cropper.setCropBoxData({
-              width: canvasData.width,
-              height: canvasData.height,
-              left: 0,
-              top: 0
-            });
-          } else {
-            // Otherwise, set crop box to container size
-            this.$refs.cropper.setCropBoxData({
-              width: containerData.width,
-              height: containerData.height,
-              left: 0,
-              top: 0
+              width: maxWidth,
+              height: maxHeight,
+              left: canvasData.left + Math.max(0, currentLeft),
+              top: canvasData.top + Math.max(0, currentTop)
             });
           }
         }
