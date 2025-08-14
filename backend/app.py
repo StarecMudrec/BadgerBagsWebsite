@@ -225,6 +225,12 @@ def login():
             }), 200
 
         #return render_template("login.html")
+        
+# Home Route (Protected Page)
+@app.route("/home")
+def home():
+    is_auth, _ = is_authenticated(request, session)
+    return render_template("homepage.html", is_auth=is_auth)
 
 
 
