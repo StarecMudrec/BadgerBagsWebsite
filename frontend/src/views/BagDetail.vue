@@ -343,7 +343,7 @@ export default {
       if (!this.isSwiping || this.images.length <= 1) return;
       this.isSwiping = false;
       
-      const threshold = this.imageWidth * 0.15; // 15% of image width as threshold
+      const threshold = this.imageWidth * 0; // 15% of image width as threshold
       const diff = this.touchStartX - this.touchEndX;
       const velocity = Math.abs(diff) / (Date.now() - this.touchStartTime);
       
