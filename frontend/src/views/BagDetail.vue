@@ -1786,7 +1786,7 @@ export default {
   @media (max-width: 1000px) {
     .fixed-crop-container {
       width: calc(100vw - 20px); /* Full width minus some padding */
-      height: calc(100vh - 65px); /* Full height minus buttons space */
+      height: calc(100vh - 100px); /* Full height minus buttons space */
       max-width: none;
       max-height: none;
     }
