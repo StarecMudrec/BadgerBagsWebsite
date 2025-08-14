@@ -5,10 +5,6 @@ import uuid
 
 db = SQLAlchemy()
 
-class AllowedUser(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String, nullable=False)
-
 class AuthToken(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     token = db.Column(db.String(255), unique=True, nullable=False)
