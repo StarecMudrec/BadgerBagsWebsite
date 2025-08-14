@@ -192,11 +192,14 @@ export default {
     }
   },
   methods: {
-    async created() {
-      await this.fetchUser();
-      if (!this.user?.is_admin) {
-        // Optionally redirect immediately
-        // this.$router.push('/');
+    async fetchUser() {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          this.user = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
       }
     },
     checkImageSize() {
