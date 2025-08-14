@@ -324,7 +324,7 @@ export default {
       // Restore transition
       this.$refs.imageContainer.querySelector('.image-track').style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
       
-      const threshold = this.imageWidth * 0.2; // 20% of image width as threshold
+      const threshold = this.imageWidth * 0.1; // 20% of image width as threshold
       const diff = this.touchStartX - this.touchEndX;
       
       if (diff > threshold) {
