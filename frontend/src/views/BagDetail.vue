@@ -10,108 +10,110 @@
 
     <!-- Content (shown when not loading) -->
     <template v-else>
-      <!-- Image Section -->
-      <div class="image-section">
-        <div class="arrow-nav left" @click="prevImage" :class="{ 'disabled': images.length <= 1 }">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
-          </svg>
-        </div>
+      <div class="content-wrapper">
+        <!-- Image Section -->
+        <div class="image-section">
+          <div class="arrow-nav left" @click="prevImage" :class="{ 'disabled': images.length <= 1 }">
+            <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+              <defs>
+                <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+                  <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+                  <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+                </filter>
+              </defs>
+              <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+            </svg>
+          </div>
 
-        <div class="image-container">
-          <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
-            <div v-for="(image, index) in images" :key="index" class="image-wrapper">
-              <img
-                :src="image.preview || image.url"
-                :alt="bag.name"
-                class="bag-image"
-              />
-              <button class="edit-image-button" @click="openCropModal(index)">
-                <i class="fas fa-edit"></i>
-              </button>
+          <div class="image-container">
+            <div class="image-track" :style="{ transform: `translateX(${imageTrackOffset}px)` }">
+              <div v-for="(image, index) in images" :key="index" class="image-wrapper">
+                <img
+                  :src="image.preview || image.url"
+                  :alt="bag.name"
+                  class="bag-image"
+                />
+                <button class="edit-image-button" @click="openCropModal(index)">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
             </div>
+          </div>
+
+          <div class="arrow-nav right" @click="nextImage" :class="{ 'disabled': images.length <= 1 }">
+            <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
+              <defs>
+                <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
+                  <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
+                  <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
+                </filter>
+              </defs>
+              <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+          </div>
+
+          <!-- Image Dots -->
+          <div class="image-dots">
+            <span
+              v-for="(image, index) in images"
+              :key="index"
+              class="image-dot"
+              :class="{ 'active': index === currentImageIndex }"
+              @click="setCurrentImageIndex(index)"
+            ></span>
           </div>
         </div>
 
-        <div class="arrow-nav right" @click="nextImage" :class="{ 'disabled': images.length <= 1 }">
-          <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="6 6 12 12" width="36" height="36">
-            <defs>
-              <filter id="arrowShadow" x="-20%" y="-20%" width="140%" height="150%">
-                <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="rgba(0,0,0,0.3)"/>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.2" flood-color="rgba(0,0,0,0.15)"/>
-              </filter>
-            </defs>
-            <path class="arrow-path" fill="white" filter="url(#arrowShadow)" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-          </svg>
-        </div>
+        <!-- Text Section (60% width) -->
+        <div class="text-section">
+          <div class="text-content">
+            <h2 class="section-title">О сумке:</h2>
 
-        <!-- Image Dots -->
-        <div class="image-dots">
-          <span
-            v-for="(image, index) in images"
-            :key="index"
-            class="image-dot"
-            :class="{ 'active': index === currentImageIndex }"
-            @click="setCurrentImageIndex(index)"
-          ></span>
-        </div>
-      </div>
-
-      <!-- Text Section (60% width) -->
-      <div class="text-section">
-        <div class="text-content">
-          <h2 class="section-title">О сумке:</h2>
-
-          <transition name="fade-slide" mode="out-in">
-            <div class="editable-field" v-if="!editingDescription" key="description-view">
-              <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
-              <span class="edit-icon" @click="editDescription">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-              </span>
-            </div>
-            <div class="editable-field" v-else key="description-edit">
-              <textarea v-model="descriptionInput" class="edit-input"></textarea>
-              <div class="edit-buttons">
-                <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
-                <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
-              </div>
-            </div>
-          </transition>
-
-          <div class="price-section">
             <transition name="fade-slide" mode="out-in">
-              <div class="price-container" v-if="!editingPrice" key="price-view">
-                <div class="price">{{ bag.price }}₽</div>
-                <span class="edit-icon" @click="editPrice">
+              <div class="editable-field" v-if="!editingDescription" key="description-view">
+                <p class="section-text">{{ bag.description || 'Здесь будет находиться информация о сумке' }}</p>
+                <span class="edit-icon" @click="editDescription">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                   </svg>
                 </span>
               </div>
-              <div class="price-container" v-else key="price-edit">
-                <input type="number" v-model.number="priceInput" class="edit-input" />
+              <div class="editable-field" v-else key="description-edit">
+                <textarea v-model="descriptionInput" class="edit-input"></textarea>
                 <div class="edit-buttons">
-                  <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
-                  <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
+                  <button class="confirm-button" @click="saveDescription"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+                  <button class="cancel-button" @click="cancelEditDescription"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
                 </div>
               </div>
             </transition>
-            <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
-              <span class="button-text">КУПИТЬ</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
-              </svg>
-            </a>
+
+            <div class="price-section">
+              <transition name="fade-slide" mode="out-in">
+                <div class="price-container" v-if="!editingPrice" key="price-view">
+                  <div class="price">{{ bag.price }}₽</div>
+                  <span class="edit-icon" @click="editPrice">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </span>
+                </div>
+                <div class="price-container" v-else key="price-edit">
+                  <input type="number" v-model.number="priceInput" class="edit-input" />
+                  <div class="edit-buttons">
+                    <button class="confirm-button" @click="savePrice"><i data-v-d4900a64="" class="fas fa-check" style="scale: 77%;"></i></button>
+                    <button class="cancel-button" @click="cancelEditPrice"><i data-v-d4900a64="" class="fas fa-times" style="scale: 77%;"></i></button>
+                  </div>
+                </div>
+              </transition>
+              <a href="https://t.me/kurorooooo" class="buy-button" target="_blank">
+                <span class="button-text">КУПИТЬ</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" class="telegram-icon">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.287 5.906c-.778.324-2.334.994-4.666 2.01-.378.15-.577.298-.595.442-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294.26.006.549-.1.868-.32 2.179-1.471 3.304-2.214 3.374-2.23.05-.012.12-.026.166.016.047.041.042.12.037.141-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8.154 8.154 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629.093.06.183.125.27.187.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.426 1.426 0 0 0-.013-.315.337.337 0 0 0-.114-.217.526.526 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09z"></path>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -1278,6 +1280,13 @@ export default {
     position: relative;
   }
 
+  .content-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+
   .disabled {
     opacity: 0.3;
     pointer-events: none;
@@ -1329,8 +1338,7 @@ export default {
 
   /* Rest of your existing styles remain the same */
   .image-section {
-    width: 40%;
-    min-width: 765px;
+    width: calc(100vh * 1.25751633987); /* Calculate width based on viewport height */
     height: 100vh;
     position: relative;
     background-color: #f4ebe2;
@@ -1338,6 +1346,7 @@ export default {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-shrink: 0; /* Prevent shrinking */
   }
 
   .image-container {
@@ -1433,8 +1442,9 @@ export default {
   }
 
   .text-section {
-    width: 60%;
-    padding: 40px 40px;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1693,7 +1703,7 @@ export default {
 
     .image-section {
       width: 100%;
-      height: auto;
+      height: calc(100vw / 1.25751633987); /* Calculate height based on viewport width */
       min-height: 50vh;
       position: relative;
       display: flex;
