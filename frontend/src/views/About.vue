@@ -53,7 +53,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  width: 40%; /* Изменено с 33.33% на 40% */
+  width: 40%; 
   height: 100vh;
   background-image: url('/portrait.jpg');
   background-size: cover;
@@ -65,9 +65,9 @@ export default {
 .about-content {
   position: relative;
   flex: 1;
-  width: 60%; /* Изменено с 66.66% на 60% */
-  margin-left: 40%; /* Изменено с 33.33% на 40% */
-  padding: 40px 10% 40px 12%; /* Новые отступы */
+  width: 60%; 
+  margin-left: 40%; 
+  padding: 40px 10% 40px 12%; 
   z-index: 1;
   background: transparent;
   display: flex;
@@ -76,8 +76,9 @@ export default {
 }
 
 .content-wrapper {
-  width: 100%;
-  max-width: 700px; /* Немного уменьшена максимальная ширина */
+  width: 90%;
+  max-width: 700px; 
+  align-self: center;
 }
 
 .about-section {
@@ -107,11 +108,11 @@ export default {
 
 .bottom-navbar {
   position: relative;
-  width: 60%; /* Изменено с 66.66% на 60% */
-  margin-left: 40%; /* Изменено с 33.33% на 40% */
+  width: 60%; 
+  margin-left: 40%; 
   display: flex;
   justify-content: space-around;
-  padding: 15px 8%; /* Новые отступы */
+  padding: 15px 8%; 
   min-height: 85px;
   background: transparent;
   z-index: 2;
