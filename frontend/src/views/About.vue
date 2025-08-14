@@ -189,7 +189,7 @@ export default {
 @media (max-width: 768px) {
   .portrait-background {
     width: 100%;
-    height: 40vh;
+    height: 100vh;
     position: relative;
   }
   
