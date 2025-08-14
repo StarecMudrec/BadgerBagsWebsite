@@ -106,13 +106,12 @@
             @bag-selected="handleBagSelected"
           />
           <div style=" display: flex; flex-direction: column; align-items: center;">
-            <div v-if="user?.is_admin" style="display: flex; flex-direction: column; align-items: center;">
-              <div class="add-item-container" v-if="user?.is_admin">
-                <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
-                  <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                </div>
+            <!-- In your template, replace the add-item-button section with this: -->
+            <div class="grid-item-wrapper" v-if="user?.is_admin">
+              <div class="add-item-button" @click="navigateToAddItem" data-test="add-item-button">
+                <svg class="plus-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5V19M5 12H19" stroke="#423125" stroke-width="2" stroke-linecap="round"/>
+                </svg>
               </div>
             </div>
             <!-- <div data-v-db91d383="" class="bag-price unselectable" style="color: rgb(0, 0, 0, 0);">.</div> -->
@@ -903,8 +902,8 @@ export default {
     flex-direction: column;
     /* min-height: 100%; Ensure they take full height */
   }
-  .add-item-container {
-    display: contents; /* Makes the container invisible to the grid layout */
+  .grid-item-wrapper {
+    display: contents; /* Makes the wrapper invisible to grid layout */
   }
 
   .bag-item {
@@ -1011,9 +1010,13 @@ export default {
     background-color: rgba(255, 255, 255, 0.05);
     width: 100%;
     height: 100%;
-    aspect-ratio: 1 / 1.78; /* Match other grid items */
+    aspect-ratio: 1 / 1.78;
     min-height: 0;
     min-width: 0;
+  }
+  .bag-grid > * {
+    min-width: 0;
+    min-height: 0;
   }
 
   .add-item-button:hover {
